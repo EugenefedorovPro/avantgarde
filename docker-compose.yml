@@ -1,0 +1,27 @@
+services:
+  django_avant:
+    container_name: django_avant
+    restart: unless-stopped
+    build:
+      context: ./backend
+    tty: true  # Enable terminal allocation
+    stdin_open: true  # Keep stdin open for interactive input
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+    ports:
+      - 8015:8000
+  react_avant:
+    container_name: react_avant
+    build: 
+      context: ./frontend
+    restart: unless-stopped
+    ports:
+      - 3015:5173
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - django_avant

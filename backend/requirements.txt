@@ -1,0 +1,13 @@
+Django==6.0.1
+djangorestframework==3.16.1
+django-extensions==4.1
+djangorestframework-simplejwt==5.5.1
+django-cors-headers==4.9.0
+
+django-stubs==5.2.9
+ipdb==0.13.13
+ipython==9.9.0
+
+gunicorn==24.1.1
+
+
