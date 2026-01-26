@@ -1,12 +1,12 @@
 __pycache__/
 *.log
+*.json
 
 # Virtual environments
 *.venv/
 *.env*
 
 # Django
-*.sqlite3
 data/
 media/
 staticfiles/
