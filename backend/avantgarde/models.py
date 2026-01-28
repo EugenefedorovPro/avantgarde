@@ -20,11 +20,12 @@ class AnswerToReclamation(models.Model):
         return f"{self.text[: 30]}"
 
 
-class RawVerses(models.Model):
+class RawVerse(models.Model):
     html_name = models.CharField(max_length=50)
-    title = models.TextField(null=True)
+    title = models.TextField(null=True, blank=True, unique=True)
     text = models.TextField(max_length=50000, null=True)
     date_of_writing = models.DateField(blank=True, null=True)
+    order = models.PositiveSmallIntegerField(blank=True, null = True, unique = True)
 
     def __str__(self):
         return self.title
@@ -36,7 +37,7 @@ class RawVerses(models.Model):
 
 class Hermeneutics(models.Model):
     raw_verses = models.ForeignKey(
-        RawVerses, on_delete=models.SET_NULL, null=True, blank=True
+        RawVerse, on_delete=models.SET_NULL, null=True, blank=True
     )
     html_name = models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
@@ -53,7 +54,7 @@ class Hermeneutics(models.Model):
 
 class Audio(models.Model):
     raw_verses = models.ForeignKey(
-        RawVerses, on_delete=models.SET_NULL, null=True, blank=True
+        RawVerse, on_delete=models.SET_NULL, null=True, blank=True
     )
     html_name = models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)

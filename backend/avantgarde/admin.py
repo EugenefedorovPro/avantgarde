@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    RawVerses,
+    RawVerse,
     EuPro,
     Hermeneutics,
     Audio,
@@ -21,7 +21,7 @@ class AnswerToReclamationAdmin(admin.ModelAdmin):
 
 class RawVersesAdmin(admin.ModelAdmin):
     fieldsets = [
-        ("Форма", {"fields": ["html_name", "title", "date_of_writing"]}),
+        ("Форма", {"fields": ["order", "html_name", "title", "date_of_writing"]}),
         ("Содержание", {"fields": ["text"]}),
     ]
     list_display = ["title", "html_name", "date_of_writing"]
@@ -42,7 +42,7 @@ class HermeneuticsAdmin(admin.ModelAdmin):
     search_fields = ["text", "title", "html_name"]
 
 
-admin.site.register(RawVerses, RawVersesAdmin)
+admin.site.register(RawVerse, RawVersesAdmin)
 admin.site.register(EuPro, EuProAdmin)
 admin.site.register(Hermeneutics, HermeneuticsAdmin)
 admin.site.register(Audio)

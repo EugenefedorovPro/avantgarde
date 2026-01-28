@@ -1,0 +1,22 @@
+.verseBox {
+  width: clamp(320px, 60vw, 600px);
+  margin-left: clamp(0px, 20vw, 250px);
+  margin-top: clamp(0px, 5vh, 48px);
+  padding: 20px;
+  /* border: solid; */
+}
+
+/* Phones: full width */
+@media (max-width: 576px) {
+  .verseBox {
+    width: 100vw;
+    margin: 0;
+    padding: 16px;
+  }
+}
+
+/* .buttonCol { */
+/*   margin-top: 3vh; */
+/* } */
+
+
