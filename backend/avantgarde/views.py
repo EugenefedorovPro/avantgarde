@@ -2,8 +2,8 @@ import ipdb
 import logging
 from itertools import cycle
 from rest_framework.views import APIView
-from avantgarde.models import RawVerse
-from avantgarde.serializers import VerseSerializer
+from avantgarde.models import RawVerse, Hermeneutics
+from avantgarde.serializers import VerseSerializer, HermSerializer
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 from django.shortcuts import get_object_or_404
@@ -49,5 +49,15 @@ class VerseView(APIView):
         else:
             verse = current_verse
 
-        serializer = VerseSerializer(verse)
-        return Response(data=serializer.data, status=HTTP_200_OK)
+        verse_ser = VerseSerializer(verse)
+
+        data = {"verse": verse_ser.data}
+
+        herm = Hermeneutics.objects.filter(raw_verses = verse).first()
+        if not herm:
+            data["herm"] =  {}
+        else:
+            herm_ser = HermSerializer(herm)
+            data["herm"] = herm_ser.data
+
+        return Response(data=data, status=HTTP_200_OK)

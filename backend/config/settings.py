@@ -5,6 +5,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = os.getenv("DEBUG") == "True"
+print(f"DEBUG = {DEBUG}")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -95,6 +96,9 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "audio"
 
 LOGGING = {
     "version": 1,

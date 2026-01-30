@@ -8,6 +8,7 @@ django-stubs==5.2.9
 ipdb==0.13.13
 ipython==9.9.0
 black==26.1.0
+pydantic==2.12.5
 
 gunicorn==24.1.1
 

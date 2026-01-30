@@ -24,7 +24,7 @@ class RawVersesAdmin(admin.ModelAdmin):
         ("Форма", {"fields": ["order", "html_name", "title", "date_of_writing"]}),
         ("Содержание", {"fields": ["text"]}),
     ]
-    list_display = ["title", "html_name", "date_of_writing"]
+    list_display = ["order", "title", "html_name", "date_of_writing"]
     search_fields = ["text", "title", "html_name"]
 
 

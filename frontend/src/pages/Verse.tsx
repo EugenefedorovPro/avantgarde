@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { verse } from "../api/verse.ts";
 import type { VerseInterface } from "../api/verse.ts";
 import { SquareButton } from "../components/SquareButton.tsx";
+import { VerseBox } from "../components/VerseBox.tsx";
 import "./Verse.css";
 
 export const Verse = () => {
@@ -39,51 +40,17 @@ export const Verse = () => {
   if (loading || !vrs) return <div>No text, wait...</div>;
 
   return (
-    <Container className="verseBox">
-      <Row>
-        <Col>
-          <ReactMarkdown>{vrs.text}</ReactMarkdown>
-        </Col>
-      </Row>
-
-      <Row>
-        <div className="text-end fst-italic">Евгений Проскуликов</div>
-      </Row>
-
-      <Row>
-        <Col className="mt-5 d-flex justify-content-center">
-          <SquareButton widthVw={90} heightVh={5} text="голос" />
-        </Col>
-      </Row>
-
-      <Row>
-        <Col className="mt-1 d-flex justify-content-center">
-          <SquareButton widthVw={90} heightVh={5} text="герменевтика" />
-        </Col>
-      </Row>
-
-      <Row>
-        <Col className="mt-1 d-flex justify-content-center">
-          <SquareButton widthVw={90} heightVh={5} text="Это не поэзия" />
-        </Col>
-      </Row>
-
-      <Row>
-        <Col className="d-flex justify-content-between mt-1 mb-3">
-          <SquareButton
-            onClick={() => newVerse("prev")}
-            widthVw={90}
-            heightVh={5}
-            text="сюда"
-          />
-          <SquareButton
-            onClick={() => newVerse("next")}
-            widthVw={90}
-            heightVh={5}
-            text="туда"
-          />
-        </Col>
-      </Row>
-    </Container>
+    <VerseBox
+      titleMd={vrs.title}
+      textMd={vrs.text}
+      author="Евгений Проскуликов"
+      tag1Text="голос"
+      tag2Text="герменевтика"
+      tag3Text="Это не поэзия"
+      prevText="сюда"
+      nextText="туда"
+      onPrev={() => newVerse("prev")}
+      onNext={() => newVerse("next")}
+    />
   );
 };
