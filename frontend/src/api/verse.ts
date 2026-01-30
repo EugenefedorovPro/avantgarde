@@ -1,31 +1,55 @@
 import axios from "axios";
 import { urlVerse } from "./urls";
 
-export interface VerseInterface {
+export type VerseType = {
+  pk: number;
+  order: number;
   html_name: string;
   title: string;
   text: string;
   date_of_writing: string;
+};
+
+export type HermType = {
+  pk: number;
+  html_name: string;
+  title: string;
+  text: string;
+  date_of_writing: string;
+};
+
+export type AudioType = {
+  pk: number;
+  audio: string;
+  html_name: string;
+};
+
+export interface VerseInterface {
+  verse: VerseType;
+  herm: HermType;
+  audio: AudioType;
 }
 
 export const verse = async (
   status: string = "current"
 ): Promise<VerseInterface | null> => {
+  const DefaultVerseOrder: string = "0";
 
-  const html_name: string | null = localStorage.getItem("html_name") ?? "verse_avantgarde_at_war";
-  
-  const url = urlVerse + `${html_name}/` + `${status}/`;
+  const verseOrder: string | null =
+    localStorage.getItem("verseOrder") ?? DefaultVerseOrder;
+
+  const url = urlVerse + `${verseOrder}/` + `${status}/`;
 
   try {
     const { data } = await axios(url);
 
     // set the current unique html_name of the verse
     // for user to go back and forward across verses
-    console.log(`data.html_name in verse.ts = ${data.html_name}`);
-    localStorage.setItem("html_name", data.html_name);
+    localStorage.setItem("verseOrder", data.verse.order);
+    console.log(data);
 
     return data;
-  } catch (e) {
+  } catch (e: any) {
     console.error("Error in verse.ts:");
     console.error(e);
     return null;

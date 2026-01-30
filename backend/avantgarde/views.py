@@ -2,10 +2,10 @@ import ipdb
 import logging
 from itertools import cycle
 from rest_framework.views import APIView
-from avantgarde.models import RawVerse, Hermeneutics
-from avantgarde.serializers import VerseSerializer, HermSerializer
+from avantgarde.models import Audio, RawVerse, Hermeneutics
+from avantgarde.serializers import VerseSerializer, HermSerializer, AudioSerializer
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
 from django.shortcuts import get_object_or_404
 
 logger = logging.getLogger(__file__)
@@ -35,9 +35,20 @@ def get_new_order(cur: int, next_to_return: bool) -> int | None:
 
 class VerseView(APIView):
 
-    def get(self, request, html_name, new):
-        current_verse = get_object_or_404(RawVerse, html_name=html_name)
+    def get(self, request, order, new):
+        try:
+            # security if order cannot be converted to number
+            current_verse = RawVerse.objects.filter(order=order).first()
+            # get the first verse if not found by order
+        except ValueError:
+            current_verse = RawVerse.objects.order_by("-order").first()
 
+            if not current_verse:
+                # not found it not verses at all in db
+                data = {"verse": None, "herm": None, "audio": None}
+                return Response(data=data, status=HTTP_404_NOT_FOUND)
+
+        # _____________________ verse ________________________
         if new == "current":
             verse = current_verse
         elif new == "next":
@@ -50,14 +61,20 @@ class VerseView(APIView):
             verse = current_verse
 
         verse_ser = VerseSerializer(verse)
-
         data = {"verse": verse_ser.data}
 
-        herm = Hermeneutics.objects.filter(raw_verses = verse).first()
-        if not herm:
-            data["herm"] =  {}
-        else:
+        # _____________________ herm_______________________
+        herm = Hermeneutics.objects.filter(raw_verses=verse).first()
+        data["herm"] = None
+        if herm:
             herm_ser = HermSerializer(herm)
             data["herm"] = herm_ser.data
+
+        # _____________________ audio________________________
+        audio = Audio.objects.filter(raw_verses=verse).first()
+        data["audio"] = None
+        if audio:
+            audio_ser = AudioSerializer(audio)
+            data["audio"] = audio_ser.data
 
         return Response(data=data, status=HTTP_200_OK)

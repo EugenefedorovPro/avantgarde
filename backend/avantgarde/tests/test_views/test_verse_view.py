@@ -16,22 +16,36 @@ class TestVerseView(CreateTestVerses):
         # del actual["pk"]
 
         expected = {
-            "html_name": "html_name_1",
-            "order": 1,
-            "title": "title_1",
-            "text": "text_1",
-            "date_of_writing": "2026-01-26",
+            "verse": {
+                "pk": 2,
+                "order": 1,
+                "html_name": "html_name_1",
+                "title": "title_1",
+                "text": "text_1",
+                "date_of_writing": "2026-01-26",
+            },
+            "herm": {
+                "pk": 2,
+                "html_name": "herm_html_name_1",
+                "title": "herm_html_name_1",
+                "text": "herm_text_{i}",
+                "date_of_writing": "2026-01-26",
+            },
+            "audio": {
+                "pk": 2,
+                "audio": "/media/pokrovsk.mp3",
+                "html_name": "audio_html_name_1",
+            },
         }
 
         self.assertEqual(response.status_code, 200)
         print(f"response.data = {response.data}")
-        # self.assertEqual(expected, actual)
+        self.assertEqual(expected, actual)
 
     def test_new_order_no_order(self):
         RawVerse.objects.all().delete()
         next_order = get_new_order(cur=1, next_to_return=True)
         self.assertFalse(next_order)
-
 
     def test_new_order_next(self):
         last_number: int = max(RawVerse.objects.values_list("order", flat=True))

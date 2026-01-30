@@ -25,7 +25,7 @@ class RawVerse(models.Model):
     title = models.TextField(null=True, blank=True)
     text = models.TextField(max_length=50000, null=True)
     date_of_writing = models.DateField(blank=True, null=True)
-    order = models.PositiveSmallIntegerField(blank=True, null = True, unique = True)
+    order = models.PositiveSmallIntegerField(blank=True, null=True, unique=True)
 
     def __str__(self):
         return f"{self.pk}- {self.html_name} {self.title}"
