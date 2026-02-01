@@ -17,7 +17,7 @@ export const SquareButton = ({
     <Button
       onClick={onClick}
       variant="light"
-      className="d-flex align-items-center justify-content-center m-1 p-0 rounded-0"
+      className="d-flex align-items-center justify-content-center rounded-0"
       style={{
         width: `${widthVw}vw`,
         height: `${heightVh}vh`,
@@ -27,9 +27,9 @@ export const SquareButton = ({
         outline: "none",
         boxShadow: "none",
 
-        backgroundColor: "#0E0E0E",
-        border: "2px solid #2A2A2A",
-        color: "#EAEAEA",
+        backgroundColor: "var(--color-bg-main)",
+        border: "2px solid var(--color-border)",
+        color: "var(--color-text-main)",
       }}
     >
       {text}

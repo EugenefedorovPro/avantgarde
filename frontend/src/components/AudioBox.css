@@ -1,0 +1,12 @@
+.audio-frame {
+  border: 1px solid #000;     /* optional, but helps visually */
+  border-radius: 0;
+  overflow: hidden;           /* IMPORTANT */
+  background: #fff;
+}
+
+/* Keep audio filling the frame */
+.square-audio {
+  width: 100%;
+  display: block;
+}

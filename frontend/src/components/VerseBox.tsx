@@ -1,115 +1,45 @@
 import React from "react";
+import type { ReactNode } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import ReactMarkdown from "react-markdown";
-import { SquareButton } from "./SquareButton";
 
 type VerseBoxProps = {
-  titleMd: string;
-  textMd: string;
-
-  author?: string;
-
-  tag1Text?: string;
-  tag2Text?: string;
-  tag3Text?: string;
-
-  prevText?: string;
-  nextText?: string;
-
-  onPrev?: () => void;
-  onNext?: () => void;
-
-  // keep your sizing configurable
-  buttonWidthVw?: number;
-  buttonHeightVh?: number;
-
+  titleMd?: string;
+  textMd?: string;
   className?: string;
+
+  childrenTop?: ReactNode;
+  childrenBottom?: ReactNode;
 };
 
 export const VerseBox: React.FC<VerseBoxProps> = ({
   titleMd,
   textMd,
-  author = "Евгений Проскуликов",
-
-  tag1Text = "голос",
-  tag2Text = "герменевтика",
-  tag3Text = "Это не поэзия",
-
-  prevText = "сюда",
-  nextText = "туда",
-
-  onPrev,
-  onNext,
-
-  buttonWidthVw = 90,
-  buttonHeightVh = 5,
-
   className = "verseBox",
+  childrenTop,
+  childrenBottom,
 }) => {
   return (
     <Container className={className}>
+      {/* Title */}
       <Row>
-        <Col>
-          <ReactMarkdown>{titleMd}</ReactMarkdown>
+        <Col className="mb-2">
+          <h5>{titleMd}</h5>
         </Col>
       </Row>
 
+      {/* Text */}
       <Row>
         <Col>
           <ReactMarkdown>{textMd}</ReactMarkdown>
         </Col>
       </Row>
 
-      <Row>
-        <div className="text-end fst-italic">{author}</div>
-      </Row>
+      {/* Author */}
+      <Row>{childrenTop && <Row className="mt-1">{childrenTop}</Row>}</Row>
 
-      <Row>
-        <Col className="mt-5 d-flex justify-content-center">
-          <SquareButton
-            widthVw={buttonWidthVw}
-            heightVh={buttonHeightVh}
-            text={tag1Text}
-          />
-        </Col>
-      </Row>
-
-      <Row>
-        <Col className="mt-1 d-flex justify-content-center">
-          <SquareButton
-            widthVw={buttonWidthVw}
-            heightVh={buttonHeightVh}
-            text={tag2Text}
-          />
-        </Col>
-      </Row>
-
-      <Row>
-        <Col className="mt-1 d-flex justify-content-center">
-          <SquareButton
-            widthVw={buttonWidthVw}
-            heightVh={buttonHeightVh}
-            text={tag3Text}
-          />
-        </Col>
-      </Row>
-
-      <Row>
-        <Col className="d-flex justify-content-between mt-1 mb-3">
-          <SquareButton
-            onClick={onPrev}
-            widthVw={buttonWidthVw}
-            heightVh={buttonHeightVh}
-            text={prevText}
-          />
-          <SquareButton
-            onClick={onNext}
-            widthVw={buttonWidthVw}
-            heightVh={buttonHeightVh}
-            text={nextText}
-          />
-        </Col>
-      </Row>
+      {/* Bottom slot */}
+      {childrenBottom && <Row className="mt-1">{childrenBottom}</Row>}
     </Container>
   );
 };

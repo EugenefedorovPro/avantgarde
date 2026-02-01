@@ -1,12 +1,18 @@
 // import reactLogo from './assets/react.svg'
-import "./App.css";
-import { Verse } from "./pages/Verse.tsx";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Verse } from "./pages/Verse";
+import { RandVersePage } from "./pages/RandVerse";
 
 function App() {
   return (
-    <>
-      <Verse/>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/verse" replace />} />
+        <Route path="/verse" element={<Verse />} />
+        <Route path="/rand_verse" element={<RandVersePage />} />
+        <Route path="*" element={<div>404</div>} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

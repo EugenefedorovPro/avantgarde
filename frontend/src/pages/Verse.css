@@ -15,8 +15,48 @@
   }
 }
 
-/* .buttonCol { */
-/*   margin-top: 3vh; */
-/* } */
+/* Content panel top border off (as you already had) */
+.custom-tabs .tab-content {
+  border-top: 0 !important;
+}
 
+/* Tabs base */
+.custom-tabs .nav-link {
+  background: var(--color-bg-main);
+  color: var(--color-text-main);
+  border: 1px solid;
+  border-radius: 0 !important;
 
+  min-height: 5vh;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 800;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.custom-tabs .nav-link:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-main);
+}
+
+/* ACTIVE: white bg + black text */
+.custom-tabs .nav-link.active,
+.custom-tabs .nav-link.active:hover {
+  background: #fff !important;
+  color: #000 !important;
+  border-color: #000; /* optional, keeps it crisp */
+}
+
+/* If Bootstrap adds "show" on active tab link in some setups */
+.custom-tabs .nav-link.show {
+  background: #fff !important;
+  color: #000 !important;
+}
+
+.custom-tabs .nav-link:focus {
+  box-shadow: none;
+}

@@ -11,12 +11,12 @@ class RandVerse:
         word = word.lower()
         return word
 
-    def rand_verse(self) -> dict[str, str]:
+    def rand_verse(self) -> dict[int, str]:
         verses = RawVerse.objects.all()
-        html_word: dict[str, str] = {}
+        order_word: dict[str, str] = {}
         for verse in verses:
-            html_word[verse.html_name] = self.select_word(verse.text)
-        return html_word
+            order_word[verse.order] = self.select_word(verse.text)
+        return order_word
 
     def only_words(self) -> str:
         html_words = self.rand_verse()

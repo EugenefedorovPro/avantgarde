@@ -1,6 +1,7 @@
 from django.urls import include, path
-from avantgarde.views import VerseView
+from avantgarde.views import VerseView, RandVerseView
 
 urlpatterns = [
     path("verse/<str:order>/<str:new>/", VerseView.as_view(), name="verse"),
+    path("rand_verse/", RandVerseView.as_view(), name="rand_verse"),
 ]
