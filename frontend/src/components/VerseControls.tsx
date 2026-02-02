@@ -5,7 +5,6 @@ import { TriangleButton } from "./TriangleButton";
 
 type VerseControlsProps = {
   tagText?: string;
-
   prevText?: string;
   nextText?: string;
 
@@ -23,20 +22,14 @@ export const VerseControls: React.FC<VerseControlsProps> = ({
   onTop,
   onPrev,
   onNext,
-  className,
+  className = "",
 }) => {
   return (
     <div className={className}>
-      <Row className="align-items-center">
-        <Col xs="auto" className="d-flex justify-content-start">
+      <Row className="w-100 g-0">
+        <Col className="d-flex align-items-center justify-content-between w-100">
           <TriangleButton direction="left" onClick={onPrev} label={prevText} />
-        </Col>
-
-        <Col className="d-flex justify-content-center">
           <SquareButton onClick={onTop} text={tagText} />
-        </Col>
-
-        <Col xs="auto" className="d-flex justify-content-end">
           <TriangleButton direction="right" onClick={onNext} label={nextText} />
         </Col>
       </Row>

@@ -1,38 +1,54 @@
 /* Make the whole tab row a black bar */
 .custom-tabs .nav-tabs {
   border-bottom: 0 !important;
-  background: #000;
+  background: var(--color-bg-main);
   padding: 8px;
-  gap: 8px;              /* space between blocks */
+  gap: var(--ui-gap);
 }
 
 /* Tabs as blocks */
 .custom-tabs .nav-link {
   background: transparent;
-  color: #fff;
-  border: 0 !important;  /* kill individual borders */
+  color: var(--color-text-main);
+  border: 0 !important;
   border-radius: 0 !important;
 
-  padding: 0.6rem 1.2rem;
+  /* FIXED HEIGHT from root */
+  height: var(--ui-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* horizontal spacing only (height is controlled above) */
+  padding: 0 1.2rem;
+
   font-weight: 800;
-  letter-spacing: 0.06em; /* “poster” feel */
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  line-height: 1;
 }
 
-/* Hover: slight lightening */
+/* Hover */
 .custom-tabs .nav-link:hover {
-  background: rgba(255,255,255,0.08);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-main);
 }
 
 /* Active = white block */
 .custom-tabs .nav-link.active,
 .custom-tabs .nav-link.active:hover {
-  background: #fff !important;
-  color: #000 !important;
+  background: var(--color-accent) !important;
+  color: var(--color-bg-main) !important;
 }
 
 /* remove focus glow */
 .custom-tabs .nav-link:focus {
   box-shadow: none;
+}
+
+/* Phones */
+@media (max-width: 576px) {
+  .custom-tabs .nav-link {
+    height: var(--ui-h-mobile);
+  }
 }

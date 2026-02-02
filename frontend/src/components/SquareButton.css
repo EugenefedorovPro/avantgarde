@@ -1,16 +1,13 @@
-/* Malevich core variables (optional, but nice) */
-:root {
-  --m-white: #fff;
-  --m-black: #000;
-
-  --m-border: 3px; /* bold outline */
-  --m-h: 56px; /* default button height */
-  --m-w: 220px; /* default button width */
-  --m-gap: 10px; /* compositional spacing */
-}
-
-/* Base “block” button */
+/* Malevich tokens scoped to buttons (no extra :root block) */
 .u-btn {
+  --m-black: var(--color-bg-main);
+  --m-white: var(--color-text-main);
+
+  --m-border: var(--ui-border);
+  --m-h: var(--ui-h);
+  --m-w: var(--ui-w);      /* desktop max width */
+  --m-gap: var(--ui-gap);
+
   border-radius: 0 !important;
   box-shadow: none !important;
 
@@ -28,12 +25,13 @@
   text-transform: uppercase;
   line-height: 1;
 
-  /* Single source of truth for size */
-  width: var(--m-w);
+  /* Responsive sizing: never overflow on phones */
+  width: 100%;
+  max-width: var(--m-w);
+  min-width: 0;         /* allow shrinking in flex layouts */
   height: var(--m-h);
   padding: 0 14px;
 
-  /* Remove bootstrap focus glow */
   outline: none !important;
 }
 
@@ -43,19 +41,19 @@
   color: var(--m-white) !important;
 }
 
-/* Pressed: small physical “stamp” move */
+/* Pressed */
 .u-btn:active {
   transform: translate(2px, 2px);
 }
 
-/* Focus: keep it sharp, no glow */
+/* Focus */
 .u-btn:focus,
 .u-btn:focus-visible {
   outline: var(--m-border) solid var(--m-black) !important;
   outline-offset: 2px;
 }
 
-/* Disabled: still graphic, just muted */
+/* Disabled */
 .u-btn:disabled,
 .u-btn.disabled {
   opacity: 0.45;
@@ -63,12 +61,22 @@
   transform: none;
 }
 
-/* Optional size variants */
+/* Variants */
 .u-btn--wide {
-  width: min(92vw, 760px);
+  max-width: min(92vw, 760px);
 }
 
 .u-btn--square {
-  width: var(--m-h); /* square based on height */
+  width: var(--m-h);
+  max-width: var(--m-h);
   padding: 0;
+}
+
+/* Phones */
+@media (max-width: 576px) {
+  .u-btn {
+    height: var(--ui-h-mobile);
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+  }
 }

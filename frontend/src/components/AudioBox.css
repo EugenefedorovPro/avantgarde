@@ -1,12 +1,27 @@
-.audio-frame {
-  border: 1px solid #000;     /* optional, but helps visually */
-  border-radius: 0;
-  overflow: hidden;           /* IMPORTANT */
-  background: #fff;
+.audio-box {
+  width: 100%;
 }
 
-/* Keep audio filling the frame */
+/* This wrapper defines the “shape” */
+.audio-frame {
+  width: 100%;
+  border: 2px solid var(--color-border);
+  border-radius: 0;
+  overflow: hidden;               /* IMPORTANT: clip rounded UI */
+  background: var(--color-bg-main);
+}
+
+/* Make the element fill the wrapper */
 .square-audio {
   width: 100%;
   display: block;
+  border-radius: 0 !important;    /* may or may not affect native UI */
+}
+
+/* WebKit (Chrome/Edge/Safari) – often the missing piece */
+.square-audio::-webkit-media-controls-enclosure {
+  border-radius: 0 !important;
+}
+.square-audio::-webkit-media-controls-panel {
+  border-radius: 0 !important;
 }

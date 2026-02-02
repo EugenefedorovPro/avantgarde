@@ -7,7 +7,6 @@ type VerseBoxProps = {
   titleMd?: string;
   textMd?: string;
   className?: string;
-
   childrenTop?: ReactNode;
   childrenBottom?: ReactNode;
 };
@@ -21,25 +20,33 @@ export const VerseBox: React.FC<VerseBoxProps> = ({
 }) => {
   return (
     <Container className={className}>
-      {/* Title */}
-      <Row>
-        <Col className="mb-2">
-          <h5>{titleMd}</h5>
-        </Col>
-      </Row>
+      {titleMd && (
+        <Row>
+          <Col className="mb-2">
+            <h5>{titleMd}</h5>
+          </Col>
+        </Row>
+      )}
 
-      {/* Text */}
-      <Row>
-        <Col>
-          <ReactMarkdown>{textMd}</ReactMarkdown>
-        </Col>
-      </Row>
+      {textMd && (
+        <Row>
+          <Col>
+            <ReactMarkdown>{textMd}</ReactMarkdown>
+          </Col>
+        </Row>
+      )}
 
-      {/* Author */}
-      <Row>{childrenTop && <Row className="mt-1">{childrenTop}</Row>}</Row>
+      {childrenTop && (
+        <Row className="mt-1">
+          <Col>{childrenTop}</Col>
+        </Row>
+      )}
 
-      {/* Bottom slot */}
-      {childrenBottom && <Row className="mt-1">{childrenBottom}</Row>}
+      {childrenBottom && (
+        <Row className="mt-1">
+          <Col>{childrenBottom}</Col>
+        </Row>
+      )}
     </Container>
   );
 };

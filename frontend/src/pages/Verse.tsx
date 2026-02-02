@@ -87,7 +87,7 @@ export const Verse = ({
 
   // Shared UI blocks
   const Signature: ReactNode = (
-    <div className="fst-italic text-end">Евгений Проскуликов</div>
+    <div className="fst-italic text-end mb-5">Евгений Проскуликов</div>
   );
 
   const controls = (

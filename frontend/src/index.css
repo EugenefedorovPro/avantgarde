@@ -14,6 +14,10 @@
   /* Optional future use */
   --color-muted: #999;
   --color-accent: #ffffff;
+  --ui-h: 38px;
+  --ui-gap: 10px;
+  --ui-h-mobile: 38px; /* optional */
+  --control-border: 520px;
 }
 
 body {
