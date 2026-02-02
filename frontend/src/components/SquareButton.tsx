@@ -1,5 +1,4 @@
 import Button from "react-bootstrap/Button";
-import "./SquareButton.css";
 
 type SquareButtonProps = {
   onClick?: () => void;

@@ -1,0 +1,344 @@
+/* =========================
+   VERSE BOX (layout)
+   Fixes mobile overflow by NOT using margin-left on small screens
+   ========================= */
+.verseBox {
+  width: min(100%, clamp(320px, 60vw, 600px));
+  margin: clamp(0px, 5vh, 48px) auto 0;
+  padding: var(--ui-pad);
+}
+
+/* Apply the “Malevich offset” only on larger screens */
+@media (min-width: 992px) {
+  .verseBox {
+    margin-left: clamp(0px, 20vw, 250px);
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .verseBox {
+    padding: var(--ui-pad-mobile);
+  }
+}
+
+
+/* =========================
+   TABS (Malevich)
+   Hover = yellow, Active tab = red, Pressed = red
+   ========================= */
+.custom-tabs .nav-tabs {
+  border-bottom: 0 !important;
+  background: var(--color-bg-main);
+  padding: 8px;
+  gap: var(--ui-gap);
+}
+
+/* Tabs as blocks */
+.custom-tabs .nav-link {
+  background: transparent;
+  color: var(--color-text-main);
+  border: 0 !important;
+  border-radius: 0 !important;
+
+  height: var(--ui-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 1.2rem;
+
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Hover: yellow (only if not currently selected) */
+.custom-tabs .nav-link:not(.active):hover {
+  background: var(--sup-yellow);
+  color: var(--color-bg-main);
+}
+
+/* Active tab = red */
+.custom-tabs .nav-link.active,
+.custom-tabs .nav-link.active:hover {
+  background: var(--sup-red) !important;
+  color: var(--color-bg-main) !important;
+}
+
+/* Pressed (mouse down) = red */
+.custom-tabs .nav-link:active {
+  background: var(--sup-red);
+  color: var(--color-bg-main);
+}
+
+/* remove focus glow */
+.custom-tabs .nav-link:focus {
+  box-shadow: none;
+}
+
+@media (max-width: 576px) {
+  .custom-tabs .nav-link {
+    height: var(--ui-h-mobile);
+  }
+}
+
+
+/* =========================
+   SQUARE BUTTON (u-btn)
+   Hover = yellow, Active(pressed) = red
+   ========================= */
+.u-btn {
+  --m-black: var(--color-bg-main);
+  --m-white: var(--color-text-main);
+
+  --m-border: var(--ui-border);
+  --m-h: var(--ui-h);
+  --m-w: var(--ui-w);
+  --m-gap: var(--ui-gap);
+
+  border-radius: 0 !important;
+  box-shadow: none !important;
+
+  background: var(--m-white) !important;
+  color: var(--m-black) !important;
+  border: var(--m-border) solid var(--m-black) !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+
+  width: 100%;
+  max-width: var(--m-w);
+  min-width: 0;
+  height: var(--m-h);
+  padding: 0 14px;
+
+  outline: none !important;
+}
+
+/* Hover: yellow */
+.u-btn:hover {
+  background: var(--sup-yellow) !important;
+  color: var(--m-black) !important;
+}
+
+/* Pressed: red */
+.u-btn:active {
+  background: var(--sup-red) !important;
+  color: var(--m-black) !important;
+  transform: translate(2px, 2px);
+}
+
+/* Focus */
+.u-btn:focus,
+.u-btn:focus-visible {
+  outline: var(--m-border) solid var(--m-black) !important;
+  outline-offset: 2px;
+}
+
+/* Disabled */
+.u-btn:disabled,
+.u-btn.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Variants */
+.u-btn--wide {
+  max-width: min(92vw, 760px);
+}
+
+.u-btn--square {
+  width: var(--m-h);
+  max-width: var(--m-h);
+  padding: 0;
+}
+
+@media (max-width: 576px) {
+  .u-btn {
+    height: var(--ui-h-mobile);
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+  }
+}
+
+
+/* =========================
+   TRIANGLE BUTTON (tri-btn)
+   Hover = yellow, Active(pressed) = red
+   ========================= */
+.tri-btn {
+  --box: var(--ui-h);
+  --border: var(--ui-border);
+
+  --black: var(--color-text-main);
+  --white: var(--color-bg-main);
+
+  width: var(--box);
+  height: var(--box);
+
+  border: 0;
+  border-radius: 0;
+
+  background: var(--white);
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  outline: none;
+  box-shadow: none;
+}
+
+/* triangle glyph scaled to box */
+.tri-btn::before {
+  content: "";
+  width: 0;
+  height: 0;
+
+  border-top: calc(var(--box) * 0.28) solid transparent;
+  border-bottom: calc(var(--box) * 0.28) solid transparent;
+}
+
+.tri-btn--left::before {
+  border-right: calc(var(--box) * 0.39) solid var(--black);
+}
+
+.tri-btn--right::before {
+  border-left: calc(var(--box) * 0.39) solid var(--black);
+}
+
+/* Hover: yellow background + black triangle */
+.tri-btn:hover {
+  background: var(--sup-yellow);
+}
+
+.tri-btn:hover::before {
+  border-right-color: var(--color-bg-main);
+  border-left-color: var(--color-bg-main);
+}
+
+/* Focus: sharp outline */
+.tri-btn:focus-visible {
+  outline: var(--border) solid var(--black);
+  outline-offset: 3px;
+}
+
+/* Active (pressed): red background + black triangle */
+.tri-btn:active {
+  background: var(--sup-red);
+  transform: translate(2px, 2px);
+}
+
+.tri-btn:active::before {
+  border-right-color: var(--color-bg-main);
+  border-left-color: var(--color-bg-main);
+}
+
+/* Disabled */
+.tri-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* prevent disabled hover/active changes */
+.tri-btn:disabled:hover,
+.tri-btn:disabled:active {
+  background: var(--white);
+}
+
+@media (max-width: 576px) {
+  .tri-btn {
+    --box: var(--ui-h-mobile);
+  }
+}
+
+
+/* =========================
+   AUDIO BOX
+   Hover = yellow border, Focus-within (clicked/active use) = red border
+   ========================= */
+.audio-box {
+  width: 100%;
+}
+
+.audio-frame {
+  width: 100%;
+  border: var(--ui-border) solid var(--color-border);
+  border-radius: 0;
+  overflow: hidden;
+  background: var(--color-bg-main);
+}
+
+/* Hover: yellow accent */
+.audio-frame:hover {
+  border-color: var(--sup-yellow);
+}
+
+/* When interacting with audio controls: red accent */
+.audio-frame:focus-within {
+  border-color: var(--sup-red);
+}
+
+.square-audio {
+  width: 100%;
+  display: block;
+  border-radius: 0 !important;
+}
+
+.square-audio::-webkit-media-controls-enclosure {
+  border-radius: 0 !important;
+}
+.square-audio::-webkit-media-controls-panel {
+  border-radius: 0 !important;
+}
+
+/* =========================
+   MALEVICH LINE UNDER TABS (ONLY)
+   Replace Bootstrap's thin border with a deliberate suprematist rule
+   ========================= */
+
+/* Kill the default bootstrap underline (source of the long line) */
+.custom-tabs .nav-tabs {
+  border-bottom: 0 !important;
+}
+
+/* Draw our own line: thick, sharp, intentional */
+.custom-tabs .nav-tabs::after {
+  content: "";
+  display: block;
+
+  /* full width of the tabs bar */
+  width: 100%;
+
+  /* Malevich thickness */
+  height: var(--ui-border);
+
+  /* default = white rule */
+  background: var(--color-text-main);
+
+  /* spacing from tabs */
+  margin-top: 8px;
+}
+
+/* Hover on the entire tab bar = yellow rule */
+.custom-tabs .nav-tabs:hover::after {
+  background: var(--sup-yellow);
+}
+
+/* Mouse down anywhere on the tab bar = red rule */
+.custom-tabs .nav-tabs:active::after {
+  background: var(--sup-red);
+}
+

@@ -2,6 +2,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Verse } from "./pages/Verse";
 import { RandVersePage } from "./pages/RandVerse";
+import "./index.css";
+import "./ui.css";
 
 function App() {
   return (

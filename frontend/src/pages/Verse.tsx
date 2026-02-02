@@ -12,8 +12,6 @@ import type {
   AudioType,
   HermType,
 } from "../api/verse";
-import "./Verse.css";
-import "./Tab.css";
 
 type TabKey = "verse" | "hermeneutics" | "audio";
 type VerseStatus = "current" | "next" | "prev";

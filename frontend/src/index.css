@@ -6,24 +6,46 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
   /* Colors */
   --color-bg-main: #0e0e0e;
   --color-border: #2a2a2a;
   --color-text-main: #eaeaea;
 
+  /* Suprematism accents (red / yellow / blue) */
+  --sup-red: #d01818;
+  --sup-yellow: #f2c300;
+  --sup-blue: #1e5aa8;
+
   /* Optional future use */
   --color-muted: #999;
   --color-accent: #ffffff;
-  --ui-h: 38px;
+
+  /* Unified UI sizing tokens */
+  --ui-border: 3px;
+  --ui-h: 36px;
+  --ui-h-mobile: 48px;
+  --ui-w: 520px;
   --ui-gap: 10px;
-  --ui-h-mobile: 38px; /* optional */
-  --control-border: 520px;
+
+  --ui-pad: 20px;
+  --ui-pad-mobile: 16px;
+}
+
+/* Safety against accidental horizontal scroll */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
 
+  /* ✅ your background image block restored */
   background-image: url("/src/assets/square.png");
   background-size: cover;
   background-position: center;

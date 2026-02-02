@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import type { AudioType } from "../api/verse";
 import { baseUrl } from "../api/urls";
-import "./AudioBox.css";
 
 type AudioBoxProps = {
   audio: AudioType;

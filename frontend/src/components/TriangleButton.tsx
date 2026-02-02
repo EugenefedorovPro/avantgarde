@@ -1,5 +1,4 @@
 import React from "react";
-import "./TriangleButton.css";
 
 type TriangleButtonProps = {
   direction: "left" | "right";
