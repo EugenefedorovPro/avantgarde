@@ -1,41 +1,45 @@
-import { Col, Row, Container } from "react-bootstrap";
-import {useNavigate} from "react-router-dom";
 import { Tabs, Tab } from "react-bootstrap";
-import type { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import type { ReactNode } from "react";
+
 import { randVerse } from "../api/randVerse";
 import { VerseControls } from "../components/VerseControls";
 import { VerseBox } from "../components/VerseBox";
-import "../pages/Tab.css";
-import { Verse } from "./Verse";
 
+type TabKey = "verse" | "hermeneutics";
 
 export const RandVersePage = () => {
   const navigate = useNavigate();
+
   const [data, setData] = useState<Record<string, string> | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [reload, setReload] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
+  const [reload, setReload] = useState(true);
 
-
-  type TabKey = "verse" | "hermeneutics" | "audio";
   const [activeTab, setActiveTab] = useState<TabKey>("verse");
 
   useEffect(() => {
+    let cancelled = false;
+
     const load = async () => {
+      setLoading(true);
       try {
         const randData = await randVerse();
-        setData(randData);
-      } catch (e: any) {
+        if (!cancelled) setData(randData);
+      } catch (e) {
         console.log(e);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     load();
+
+    return () => {
+      cancelled = true;
+    };
   }, [reload]);
 
-  // Shared UI blocks
   const Signature: ReactNode = (
     <div className="fst-italic text-end">Евгений Проскуликов</div>
   );
@@ -45,19 +49,18 @@ export const RandVersePage = () => {
       tagText="Собрать новый стих"
       prevText="сюда"
       nextText="туда"
-      onTop={() => setReload(prev => !prev)}
+      onTop={() => setReload((prev) => !prev)}
       onPrev={() => navigate("/verse?initialStatus=prev")}
       onNext={() => navigate("/verse?initialStatus=next")}
     />
   );
 
-  if (!data) return <div>loading...</div>;
+  if (loading) return <div>loading...</div>;
+  if (!data) return <div>no data</div>;
 
-  const newVerse: string = Object.values(data).join(" ");
-  console.log(newVerse);
+  const newVerse = Object.values(data).join(" ");
 
   return (
-
     <Tabs
       id="verse-tabs"
       activeKey={activeTab}
@@ -65,29 +68,13 @@ export const RandVersePage = () => {
       className="custom-tabs"
       mountOnEnter
     >
-      {/* VERSE */}
       <Tab eventKey="verse" title="Verse">
-        <VerseBox
-          textMd={newVerse}
-          childrenTop={Signature}
-          childrenBottom={controls}
-        />
+        <VerseBox textMd={newVerse} childrenTop={Signature} childrenBottom={controls} />
       </Tab>
 
-      {/* HERMENEUTICS */}
-      {
-        <Tab eventKey="hermeneutics" title="Hermeneutics">
-          <VerseBox
-            titleMd=""
-            textMd=""
-            childrenTop={Signature}
-            childrenBottom={controls}
-          />
-        </Tab>
-      }
-
+      <Tab eventKey="hermeneutics" title="Hermeneutics">
+        <VerseBox childrenTop={Signature} childrenBottom={controls} />
+      </Tab>
     </Tabs>
-
-
   );
 };

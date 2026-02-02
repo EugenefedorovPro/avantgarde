@@ -1,11 +1,114 @@
-/* =========================
-   VERSE BOX (layout)
-   Fixes mobile overflow by NOT using margin-left on small screens
-   ========================= */
+/* =========================================================
+   MALEVICH UI.CSS
+   Suprematist palette + hard geometry + deliberate accents
+   Hover = yellow, Active/Pressed = red
+   Keeps your existing class names intact
+   ========================================================= */
+
+/* -------------------------
+   TOKENS
+   ------------------------- */
+:root {
+  /* Core */
+  --color-bg-main: #0b0d10;
+  --color-text-main: #f2f2f2;
+  --color-border: #f2f2f2;
+
+  /* Suprematism (classical accents) */
+  --sup-red: #d91515;
+  --sup-yellow: #f2c400;
+  --sup-blue: #1f4fff;
+
+  /* UI rhythm */
+  --ui-border: 3px;
+  --ui-gap: 10px;
+
+  --ui-h: 56px;
+  --ui-h-mobile: 48px;
+
+  --ui-w: 560px;
+
+  --ui-pad: 20px;
+  --ui-pad-mobile: 16px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* -------------------------
+   BACKGROUND (restore image)
+   ------------------------- */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--color-text-main);
+  background-color: var(--color-bg-main);
+
+  /* your Malevich square back */
+  background-image: url("./assets/square_malevitch.png");
+  background-repeat: no-repeat;
+  background-position: left top;
+  background-size: min(42vw, 560px) auto;
+  background-attachment: fixed;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* -------------------------
+   VERSE BOX (layout + suprematist “marks”)
+   ------------------------- */
 .verseBox {
   width: min(100%, clamp(320px, 60vw, 600px));
   margin: clamp(0px, 5vh, 48px) auto 0;
   padding: var(--ui-pad);
+
+  background: var(--color-bg-main);
+  border: var(--ui-border) solid var(--color-border);
+  border-radius: 0;
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* content above shapes */
+.verseBox > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* red square stamp */
+.verseBox::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 18px;
+  height: 18px;
+  background: var(--sup-red);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* yellow bar */
+.verseBox::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  width: 88px;
+  height: 10px;
+  background: var(--sup-yellow);
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* Apply the “Malevich offset” only on larger screens */
@@ -22,16 +125,62 @@
   }
 }
 
+/* Optional text blocks if you use these classes */
+.verseTitle {
+  margin: 0 0 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
 
-/* =========================
+.verseText {
+  line-height: 1.55;
+}
+
+/* -------------------------
    TABS (Malevich)
    Hover = yellow, Active tab = red, Pressed = red
-   ========================= */
+   + Malevich line under tabs (replaces Bootstrap underline)
+   ------------------------- */
 .custom-tabs .nav-tabs {
-  border-bottom: 0 !important;
+  border-bottom: 0 !important; /* kill bootstrap underline */
   background: var(--color-bg-main);
   padding: 8px;
   gap: var(--ui-gap);
+  position: relative;
+}
+
+/* MALEVICH LINE UNDER TABS */
+.custom-tabs .nav-tabs::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: var(--ui-border);
+
+  /* suprematist “rule”: white → red → yellow → blue */
+  background: linear-gradient(
+    90deg,
+    var(--color-text-main) 0%,
+    var(--color-text-main) 44%,
+    var(--sup-red) 44%,
+    var(--sup-red) 58%,
+    var(--sup-yellow) 58%,
+    var(--sup-yellow) 78%,
+    var(--sup-blue) 78%,
+    var(--sup-blue) 100%
+  );
+
+  margin-top: 8px;
+
+  /* ensure it behaves as a full-width bar even in flex contexts */
+  flex: 0 0 100%;
+}
+
+.custom-tabs .nav-tabs:hover::after {
+  background: var(--sup-yellow);
+}
+
+.custom-tabs .nav-tabs:active::after {
+  background: var(--sup-red);
 }
 
 /* Tabs as blocks */
@@ -48,10 +197,12 @@
 
   padding: 0 1.2rem;
 
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-weight: 900;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   line-height: 1;
+
+  box-shadow: none;
 }
 
 /* Hover: yellow (only if not currently selected) */
@@ -73,8 +224,9 @@
   color: var(--color-bg-main);
 }
 
-/* remove focus glow */
-.custom-tabs .nav-link:focus {
+/* Remove focus glow */
+.custom-tabs .nav-link:focus,
+.custom-tabs .nav-link:focus-visible {
   box-shadow: none;
 }
 
@@ -84,19 +236,16 @@
   }
 }
 
-
-/* =========================
+/* -------------------------
    SQUARE BUTTON (u-btn)
-   Hover = yellow, Active(pressed) = red
-   ========================= */
+   Hover = yellow, Pressed = red
+   ------------------------- */
 .u-btn {
   --m-black: var(--color-bg-main);
   --m-white: var(--color-text-main);
-
   --m-border: var(--ui-border);
   --m-h: var(--ui-h);
   --m-w: var(--ui-w);
-  --m-gap: var(--ui-gap);
 
   border-radius: 0 !important;
   box-shadow: none !important;
@@ -123,27 +272,23 @@
   outline: none !important;
 }
 
-/* Hover: yellow */
 .u-btn:hover {
   background: var(--sup-yellow) !important;
   color: var(--m-black) !important;
 }
 
-/* Pressed: red */
 .u-btn:active {
   background: var(--sup-red) !important;
   color: var(--m-black) !important;
   transform: translate(2px, 2px);
 }
 
-/* Focus */
 .u-btn:focus,
 .u-btn:focus-visible {
-  outline: var(--m-border) solid var(--m-black) !important;
+  outline: var(--ui-border) solid var(--m-white) !important;
   outline-offset: 2px;
 }
 
-/* Disabled */
 .u-btn:disabled,
 .u-btn.disabled {
   opacity: 0.45;
@@ -151,14 +296,13 @@
   transform: none;
 }
 
-/* Variants */
 .u-btn--wide {
   max-width: min(92vw, 760px);
 }
 
 .u-btn--square {
-  width: var(--m-h);
-  max-width: var(--m-h);
+  width: var(--ui-h);
+  max-width: var(--ui-h);
   padding: 0;
 }
 
@@ -168,13 +312,16 @@
     font-size: 0.95rem;
     letter-spacing: 0.06em;
   }
+  .u-btn--square {
+    width: var(--ui-h-mobile);
+    max-width: var(--ui-h-mobile);
+  }
 }
 
-
-/* =========================
+/* -------------------------
    TRIANGLE BUTTON (tri-btn)
-   Hover = yellow, Active(pressed) = red
-   ========================= */
+   Hover = yellow, Pressed = red
+   ------------------------- */
 .tri-btn {
   --box: var(--ui-h);
   --border: var(--ui-border);
@@ -218,11 +365,10 @@
   border-left: calc(var(--box) * 0.39) solid var(--black);
 }
 
-/* Hover: yellow background + black triangle */
+/* Hover: yellow */
 .tri-btn:hover {
   background: var(--sup-yellow);
 }
-
 .tri-btn:hover::before {
   border-right-color: var(--color-bg-main);
   border-left-color: var(--color-bg-main);
@@ -234,12 +380,11 @@
   outline-offset: 3px;
 }
 
-/* Active (pressed): red background + black triangle */
+/* Pressed: red */
 .tri-btn:active {
   background: var(--sup-red);
   transform: translate(2px, 2px);
 }
-
 .tri-btn:active::before {
   border-right-color: var(--color-bg-main);
   border-left-color: var(--color-bg-main);
@@ -251,11 +396,9 @@
   cursor: not-allowed;
   transform: none;
 }
-
-/* prevent disabled hover/active changes */
 .tri-btn:disabled:hover,
 .tri-btn:disabled:active {
-  background: var(--white);
+  background: var(--color-bg-main);
 }
 
 @media (max-width: 576px) {
@@ -264,11 +407,10 @@
   }
 }
 
-
-/* =========================
+/* -------------------------
    AUDIO BOX
-   Hover = yellow border, Focus-within (clicked/active use) = red border
-   ========================= */
+   Hover = yellow border, Focus-within = red border
+   ------------------------- */
 .audio-box {
   width: 100%;
 }
@@ -281,12 +423,10 @@
   background: var(--color-bg-main);
 }
 
-/* Hover: yellow accent */
 .audio-frame:hover {
   border-color: var(--sup-yellow);
 }
 
-/* When interacting with audio controls: red accent */
 .audio-frame:focus-within {
   border-color: var(--sup-red);
 }
@@ -304,41 +444,25 @@
   border-radius: 0 !important;
 }
 
-/* =========================
-   MALEVICH LINE UNDER TABS (ONLY)
-   Replace Bootstrap's thin border with a deliberate suprematist rule
-   ========================= */
-
-/* Kill the default bootstrap underline (source of the long line) */
-.custom-tabs .nav-tabs {
-  border-bottom: 0 !important;
-}
-
-/* Draw our own line: thick, sharp, intentional */
-.custom-tabs .nav-tabs::after {
-  content: "";
-  display: block;
-
-  /* full width of the tabs bar */
+/* -------------------------
+   CONTROLS BAR (layout)
+   ------------------------- */
+.controlsBar {
+  display: grid;
+  grid-template-columns: var(--ui-h) 1fr var(--ui-h);
+  gap: var(--ui-gap);
+  align-items: center;
   width: 100%;
-
-  /* Malevich thickness */
-  height: var(--ui-border);
-
-  /* default = white rule */
-  background: var(--color-text-main);
-
-  /* spacing from tabs */
-  margin-top: 8px;
 }
 
-/* Hover on the entire tab bar = yellow rule */
-.custom-tabs .nav-tabs:hover::after {
-  background: var(--sup-yellow);
+/* a strict “baseline” under controls (quiet suprematism) */
+.controlsBar {
+  padding-top: 10px;
+  border-top: var(--ui-border) solid var(--color-border);
 }
-
-/* Mouse down anywhere on the tab bar = red rule */
-.custom-tabs .nav-tabs:active::after {
-  background: var(--sup-red);
+.controlsBar:hover {
+  border-top-color: var(--sup-yellow);
 }
-
+.controlsBar:active {
+  border-top-color: var(--sup-red);
+}

@@ -1,6 +1,4 @@
-import React from "react";
 import type { ReactNode } from "react";
-import { Container, Row, Col } from "react-bootstrap";
 import ReactMarkdown from "react-markdown";
 
 type VerseBoxProps = {
@@ -11,42 +9,32 @@ type VerseBoxProps = {
   childrenBottom?: ReactNode;
 };
 
-export const VerseBox: React.FC<VerseBoxProps> = ({
+export const VerseBox = ({
   titleMd,
   textMd,
   className = "verseBox",
   childrenTop,
   childrenBottom,
-}) => {
+}: VerseBoxProps) => {
+  const hasTitle = Boolean(titleMd?.trim());
+  const hasText = Boolean(textMd?.trim());
+
   return (
-    <Container className={className}>
-      {titleMd && (
-        <Row>
-          <Col className="mb-2">
-            <h5>{titleMd}</h5>
-          </Col>
-        </Row>
+    <section className={className}>
+      {hasTitle && (
+        <h5 className="verseTitle">
+          <ReactMarkdown>{titleMd!}</ReactMarkdown>
+        </h5>
       )}
 
-      {textMd && (
-        <Row>
-          <Col>
-            <ReactMarkdown>{textMd}</ReactMarkdown>
-          </Col>
-        </Row>
+      {hasText && (
+        <div className="verseText">
+          <ReactMarkdown>{textMd!}</ReactMarkdown>
+        </div>
       )}
 
-      {childrenTop && (
-        <Row className="mt-1">
-          <Col>{childrenTop}</Col>
-        </Row>
-      )}
-
-      {childrenBottom && (
-        <Row className="mt-1">
-          <Col>{childrenBottom}</Col>
-        </Row>
-      )}
-    </Container>
+      {childrenTop && <div className="verseTop">{childrenTop}</div>}
+      {childrenBottom && <div className="verseBottom">{childrenBottom}</div>}
+    </section>
   );
 };

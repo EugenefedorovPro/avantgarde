@@ -3,7 +3,7 @@ import React from "react";
 type TriangleButtonProps = {
   direction: "left" | "right";
   onClick?: () => void;
-  label?: string;       // optional accessible label
+  label?: string;
   disabled?: boolean;
 };
 
@@ -11,10 +11,9 @@ export const TriangleButton: React.FC<TriangleButtonProps> = ({
   direction,
   onClick,
   label,
-  disabled,
+  disabled = false,
 }) => {
-  const ariaLabel =
-    label ?? (direction === "left" ? "Previous" : "Next");
+  const ariaLabel = label ?? (direction === "left" ? "Previous" : "Next");
 
   return (
     <button
@@ -22,9 +21,9 @@ export const TriangleButton: React.FC<TriangleButtonProps> = ({
       className={`tri-btn tri-btn--${direction}`}
       onClick={onClick}
       disabled={disabled}
+      aria-disabled={disabled}
       aria-label={ariaLabel}
       title={ariaLabel}
     />
   );
 };
-
