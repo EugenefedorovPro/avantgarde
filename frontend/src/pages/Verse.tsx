@@ -97,8 +97,6 @@ export const Verse = ({
       nextText="туда"
       onPrev={() => setStatus("prev")}
       onNext={() => setStatus("next")}
-      buttonWidthVw={100}
-      buttonHeightVh={5}
     />
   );
 

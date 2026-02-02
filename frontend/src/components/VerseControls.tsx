@@ -1,6 +1,7 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 import { SquareButton } from "./SquareButton";
+import { TriangleButton } from "./TriangleButton";
 
 type VerseControlsProps = {
   tagText?: string;
@@ -12,9 +13,6 @@ type VerseControlsProps = {
   onPrev?: () => void;
   onNext?: () => void;
 
-  buttonWidthVw?: number;
-  buttonHeightVh?: number;
-
   className?: string;
 };
 
@@ -25,37 +23,21 @@ export const VerseControls: React.FC<VerseControlsProps> = ({
   onTop,
   onPrev,
   onNext,
-  buttonWidthVw,
-  buttonHeightVh,
   className,
 }) => {
   return (
     <div className={className}>
-      <Row>
-        <Col className="d-flex justify-content-center">
-          <SquareButton
-            onClick={onTop}
-            widthVw={buttonWidthVw}
-            heightVh={buttonHeightVh}
-            text={tagText}
-          />
+      <Row className="align-items-center">
+        <Col xs="auto" className="d-flex justify-content-start">
+          <TriangleButton direction="left" onClick={onPrev} label={prevText} />
         </Col>
-      </Row>
 
-      <Row>
-        <Col className="d-flex justify-content-between">
-          <SquareButton
-            onClick={onPrev}
-            widthVw={buttonWidthVw}
-            heightVh={buttonHeightVh}
-            text={prevText}
-          />
-          <SquareButton
-            onClick={onNext}
-            widthVw={buttonWidthVw}
-            heightVh={buttonHeightVh}
-            text={nextText}
-          />
+        <Col className="d-flex justify-content-center">
+          <SquareButton onClick={onTop} text={tagText} />
+        </Col>
+
+        <Col xs="auto" className="d-flex justify-content-end">
+          <TriangleButton direction="right" onClick={onNext} label={nextText} />
         </Col>
       </Row>
     </div>

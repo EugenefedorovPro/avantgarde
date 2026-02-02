@@ -1,38 +1,25 @@
 import Button from "react-bootstrap/Button";
+import "./SquareButton.css";
 
 type SquareButtonProps = {
   onClick?: () => void;
-  widthVw?: number; // width in vw
-  heightVh?: number; // height in vh
   text?: string;
+  disabled?: boolean;
+  kind?: "default" | "wide" | "square";
 };
 
 export const SquareButton = ({
   onClick,
-  widthVw = 5,
-  heightVh = 5,
   text,
-}: SquareButtonProps) => {
-  return (
-    <Button
-      onClick={onClick}
-      variant="light"
-      className="d-flex align-items-center justify-content-center rounded-0"
-      style={{
-        width: `${widthVw}vw`,
-        height: `${heightVh}vh`,
-        fontWeight: 800,
-        fontSize: "1rem",
-
-        outline: "none",
-        boxShadow: "none",
-
-        backgroundColor: "var(--color-bg-main)",
-        border: "2px solid var(--color-border)",
-        color: "var(--color-text-main)",
-      }}
-    >
-      {text}
-    </Button>
-  );
-};
+  disabled,
+  kind = "default",
+}: SquareButtonProps) => (
+  <Button
+    onClick={onClick}
+    disabled={disabled}
+    variant="light"
+    className={`u-btn ${kind === "wide" ? "u-btn--wide" : ""} ${kind === "square" ? "u-btn--square" : ""}`}
+  >
+    {text}
+  </Button>
+);

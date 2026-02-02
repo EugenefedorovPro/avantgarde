@@ -1,0 +1,69 @@
+.tri-btn {
+  --box: 56px;
+  --border: 3px;
+  --black: #000;
+  --white: #fff;
+
+  width: var(--box);
+  height: var(--box);
+
+  border: var(--border) solid var(--black);
+  border-radius: 0;
+
+  background: var(--white);
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  outline: none;
+  box-shadow: none;
+}
+
+/* triangle glyph */
+.tri-btn::before {
+  content: "";
+  width: 0;
+  height: 0;
+
+  border-top: 16px solid transparent;
+  border-bottom: 16px solid transparent;
+}
+
+.tri-btn--left::before {
+  border-right: 22px solid var(--black);
+}
+
+.tri-btn--right::before {
+  border-left: 22px solid var(--black);
+}
+
+/* hover invert */
+.tri-btn:hover {
+  background: var(--black);
+}
+
+.tri-btn:hover::before {
+  border-right-color: var(--white);
+  border-left-color: var(--white);
+}
+
+/* focus */
+.tri-btn:focus-visible {
+  outline: var(--border) solid var(--black);
+  outline-offset: 3px;
+}
+
+/* pressed */
+.tri-btn:active {
+  transform: translate(2px, 2px);
+}
+
+/* disabled */
+.tri-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}

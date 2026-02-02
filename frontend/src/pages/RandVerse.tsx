@@ -7,7 +7,6 @@ import { randVerse } from "../api/randVerse";
 import { VerseControls } from "../components/VerseControls";
 import { VerseBox } from "../components/VerseBox";
 import "../pages/Tab.css";
-import { SquareButton } from "../components/SquareButton";
 import { Verse } from "./Verse";
 
 
@@ -49,8 +48,6 @@ export const RandVersePage = () => {
       onTop={() => setReload(prev => !prev)}
       onPrev={() => navigate("/verse?initialStatus=prev")}
       onNext={() => navigate("/verse?initialStatus=next")}
-      buttonWidthVw={100}
-      buttonHeightVh={5}
     />
   );
 
