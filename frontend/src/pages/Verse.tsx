@@ -1,3 +1,4 @@
+import { useSearchParams } from "react-router-dom";
 import { Tabs, Tab } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
@@ -12,28 +13,55 @@ import type {
   HermType,
 } from "../api/verse";
 import "./Verse.css";
+import "./Tab.css";
 
 type TabKey = "verse" | "hermeneutics" | "audio";
+type VerseStatus = "current" | "next" | "prev";
+type VerseProps = {
+  initialStatus?: VerseStatus;
+  initialVerseOrder?: string;
+};
 
-export const Verse = () => {
-  const [status, setStatus] = useState("current");
+export const Verse = ({
+  initialStatus = "current",
+  initialVerseOrder = "-1",
+}: VerseProps) => {
+  // read url tags
+  const [sp] = useSearchParams();
+  const [status, setStatus] = useState(
+    sp.get("initialStatus") ?? initialStatus
+  );
+
+  const [verseOrder, setVerseOrder] = useState(
+    sp.get("initialVerseOrder") ?? initialVerseOrder
+  );
+  console.log(`verseOrder = ${verseOrder}`);
+  // if no initialVerseOrder arg is passes, order -> get from local storage
+  // if no arg in local storage -> order = 0
+  if (verseOrder == "-1") {
+    setVerseOrder(localStorage.getItem("verseOrder") ?? "0");
+  }
+  console.log(`verseOrder = ${verseOrder}`);
+
   const [vrs, setVrs] = useState<VerseType | null>(null);
   const [herm, setHerm] = useState<HermType | null>(null);
   const [audio, setAudio] = useState<AudioType | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabKey>("verse");
 
+
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       try {
-        const data: VerseInterface | null = await verse(status);
+        const data: VerseInterface | null = await verse(status, verseOrder);
         setStatus("current");
 
         if (data) {
           setVrs(data.verse);
           setHerm(data.herm);
           setAudio(data.audio);
+          setVerseOrder(localStorage.getItem("verseOrder") ?? "-1");
 
           // fallback if active tab disappears
           if (!data.herm && activeTab === "hermeneutics") {

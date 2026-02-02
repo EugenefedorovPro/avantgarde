@@ -1,0 +1,38 @@
+/* Make the whole tab row a black bar */
+.custom-tabs .nav-tabs {
+  border-bottom: 0 !important;
+  background: #000;
+  padding: 8px;
+  gap: 8px;              /* space between blocks */
+}
+
+/* Tabs as blocks */
+.custom-tabs .nav-link {
+  background: transparent;
+  color: #fff;
+  border: 0 !important;  /* kill individual borders */
+  border-radius: 0 !important;
+
+  padding: 0.6rem 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.06em; /* “poster” feel */
+  text-transform: uppercase;
+}
+
+/* Hover: slight lightening */
+.custom-tabs .nav-link:hover {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+/* Active = white block */
+.custom-tabs .nav-link.active,
+.custom-tabs .nav-link.active:hover {
+  background: #fff !important;
+  color: #000 !important;
+}
+
+/* remove focus glow */
+.custom-tabs .nav-link:focus {
+  box-shadow: none;
+}

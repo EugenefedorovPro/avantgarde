@@ -8,6 +8,7 @@ type VerseControlsProps = {
   prevText?: string;
   nextText?: string;
 
+  onTop?: () => void;
   onPrev?: () => void;
   onNext?: () => void;
 
@@ -21,6 +22,7 @@ export const VerseControls: React.FC<VerseControlsProps> = ({
   tagText = "Это не поэзия",
   prevText = "сюда",
   nextText = "туда",
+  onTop,
   onPrev,
   onNext,
   buttonWidthVw,
@@ -32,6 +34,7 @@ export const VerseControls: React.FC<VerseControlsProps> = ({
       <Row>
         <Col className="d-flex justify-content-center">
           <SquareButton
+            onClick={onTop}
             widthVw={buttonWidthVw}
             heightVh={buttonHeightVh}
             text={tagText}

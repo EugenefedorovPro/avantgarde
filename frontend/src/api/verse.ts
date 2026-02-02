@@ -31,14 +31,11 @@ export interface VerseInterface {
 }
 
 export const verse = async (
-  status: string = "current"
+  status: string = "current",
+  verseOrder: string = "0"
 ): Promise<VerseInterface | null> => {
-  const DefaultVerseOrder: string = "0";
-
-  const verseOrder: string | null =
-    localStorage.getItem("verseOrder") ?? DefaultVerseOrder;
-
   const url = urlVerse + `${verseOrder}/` + `${status}/`;
+  console.log(url);
 
   try {
     const { data } = await axios(url);
@@ -46,7 +43,7 @@ export const verse = async (
     // set the current unique html_name of the verse
     // for user to go back and forward across verses
     localStorage.setItem("verseOrder", data.verse.order);
-    console.log(data);
+    console.log(`new_verse_order = ${localStorage.getItem("verseOrder")}`);
 
     return data;
   } catch (e: any) {
