@@ -1,8 +1,8 @@
 export const THEME_FILES = {
-  default: "ui_kiriko.css",
+  default: "ui_kosuth.css",
   judd: "ui_judd.css",
   klee: "ui_klee.css",
-  kosuth: "ui_kosuth.css",
+  chirico: "ui_kiriko.css",
   malevitch: "ui_white.css",
   boychuk: "ui_boychuk.css",
   ekster: "ui_ekster.css",
@@ -12,11 +12,11 @@ export const THEME_FILES = {
 export type ThemeName = keyof typeof THEME_FILES;
 
 export const THEME_LABELS: Record<ThemeName, string> = {
-  default: "Kiriko",
+  default: "Kosuth",
   malevitch: "Malevitch",
   judd: "Judd",
   klee: "Klee",
-  kosuth: "Kosuth",
+  chirico: "Kosuth",
   boychuk: "Boychuk",
   ekster: "Ekster",
 
