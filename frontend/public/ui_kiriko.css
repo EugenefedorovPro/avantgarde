@@ -1,0 +1,612 @@
+/* =========================================================
+   ui_kiriko.css — de CHIRICO (tabs + tool fixed bar)
+   Tabs + theme switcher fit even on 360px width.
+   Theme switcher sits next to tabs, sticky on the right.
+   ========================================================= */
+
+
+/* =========================
+   TOKENS / BASE
+   ========================= */
+
+:root {
+  --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+
+  /* Colors */
+  --sky:    #2b5f4a;
+  --wall:   #caa065;
+  --stucco: #f3e7d1;
+  --shadow: #151515;
+  --ink:    #111111;
+  --ink-2:  #2b2b2b;
+
+  --shutter: #154a6c;
+  --brick:   #7a4d2b;
+  --bronze:  #74623e;
+
+  /* Sizes */
+  --rule: 3px;
+  --hair: 1px;
+
+  --gap:  10px;
+
+  --ui-h: 50px;
+  --ui-h-mobile: 40px;
+
+  --pad: 20px;
+  --pad-m: 14px;
+
+  --content-max: 860px;
+
+  /* Tabs bar geometry */
+  --tabs-pad-y: 8px;
+  --tabs-pad-x: 8px;
+  --tabs-h: var(--ui-h);
+  --tabs-rule-gap: 6px;
+  --tabs-bar-h: calc(
+    (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) + var(--rule)
+  );
+
+  /* Theme switcher sizing */
+  --tabs-tool-w: 120px;   /* desktop */
+  --tabs-tool-gap: 10px;
+  --theme-h: 34px;
+  --theme-pad-x: 12px;
+
+  /* Safety so the tool never paints outside viewport */
+  --tabs-safe-pad: 6px;
+  --tabs-tool-max: calc(100vw - (var(--tabs-safe-pad) * 2));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font: 400 16px/1.76 var(--font);
+  letter-spacing: .01em;
+
+  background: linear-gradient(180deg, var(--sky) 0 54%, #e9d8ba 54% 100%);
+}
+
+/* Simple “architecture” background */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    linear-gradient(0deg, var(--wall) 0 32%, transparent 32% 100%) 0 32%/36% 40% no-repeat,
+    linear-gradient(0deg, var(--stucco) 0 100%) 70% 20%/10% 30% no-repeat;
+
+  mix-blend-mode: multiply;
+  opacity: .9;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding: calc(var(--tabs-bar-h) + 8px) 8px 32px;
+}
+
+
+/* =========================
+   TABS BAR (nav-tabs is the fixed bar)
+   ========================= */
+
+/* Fixed strip for tabs + tool */
+.custom-tabs .nav-tabs,
+.custom-tabs.nav-tabs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+
+  margin: 0 !important;
+  padding: var(--tabs-pad-y) var(--tabs-pad-x) 0 !important;
+
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  background: #204c3f;
+  border-bottom: 0 !important;
+  box-shadow: 0 var(--rule) 0 0 var(--ink);
+
+  max-width: 100vw;
+  box-sizing: border-box;
+  scrollbar-width: none;
+}
+.custom-tabs .nav-tabs::-webkit-scrollbar,
+.custom-tabs.nav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* Bottom rule under tabs row */
+.custom-tabs .nav-tabs::after,
+.custom-tabs.nav-tabs::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: var(--rule);
+  margin-top: var(--tabs-rule-gap);
+  background: var(--ink);
+  flex: 0 0 100%;
+}
+
+/* nav-items must not stretch */
+.custom-tabs .nav-tabs > .nav-item,
+.custom-tabs.nav-tabs > .nav-item {
+  flex: 0 0 auto;
+}
+
+
+/* =========================
+   TABS + TOOLS (Theme switcher wiring)
+   ========================= */
+
+/* React-Bootstrap Tabs gets navClassName="tabsWithTools" → ul.nav-tabs.tabsWithTools */
+.tabsWithTools {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+/* The tool container inside the nav (not a tab) */
+.tabsWithTools .tabsTool {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+
+  margin-left: var(--tabs-tool-gap);
+
+  position: sticky;
+  right: 0;
+
+  background: #204c3f;
+  padding-left: var(--tabs-tool-gap);
+  padding-right: var(--tabs-safe-pad);
+
+  max-width: var(--tabs-tool-max);
+  overflow: hidden;
+}
+
+/* Give the sticky tool space so it doesn't cover last tab */
+.custom-tabs .nav-tabs.tabsWithTools,
+.custom-tabs.nav-tabs.tabsWithTools {
+  padding-right: calc(
+    var(--tabs-pad-x) + min(var(--tabs-tool-w), var(--tabs-tool-max)) + var(--tabs-tool-gap)
+  ) !important;
+}
+
+
+/* =========================
+   TAB BUTTONS
+   ========================= */
+
+.custom-tabs .nav-link,
+.custom-tabs .nav-link:visited {
+  background: var(--stucco);
+  color: var(--ink);
+  border: var(--rule) solid var(--ink) !important;
+  border-radius: 0 !important;
+
+  height: var(--tabs-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 110px;           /* desktop width */
+  padding: 0 14px;
+
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  text-decoration: none;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.18),
+    0 4px 0 var(--shadow);
+}
+
+/* hover/focus on inactive tabs: brick text, same background */
+.custom-tabs .nav-link:not(.active):hover,
+.custom-tabs .nav-link:not(.active):focus {
+  background: #efe2c6;
+  color: var(--brick);
+  text-decoration: none;
+}
+
+/* active tab keeps ink color + brick underlining block */
+.custom-tabs .nav-link.active,
+.custom-tabs .nav-link.active:hover,
+.custom-tabs .nav-link.active:focus {
+  background: #f7edd8 !important;
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow:
+    inset 0 0 0 1px var(--ink),
+    inset 0 -6px 0 0 var(--brick),
+    0 4px 0 var(--shadow);
+}
+
+
+/* =========================
+   THEME SWITCHER BUTTON (kiriko)
+   ========================= */
+
+/* Your ThemeSwitcher should render className="themeSwitch".
+   We also accept .theme-switcher for backward compatibility. */
+.themeSwitch,
+.theme-switcher,
+.tabsTool .themeSwitch,
+.tabsTool .theme-switcher,
+.tabsTool button {
+  width: min(var(--tabs-tool-w), var(--tabs-tool-max));
+  max-width: 100%;
+  height: var(--theme-h);
+  padding: 0 var(--theme-pad-x);
+
+  border-radius: 0;
+  border: var(--rule) solid var(--ink);
+  background: var(--stucco);
+  color: var(--ink);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font: 900 12px/1 var(--font);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.18),
+    0 4px 0 var(--shadow);
+
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+
+  min-width: 0;
+  overflow: hidden;
+}
+
+.themeSwitch:hover,
+.theme-switcher:hover,
+.tabsTool .themeSwitch:hover,
+.tabsTool .theme-switcher:hover,
+.tabsTool button:hover {
+  background: #efe2c6;
+}
+
+.themeSwitch:active,
+.theme-switcher:active,
+.tabsTool .themeSwitch:active,
+.tabsTool .theme-switcher:active,
+.tabsTool button:active {
+  transform: translate(1px,1px);
+  box-shadow:
+    inset 0 0 0 1px var(--ink),
+    0 3px 0 var(--shadow);
+}
+
+/* small “shutter” strip */
+.themeSwitch::before,
+.theme-switcher::before,
+.tabsTool .themeSwitch::before,
+.tabsTool .theme-switcher::before,
+.tabsTool button::before {
+  content: "";
+  width: 10px;
+  height: 60%;
+  margin-right: 10px;
+  background: var(--shutter);
+  box-shadow: 0 0 0 var(--rule) var(--ink);
+  flex: 0 0 auto;
+}
+
+
+/* =========================
+   MOBILE (<= 576px)
+   ========================= */
+
+@media (max-width: 576px) {
+  :root {
+    --tabs-h: var(--ui-h-mobile);
+    --tabs-bar-h: calc(
+      (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) + var(--rule)
+    );
+
+    --tabs-tool-w: 90px;   /* mobile width */
+    --theme-h: 34px;
+  }
+
+  #root {
+    padding-top: calc(var(--tabs-bar-h) + 6px);
+  }
+
+  .custom-tabs .nav-tabs,
+  .custom-tabs.nav-tabs {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    gap: 6px;
+  }
+
+  .custom-tabs .nav-link,
+  .custom-tabs .nav-link:visited {
+    height: var(--tabs-h);
+    padding: 0 8px;
+    min-width: 70px;          /* narrower tabs for 360px */
+    font-size: 0.86rem;
+    letter-spacing: .05em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tabsWithTools .tabsTool {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .themeSwitch,
+  .theme-switcher,
+  .tabsTool .themeSwitch,
+  .tabsTool .theme-switcher,
+  .tabsTool button {
+    height: var(--tabs-h);
+    padding: 0 10px;
+    font-size: 0.78rem;
+  }
+
+  .themeSwitch::before,
+  .theme-switcher::before,
+  .tabsTool .themeSwitch::before,
+  .tabsTool .theme-switcher::before,
+  .tabsTool button::before {
+    width: 8px;
+    margin-right: 6px;
+  }
+
+  .custom-tabs .nav-tabs.tabsWithTools,
+  .custom-tabs.nav-tabs.tabsWithTools {
+    padding-right: calc(
+      6px + min(var(--tabs-tool-w), var(--tabs-tool-max)) + 10px
+    ) !important;
+  }
+}
+
+
+/* =========================
+   VERSE BOX
+   ========================= */
+
+.verseBox {
+  width: min(100%, var(--content-max));
+  margin: clamp(6px, 2vh, 20px) auto 0;
+  padding: var(--pad);
+
+  background: #fffdf6;
+  border: var(--rule) solid var(--ink);
+  border-radius: 0;
+
+  position: relative;
+}
+
+@media (max-width: 576px) {
+  .verseBox {
+    padding: var(--pad-m);
+  }
+}
+
+.verseTitle {
+  margin: 0 0 10px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.verseText {
+  line-height: 1.9;
+  color: var(--ink-2);
+  word-break: break-word;
+}
+
+.verseTop { margin-top: 8px; }
+.verseBottom { margin-top: 12px; }
+
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+.u-btn {
+  border-radius: 0 !important;
+  background: var(--stucco) !important;
+  color: var(--ink) !important;
+  border: var(--rule) solid var(--ink) !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+
+  width: 100%;
+  max-width: min(92vw, 980px);
+  height: var(--ui-h);
+  padding: 0 18px;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.18),
+    0 6px 0 var(--shadow);
+}
+
+.u-btn:hover { background:#efe2c6 !important; }
+
+.u-btn:active {
+  transform: translate(1px,1px);
+  box-shadow:
+    inset 0 0 0 1px var(--ink),
+    0 4px 0 var(--shadow);
+}
+
+.u-btn--square {
+  width: var(--ui-h);
+  max-width: var(--ui-h);
+  padding: 0;
+}
+
+@media (max-width: 576px) {
+  .u-btn {
+    height: var(--ui-h-mobile);
+  }
+  .u-btn--square {
+    width: var(--ui-h-mobile);
+    max-width: var(--ui-h-mobile);
+  }
+}
+
+
+/* =========================
+   TRIANGLE BUTTONS
+   ========================= */
+
+.tri-btn {
+  --box: var(--ui-h);
+  width: var(--box);
+  height: var(--box);
+
+  border: var(--rule) solid var(--ink);
+  border-radius: 0;
+  background: var(--stucco);
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.18),
+    0 6px 0 var(--shadow);
+}
+
+.tri-btn::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: calc(var(--box) * 0.26) solid transparent;
+  border-bottom: calc(var(--box) * 0.26) solid transparent;
+}
+
+.tri-btn--left::before  { border-right: calc(var(--box) * 0.36) solid var(--ink); }
+.tri-btn--right::before { border-left:  calc(var(--box) * 0.36) solid var(--ink); }
+
+.tri-btn:hover  { background:#efe2c6; }
+.tri-btn:active {
+  transform: translate(1px,1px);
+  box-shadow:
+    inset 0 0 0 1px var(--ink),
+    0 4px 0 var(--shadow);
+}
+
+@media (max-width: 576px) {
+  .tri-btn { --box: var(--ui-h-mobile); }
+}
+
+
+/* =========================
+   AUDIO
+   ========================= */
+
+.audio-box { width: 100%; }
+
+.audio-frame {
+  width: 100%;
+  border: var(--rule) solid var(--ink);
+  border-radius: 0;
+  overflow: hidden;
+  background: #fffaf0;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.18),
+    0 6px 0 var(--shadow);
+}
+
+.audio-frame:hover,
+.audio-frame:focus-within {
+  outline: var(--rule) solid var(--ink);
+  outline-offset: -2px;
+}
+
+.square-audio {
+  width: 100%;
+  display: block;
+  border-radius: 0 !important;
+}
+
+.square-audio::-webkit-media-controls-enclosure,
+.square-audio::-webkit-media-controls-panel {
+  border-radius: 0 !important;
+}
+
+
+/* =========================
+   CONTROLS BAR
+   ========================= */
+
+.controlsBar {
+  display: grid;
+  grid-template-columns: var(--ui-h) minmax(0,1fr) var(--ui-h);
+  gap: var(--gap);
+  align-items: center;
+  width: 100%;
+
+  margin-top: 14px;
+  padding-top: 12px;
+
+  border-top: var(--hair) solid rgba(0,0,0,.25);
+}
+
+.controlsBar > * { min-width: 0; }
+.controlsBar .u-btn {
+  max-width: none;
+  width: 100%;
+  justify-self: stretch;
+}
+
+@media (max-width: 576px) {
+  .controlsBar {
+    grid-template-columns: var(--ui-h-mobile) minmax(0,1fr) var(--ui-h-mobile);
+    padding-top: 10px;
+    margin-top: 12px;
+  }
+}

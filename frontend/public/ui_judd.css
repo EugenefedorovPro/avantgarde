@@ -5,14 +5,14 @@
    — Mobile tweak: tabs visually sit INSIDE the box borders.
    ========================================================= */
 
-
 /* =========================
    TOKENS / BASE
    ========================= */
 
 :root {
   /* Typeface: neutral, engineered */
-  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    sans-serif;
 
   /* Gallery wall + ink */
   --wall: #fcfcfc;
@@ -25,8 +25,8 @@
   --plywood: #c6a777;
 
   /* Scale (strict, modular) */
-  --step: 8px;             /* base unit */
-  --ui-border: 2px;        /* crisp rule */
+  --step: 8px; /* base unit */
+  --ui-border: 2px; /* crisp rule */
   --ui-gap: calc(var(--step) * 1.5);
 
   --ui-h: calc(var(--step) * 6 + var(--ui-border));
@@ -43,15 +43,22 @@
   --tabs-h: var(--ui-h);
   --tabs-rule-gap: var(--step);
   --tabs-bar-h: calc(
-    (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) + var(--ui-border)
+    (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) +
+      var(--ui-border)
   );
 }
 
 *,
 *::before,
-*::after { box-sizing: border-box; }
+*::after {
+  box-sizing: border-box;
+}
 
-html, body { min-height: 100%; overflow-x: hidden; }
+html,
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+}
 
 body {
   margin: 0;
@@ -63,14 +70,16 @@ body {
 
 /* No decorative wallpapers in Judd variant */
 body::before,
-body::after { content: none !important; }
+body::after {
+  content: none !important;
+}
 
 /* Content starts close to the fixed tabs (modular) */
 #root {
   min-height: 100vh;
-  padding: calc(var(--tabs-bar-h) + var(--step)) calc(var(--step) * 2) calc(var(--step) * 3);
+  padding: calc(var(--tabs-bar-h) + var(--step)) calc(var(--step) * 2)
+    calc(var(--step) * 3);
 }
-
 
 /* =========================
    TABS — SERIAL BAR
@@ -79,7 +88,9 @@ body::after { content: none !important; }
 .custom-tabs .nav-tabs,
 .custom-tabs.nav-tabs {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
 
   margin: 0 !important;
@@ -93,13 +104,15 @@ body::after { content: none !important; }
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 
-  background: var(--wall);                 /* opaque, flat */
+  background: var(--wall); /* opaque, flat */
   border-bottom: 0 !important;
-  box-shadow: 0 var(--ui-border) 0 0 var(--ink);  /* single industrial rule */
+  box-shadow: 0 var(--ui-border) 0 0 var(--ink); /* single industrial rule */
   scrollbar-width: none;
 }
 .custom-tabs .nav-tabs::-webkit-scrollbar,
-.custom-tabs.nav-tabs::-webkit-scrollbar { display: none; }
+.custom-tabs.nav-tabs::-webkit-scrollbar {
+  display: none;
+}
 
 .custom-tabs .nav-tabs::after,
 .custom-tabs.nav-tabs::after {
@@ -113,7 +126,9 @@ body::after { content: none !important; }
 }
 
 .custom-tabs .nav-tabs > .nav-item,
-.custom-tabs.nav-tabs > .nav-item { flex: 0 0 auto; }
+.custom-tabs.nav-tabs > .nav-item {
+  flex: 0 0 auto;
+}
 
 /* Each tab = a module (identical spec, serial) */
 .custom-tabs .nav-link {
@@ -135,7 +150,9 @@ body::after { content: none !important; }
   white-space: nowrap;
 }
 
-.custom-tabs .nav-link:not(.active):hover { background: var(--aluminum); }
+.custom-tabs .nav-link:not(.active):hover {
+  background: var(--aluminum);
+}
 
 .custom-tabs .nav-link.active,
 .custom-tabs .nav-link.active:hover {
@@ -143,13 +160,13 @@ body::after { content: none !important; }
   color: #ffffff !important;
 }
 
-
 /* === MOBILE OVERRIDE: keep the tabs visually INSIDE the box borders === */
 @media (max-width: 576px) {
   :root {
     --tabs-h: var(--ui-h-mobile);
     --tabs-bar-h: calc(
-      (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) + var(--ui-border)
+      (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) +
+        var(--ui-border)
     );
   }
 
@@ -184,7 +201,6 @@ body::after { content: none !important; }
   }
 }
 
-
 /* =========================
    VERSE BOX — STACK MODULE
    (hard box with structural left bar)
@@ -206,7 +222,9 @@ body::after { content: none !important; }
 /* No overlays; no ::before/::after paint over content */
 
 @media (max-width: 576px) {
-  .verseBox { padding: var(--ui-pad-mobile); }
+  .verseBox {
+    padding: var(--ui-pad-mobile);
+  }
 }
 
 .verseTitle {
@@ -222,9 +240,12 @@ body::after { content: none !important; }
   letter-spacing: 0.01em;
 }
 
-.verseTop   { margin-top: var(--step); }
-.verseBottom{ margin-top: calc(var(--step) * 1.5); }
-
+.verseTop {
+  margin-top: var(--step);
+}
+.verseBottom {
+  margin-top: calc(var(--step) * 1.5);
+}
 
 /* =========================
    BUTTONS — UNIT BOXES
@@ -252,17 +273,32 @@ body::after { content: none !important; }
   padding: 0 calc(var(--step) * 2);
 }
 
-.u-btn:hover  { background: var(--aluminum) !important; }
-.u-btn:active { background: var(--cadmium-red) !important; color: #fff !important; }
-
-.u-btn--wide   { max-width: min(92vw, 1120px); }
-.u-btn--square { width: var(--ui-h); max-width: var(--ui-h); padding: 0; }
-
-@media (max-width: 576px) {
-  .u-btn { height: var(--ui-h-mobile); }
-  .u-btn--square { width: var(--ui-h-mobile); max-width: var(--ui-h-mobile); }
+.u-btn:hover {
+  background: var(--aluminum) !important;
+}
+.u-btn:active {
+  background: var(--cadmium-red) !important;
+  color: #fff !important;
 }
 
+.u-btn--wide {
+  max-width: min(92vw, 1120px);
+}
+.u-btn--square {
+  width: var(--ui-h);
+  max-width: var(--ui-h);
+  padding: 0;
+}
+
+@media (max-width: 576px) {
+  .u-btn {
+    height: var(--ui-h-mobile);
+  }
+  .u-btn--square {
+    width: var(--ui-h-mobile);
+    max-width: var(--ui-h-mobile);
+  }
+}
 
 /* =========================
    TRIANGLE BUTTON — DIRECTION UNIT
@@ -279,35 +315,51 @@ body::after { content: none !important; }
   background: #ffffff;
   cursor: pointer;
 
-  display: inline-flex; align-items: center; justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0;
 }
 
 .tri-btn::before {
   content: "";
-  width: 0; height: 0;
+  width: 0;
+  height: 0;
   border-top: calc(var(--box) * 0.26) solid transparent;
   border-bottom: calc(var(--box) * 0.26) solid transparent;
 }
-.tri-btn--left::before  { border-right: calc(var(--box) * 0.36) solid var(--ink); }
-.tri-btn--right::before { border-left:  calc(var(--box) * 0.36) solid var(--ink); }
-
-.tri-btn:hover  { background: var(--aluminum); }
-.tri-btn:active { background: var(--cadmium-red); }
-.tri-btn:active.tri-btn--left::before,
-.tri-btn:active.tri-btn--right::before { border-color: #ffffff; }
-
-@media (max-width: 576px) {
-  .tri-btn { --box: var(--ui-h-mobile); }
+.tri-btn--left::before {
+  border-right: calc(var(--box) * 0.36) solid var(--ink);
+}
+.tri-btn--right::before {
+  border-left: calc(var(--box) * 0.36) solid var(--ink);
 }
 
+.tri-btn:hover {
+  background: var(--aluminum);
+}
+.tri-btn:active {
+  background: var(--cadmium-red);
+}
+.tri-btn:active.tri-btn--left::before,
+.tri-btn:active.tri-btn--right::before {
+  border-color: #ffffff;
+}
+
+@media (max-width: 576px) {
+  .tri-btn {
+    --box: var(--ui-h-mobile);
+  }
+}
 
 /* =========================
    AUDIO — RACK MODULE
    (stacked unit with aluminum face)
    ========================= */
 
-.audio-box { width: 100%; }
+.audio-box {
+  width: 100%;
+}
 
 .audio-frame {
   width: 100%;
@@ -319,13 +371,22 @@ body::after { content: none !important; }
   outline-offset: calc(var(--ui-border) * -6);
 }
 
-.audio-frame:hover        { border-color: var(--ultramarine); }
-.audio-frame:focus-within { border-color: var(--cadmium-red); }
+.audio-frame:hover {
+  border-color: var(--ultramarine);
+}
+.audio-frame:focus-within {
+  border-color: var(--cadmium-red);
+}
 
-.square-audio { width: 100%; display: block; border-radius: 0 !important; }
+.square-audio {
+  width: 100%;
+  display: block;
+  border-radius: 0 !important;
+}
 .square-audio::-webkit-media-controls-enclosure,
-.square-audio::-webkit-media-controls-panel { border-radius: 0 !important; }
-
+.square-audio::-webkit-media-controls-panel {
+  border-radius: 0 !important;
+}
 
 /* =========================
    CONTROLS BAR — SERIAL LINE
@@ -333,7 +394,7 @@ body::after { content: none !important; }
 
 .controlsBar {
   display: grid;
-  grid-template-columns: var(--ui-h) minmax(0,1fr) var(--ui-h);
+  grid-template-columns: var(--ui-h) minmax(0, 1fr) var(--ui-h);
   gap: var(--ui-gap);
   align-items: center;
   width: 100%;
@@ -344,13 +405,143 @@ body::after { content: none !important; }
   border-top: var(--ui-border) solid var(--ink);
 }
 
-.controlsBar > * { min-width: 0; }
-.controlsBar .u-btn { max-width: none; width: 100%; justify-self: stretch; }
+.controlsBar > * {
+  min-width: 0;
+}
+.controlsBar .u-btn {
+  max-width: none;
+  width: 100%;
+  justify-self: stretch;
+}
 
 @media (max-width: 576px) {
   .controlsBar {
-    grid-template-columns: var(--ui-h-mobile) minmax(0,1fr) var(--ui-h-mobile);
+    grid-template-columns: var(--ui-h-mobile) minmax(0, 1fr) var(--ui-h-mobile);
     padding-top: var(--step);
     margin-top: var(--step);
   }
 }
+
+/* =========================
+   TABS + THEME SWITCHER WIRING
+   ========================= */
+
+/* Tabs row that also hosts tools (theme switcher) */
+.tabsWithTools {
+  display: flex;
+  align-items: center;
+}
+
+/* Tool container (right side) */
+.tabsWithTools .tabsTool {
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+}
+
+/* THEME SWITCHER — JUDD MODULE
+   Works for:
+   - <button class="theme-switcher">
+   - any button inside .tabsTool
+*/
+.theme-switcher,
+.tabsTool .theme-switcher,
+.tabsTool button {
+  height: var(--tabs-h);
+  min-width: calc(var(--step) * 13);
+  padding: 0 calc(var(--step) * 2);
+
+  border-radius: 0;
+  border: var(--ui-border) solid var(--ink);
+  background: #ffffff;
+  color: var(--ink);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font: 800 0.8rem/1 var(--font-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* hover: aluminum unit */
+.theme-switcher:hover,
+.tabsTool .theme-switcher:hover,
+.tabsTool button:hover {
+  background: var(--aluminum);
+}
+
+/* active: cadmium red block */
+.theme-switcher:active,
+.tabsTool .theme-switcher:active,
+.tabsTool button:active {
+  background: var(--cadmium-red);
+  color: #ffffff;
+}
+
+/* Prevent default link-blue if it's a <a> */
+.theme-switcher,
+.tabsTool .theme-switcher,
+.tabsTool button {
+  text-decoration: none;
+}
+
+/* Prevent 2-line tabs on mobile: horizontal scroll instead */
+@media (max-width: 576px) {
+  .tabsWithTools {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabsWithTools .nav-item {
+    flex: 0 0 auto;
+  }
+
+  /* Keep the switcher visible at the right edge while scrolling */
+  .tabsWithTools .tabsTool {
+    position: sticky;
+    right: 0;
+    background: inherit;
+    padding-right: 8px;
+  }
+
+  /* Slightly narrower switcher on mobile */
+  .theme-switcher,
+  .tabsTool .theme-switcher,
+  .tabsTool button {
+    height: var(--ui-h-mobile);
+    min-width: calc(var(--step) * 11);
+    padding: 0 calc(var(--step) * 1.5);
+    font-size: 0.76rem;
+  }
+}
+/* Base state + visited: always engineered black, no underline */
+.custom-tabs .nav-link,
+.custom-tabs .nav-link:visited {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* Hover/focus on inactive tabs: aluminum background, same ink text */
+.custom-tabs .nav-link:not(.active):hover,
+.custom-tabs .nav-link:not(.active):focus {
+  background: var(--aluminum);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* Active tab: cadmium red block, white text, no underline */
+.custom-tabs .nav-link.active,
+.custom-tabs .nav-link.active:hover,
+.custom-tabs .nav-link.active:focus {
+  background: var(--cadmium-red) !important;
+  color: #ffffff !important;
+  text-decoration: none;
+}
+

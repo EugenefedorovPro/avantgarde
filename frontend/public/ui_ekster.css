@@ -1,0 +1,855 @@
+/* =========================================================
+   ui_ekster.css — OLEKSANDRA EKSTER VARIANT
+   Constructivist stage design: diagonals, spotlight beams,
+   sharp rectangles, electric color planes.
+   Tabs + theme switcher: fixed, single-row via horizontal scroll,
+   mobile-safe, no wrapping.
+   ========================================================= */
+
+
+/* =========================
+   TOKENS / BASE
+   ========================= */
+
+:root {
+  /* Type: clear, modern */
+  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    sans-serif;
+
+  /* Stage + ink */
+  --stage-bg: #05070c;
+  --stage-ink: #f3f3f3;
+
+  /* Ekster pigments */
+  --ekster-blue:   #1e7fdc;
+  --ekster-orange: #f27e32;
+  --ekster-yellow: #f5d547;
+  --ekster-red:    #c11b36;
+  --ekster-grey:   #3b404c;
+
+  /* UI scale */
+  --ui-border: 2px;
+  --ui-gap: 10px;
+
+  --ui-h: 52px;
+  --ui-h-mobile: 44px;
+
+  --ui-pad: 20px;
+  --ui-pad-mobile: 14px;
+
+  --content-max: 820px;
+
+  /* Tabs bar (fixed) */
+  --tabs-pad-y: 8px;
+  --tabs-pad-x: 12px;
+  --tabs-h: var(--ui-h);
+  --tabs-rule-gap: 8px;
+  --tabs-bar-h: calc(
+    (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) +
+      var(--ui-border)
+  );
+
+  /* Theme switcher sizing + safety */
+  --tabs-tool-w: 132px;
+  --tabs-tool-gap: 10px;
+  --tabs-safe-pad: 6px;
+  --tabs-tool-max: calc(100vw - (var(--tabs-safe-pad) * 2));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--stage-ink);
+  background: var(--stage-bg);
+  font: 400 16px/1.7 var(--font-body);
+}
+
+/* Stage space: diagonal light beams and panels (behind content) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    linear-gradient(135deg,
+      rgba(30,127,220,0.28) 0 35%,
+      transparent 35% 60%,
+      rgba(242,126,50,0.30) 60% 100%
+    ),
+    linear-gradient(225deg,
+      rgba(245,213,71,0.18) 0 20%,
+      transparent 20% 70%,
+      rgba(193,27,54,0.26) 70% 100%
+    );
+  mix-blend-mode: screen;
+  opacity: 0.9;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: -20vh -20vw;
+  z-index: 0;
+  pointer-events: none;
+
+  /* angled “scenery wings” */
+  background:
+    linear-gradient(120deg,
+      rgba(5,7,12,0.0) 0 40%,
+      rgba(5,7,12,0.9) 40% 100%
+    );
+  opacity: 0.7;
+}
+
+/* Content sits above stage */
+#root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding: calc(var(--tabs-bar-h) + 10px) 14px 32px;
+}
+
+
+/* =========================
+   TABS (FIXED “LIGHT BRIDGE”)
+   ========================= */
+
+.custom-tabs .nav-tabs,
+.custom-tabs.nav-tabs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+
+  margin: 0 !important;
+  padding: var(--tabs-pad-y) var(--tabs-pad-x) 0 !important;
+
+  display: flex;
+  align-items: center;
+  gap: var(--ui-gap);
+
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  background:
+    linear-gradient(180deg,
+      #0b0f1a 0 55%,
+      #05070c 55% 100%
+    );
+  border-bottom: 0 !important;
+
+  /* sharp line under bar */
+  box-shadow: 0 var(--ui-border) 0 0 var(--stage-ink);
+  scrollbar-width: none;
+
+  max-width: 100vw;
+  box-sizing: border-box;
+  contain: layout paint; /* sticky tool clipped inside */
+}
+.custom-tabs .nav-tabs::-webkit-scrollbar,
+.custom-tabs.nav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* extra rule below tabs row */
+.custom-tabs .nav-tabs::after,
+.custom-tabs.nav-tabs::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: var(--ui-border);
+  margin-top: var(--tabs-rule-gap);
+  background: var(--stage-ink);
+  flex: 0 0 100%;
+}
+
+.custom-tabs .nav-tabs > .nav-item,
+.custom-tabs.nav-tabs > .nav-item {
+  flex: 0 0 auto;
+}
+
+/* Tabs: sharp rectangles with diagonal color accent */
+.custom-tabs .nav-link,
+.custom-tabs .nav-link:visited {
+  background:
+    linear-gradient(145deg,
+      rgba(30,127,220,0.42) 0 55%,
+      rgba(5,7,12,1) 55% 100%
+    );
+  color: var(--stage-ink);
+  border: var(--ui-border) solid var(--stage-ink) !important;
+  border-radius: 0 !important;
+
+  height: var(--tabs-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  text-decoration: none;
+  box-shadow:
+    0 0 0 2px rgba(60,80,110,0.8),
+    0 4px 0 rgba(0,0,0,0.85);
+}
+
+/* Hover: more light and orange edge */
+.custom-tabs .nav-link:not(.active):hover,
+.custom-tabs .nav-link:not(.active):focus {
+  background:
+    linear-gradient(145deg,
+      rgba(242,126,50,0.52) 0 55%,
+      rgba(5,7,12,1) 55% 100%
+    );
+  border-color: var(--ekster-orange) !important;
+  text-decoration: none;
+}
+
+/* Active: solid orange/red plane with yellow edge */
+.custom-tabs .nav-link.active,
+.custom-tabs .nav-link.active:hover,
+.custom-tabs .nav-link.active:focus {
+  background:
+    linear-gradient(135deg,
+      var(--ekster-orange) 0 55%,
+      var(--ekster-red) 55% 100%
+    ) !important;
+  color: #05070c !important;
+  border-color: var(--ekster-yellow) !important;
+  box-shadow:
+    0 0 0 3px rgba(245,213,71,0.85),
+    0 4px 0 rgba(0,0,0,0.95);
+  text-decoration: none;
+}
+
+
+/* =========================
+   TABS + TOOLS (THEME SWITCHER)
+   ========================= */
+
+.tabsWithTools {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+/* sticky-right tool container */
+.tabsWithTools .tabsTool {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+
+  margin-left: var(--tabs-tool-gap);
+
+  position: sticky;
+  right: 0;
+
+  background:
+    linear-gradient(180deg,
+      #0b0f1a 0 55%,
+      #05070c 55% 100%
+    );
+  padding-left: var(--tabs-tool-gap);
+  padding-right: var(--tabs-safe-pad);
+
+  max-width: var(--tabs-tool-max);
+  overflow: hidden;
+}
+
+/* reserve space for the tool so it doesn’t cover last tab */
+.custom-tabs .nav-tabs.tabsWithTools,
+.custom-tabs.nav-tabs.tabsWithTools {
+  padding-right: calc(
+    var(--tabs-pad-x) + min(var(--tabs-tool-w), var(--tabs-tool-max)) +
+      var(--tabs-tool-gap)
+  ) !important;
+}
+
+
+/* =========================
+   MOBILE TABS
+   ========================= */
+
+@media (max-width: 576px) {
+  :root {
+    --tabs-h: var(--ui-h-mobile);
+    --tabs-bar-h: calc(
+      (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) +
+        var(--ui-border)
+    );
+    --tabs-tool-w: 104px;
+  }
+
+  #root {
+    padding-top: calc(var(--tabs-bar-h) + 8px);
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .custom-tabs .nav-tabs,
+  .custom-tabs.nav-tabs {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    gap: 6px;
+  }
+
+  .custom-tabs .nav-link,
+  .custom-tabs .nav-link:visited {
+    height: var(--tabs-h);
+    padding: 0 10px;
+    font-size: 0.84rem;
+    letter-spacing: 0.07em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tabsWithTools .tabsTool {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .custom-tabs .nav-tabs.tabsWithTools,
+  .custom-tabs.nav-tabs.tabsWithTools {
+    padding-right: calc(
+      6px + min(var(--tabs-tool-w), var(--tabs-tool-max)) + 10px
+    ) !important;
+  }
+}
+
+
+/* =========================
+   VERSE BOX (ANGLED PANEL)
+   ========================= */
+
+.verseBox {
+  width: min(100%, var(--content-max));
+  margin: clamp(6px, 2vh, 20px) auto 0;
+  padding: var(--ui-pad);
+
+  background:
+    linear-gradient(135deg,
+      rgba(5,7,12,0.97) 0 54%,
+      rgba(30,127,220,0.25) 54% 100%
+    );
+  border: var(--ui-border) solid var(--stage-ink);
+  border-radius: 0;
+
+  position: relative;
+  overflow: hidden;
+
+  box-shadow:
+    0 0 0 6px rgba(59,64,76,0.9),
+    18px 18px 0 rgba(0,0,0,0.9);
+}
+
+/* geometric overlay planes, behind content */
+.verseBox::before {
+  content: "";
+  position: absolute;
+  right: -20%;
+  top: -25%;
+  width: 50%;
+  height: 60%;
+  background:
+    linear-gradient(145deg,
+      rgba(242,126,50,0.9) 0 50%,
+      rgba(193,27,54,0.9) 50% 100%
+    );
+  opacity: 0.28;
+  transform: skewX(-8deg);
+  pointer-events: none;
+}
+
+.verseBox::after {
+  content: "";
+  position: absolute;
+  left: -18%;
+  bottom: -22%;
+  width: 45%;
+  height: 55%;
+  background:
+    linear-gradient(135deg,
+      rgba(30,127,220,0.85) 0 55%,
+      rgba(5,7,12,1) 55% 100%
+    );
+  opacity: 0.33;
+  transform: skewY(-10deg);
+  pointer-events: none;
+}
+
+/* Content above overlays */
+.verseBox > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Markdown text inherits readable color */
+.verseBox p,
+.verseBox li,
+.verseBox ul,
+.verseBox ol,
+.verseBox blockquote,
+.verseBox pre,
+.verseBox code,
+.verseBox h1,
+.verseBox h2,
+.verseBox h3,
+.verseBox h4,
+.verseBox h5,
+.verseBox h6 {
+  color: var(--stage-ink);
+}
+
+/* Tables stay inside box on phone */
+.verseBox table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+}
+.verseBox th,
+.verseBox td {
+  padding: 4px 6px;
+  word-break: break-word;
+}
+
+@media (max-width: 576px) {
+  .verseBox {
+    width: 100vw;
+    margin: 0;
+    padding: var(--ui-pad-mobile);
+    border-left-width: var(--ui-border);
+    border-right-width: var(--ui-border);
+    box-shadow:
+      0 0 0 4px rgba(59,64,76,0.9),
+      12px 12px 0 rgba(0,0,0,0.9);
+  }
+}
+
+.verseTitle {
+  margin: 0 0 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ekster-yellow);
+}
+
+.verseText {
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+}
+
+.verseTop {
+  margin-top: 8px;
+}
+.verseBottom {
+  margin-top: 12px;
+}
+
+
+/* =========================
+   THEME SWITCHER — EKSTER BAR
+   (use className="themeSwitch")
+   ========================= */
+
+.themeSwitch,
+.theme-switcher,
+.tabsTool .themeSwitch,
+.tabsTool .theme-switcher,
+.tabsTool button {
+  width: min(var(--tabs-tool-w), var(--tabs-tool-max));
+  max-width: 100%;
+  height: var(--tabs-h);
+
+  border-radius: 0;
+  border: var(--ui-border) solid var(--stage-ink);
+  background:
+    linear-gradient(135deg,
+      rgba(59,64,76,1) 0 45%,
+      rgba(5,7,12,1) 45% 100%
+    );
+  color: var(--stage-ink);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+
+  cursor: pointer;
+  user-select: none;
+
+  padding: 0 10px;
+
+  box-shadow:
+    0 0 0 2px rgba(59,64,76,1),
+    0 4px 0 rgba(0,0,0,0.9);
+
+  min-width: 0;
+  overflow: hidden;
+
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    background-color 140ms linear,
+    border-color 140ms linear,
+    color 140ms linear,
+    transform 90ms linear,
+    box-shadow 140ms linear;
+}
+
+/* Diagonal “beam” chip inside switch */
+.themeSwitch::before,
+.theme-switcher::before,
+.tabsTool .themeSwitch::before,
+.tabsTool .theme-switcher::before,
+.tabsTool button::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  background:
+    linear-gradient(135deg,
+      var(--ekster-blue) 0 55%,
+      var(--ekster-orange) 55% 100%
+    );
+  box-shadow:
+    -4px 4px 0 rgba(0,0,0,0.9);
+}
+
+/* Label span if used */
+.themeSwitch__label {
+  display: inline-block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Hover: more orange and yellow edge */
+.themeSwitch:hover,
+.theme-switcher:hover,
+.tabsTool .themeSwitch:hover,
+.tabsTool .theme-switcher:hover,
+.tabsTool button:hover {
+  background:
+    linear-gradient(135deg,
+      rgba(242,126,50,0.85) 0 55%,
+      rgba(5,7,12,1) 55% 100%
+    );
+  border-color: var(--ekster-yellow);
+  box-shadow:
+    0 0 0 2px rgba(245,213,71,0.9),
+    0 4px 0 rgba(0,0,0,0.95);
+}
+
+/* Active: red/orange plane */
+.themeSwitch:active,
+.theme-switcher:active,
+.tabsTool .themeSwitch:active,
+.tabsTool .theme-switcher:active,
+.tabsTool button:active {
+  background:
+    linear-gradient(135deg,
+      var(--ekster-red) 0 55%,
+      var(--ekster-orange) 55% 100%
+    );
+  color: #05070c;
+  border-color: var(--ekster-yellow);
+  transform: translate(2px, 2px);
+}
+
+/* Keyboard focus */
+.themeSwitch:focus-visible,
+.theme-switcher:focus-visible {
+  outline: var(--ui-border) solid var(--ekster-blue);
+  outline-offset: 3px;
+}
+
+/* Mobile tweaks */
+@media (max-width: 576px) {
+  .themeSwitch,
+  .theme-switcher,
+  .tabsTool .themeSwitch,
+  .tabsTool .theme-switcher,
+  .tabsTool button {
+    height: var(--tabs-h);
+    padding: 0 8px;
+  }
+
+  .themeSwitch__label {
+    font-size: 0.8rem;
+    letter-spacing: 0.07em;
+  }
+}
+
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+.u-btn {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+
+  background:
+    linear-gradient(160deg,
+      #05070c 0 45%,
+      #151a23 45% 100%
+    ) !important;
+  color: var(--stage-ink) !important;
+  border: var(--ui-border) solid var(--stage-ink) !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+
+  width: 100%;
+  max-width: min(92vw, 880px);
+  height: var(--ui-h);
+  padding: 0 18px;
+}
+
+.u-btn:hover {
+  background:
+    linear-gradient(160deg,
+      var(--ekster-blue) 0 45%,
+      #05070c 45% 100%
+    ) !important;
+  border-color: var(--ekster-yellow) !important;
+}
+
+.u-btn:active {
+  background:
+    linear-gradient(160deg,
+      var(--ekster-orange) 0 45%,
+      var(--ekster-red) 45% 100%
+    ) !important;
+  border-color: var(--ekster-yellow) !important;
+  color: #05070c !important;
+  transform: translate(2px, 2px);
+}
+
+.u-btn--wide {
+  max-width: min(92vw, 980px);
+}
+
+.u-btn--square {
+  width: var(--ui-h);
+  max-width: var(--ui-h);
+  padding: 0;
+}
+
+@media (max-width: 576px) {
+  .u-btn {
+    height: var(--ui-h-mobile);
+  }
+  .u-btn--square {
+    width: var(--ui-h-mobile);
+    max-width: var(--ui-h-mobile);
+  }
+}
+
+
+/* =========================
+   TRIANGLE BUTTONS (DIRECTION PLANES)
+   ========================= */
+
+.tri-btn {
+  --box: var(--ui-h);
+
+  width: var(--box);
+  height: var(--box);
+  border: var(--ui-border) solid var(--stage-ink);
+  border-radius: 0;
+  background:
+    linear-gradient(145deg,
+      #05070c 0 50%,
+      #151a23 50% 100%
+    );
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  box-shadow:
+    0 0 0 2px rgba(59,64,76,1),
+    0 6px 0 rgba(0,0,0,0.9);
+}
+
+.tri-btn::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: calc(var(--box) * 0.26) solid transparent;
+  border-bottom: calc(var(--box) * 0.26) solid transparent;
+}
+
+.tri-btn--left::before {
+  border-right: calc(var(--box) * 0.36) solid var(--stage-ink);
+}
+.tri-btn--right::before {
+  border-left: calc(var(--box) * 0.36) solid var(--stage-ink);
+}
+
+.tri-btn:hover {
+  background:
+    linear-gradient(145deg,
+      var(--ekster-blue) 0 50%,
+      #05070c 50% 100%
+    );
+}
+
+.tri-btn:active {
+  background:
+    linear-gradient(145deg,
+      var(--ekster-red) 0 50%,
+      var(--ekster-orange) 50% 100%
+    );
+  box-shadow:
+    0 0 0 2px rgba(245,213,71,0.9),
+    0 4px 0 rgba(0,0,0,0.95);
+}
+.tri-btn:active.tri-btn--left::before,
+.tri-btn:active.tri-btn--right::before {
+  border-color: #05070c;
+}
+
+@media (max-width: 576px) {
+  .tri-btn {
+    --box: var(--ui-h-mobile);
+  }
+}
+
+
+/* =========================
+   AUDIO (CONSOLE MODULE)
+   ========================= */
+
+.audio-box {
+  width: 100%;
+}
+
+.audio-frame {
+  width: 100%;
+  border: var(--ui-border) solid var(--stage-ink);
+  border-radius: 0;
+  overflow: hidden;
+
+  background:
+    linear-gradient(135deg,
+      #05070c 0 40%,
+      #10141f 40% 70%,
+      #05070c 70% 100%
+    );
+  box-shadow:
+    0 0 0 4px rgba(59,64,76,1),
+    14px 14px 0 rgba(0,0,0,0.9);
+}
+
+.audio-frame:hover {
+  border-color: var(--ekster-blue);
+}
+.audio-frame:focus-within {
+  border-color: var(--ekster-orange);
+}
+
+.square-audio {
+  width: 100%;
+  display: block;
+  border-radius: 0 !important;
+}
+.square-audio::-webkit-media-controls-enclosure,
+.square-audio::-webkit-media-controls-panel {
+  border-radius: 0 !important;
+}
+
+
+/* =========================
+   CONTROLS BAR
+   ========================= */
+
+.controlsBar {
+  display: grid;
+  grid-template-columns: var(--ui-h) minmax(0, 1fr) var(--ui-h);
+  gap: var(--ui-gap);
+  align-items: center;
+  width: 100%;
+
+  margin-top: 14px;
+  padding-top: 12px;
+
+  border-top: var(--ui-border) solid rgba(243,243,243,0.85);
+  position: relative;
+}
+
+/* small diagonal strip above line */
+.controlsBar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -4px;
+  width: 36px;
+  height: 4px;
+  background:
+    linear-gradient(135deg,
+      var(--ekster-blue) 0 40%,
+      var(--ekster-yellow) 40% 75%,
+      var(--ekster-red) 75% 100%
+    );
+  transform-origin: left center;
+  transform: skewX(-15deg);
+  pointer-events: none;
+}
+
+.controlsBar > * {
+  min-width: 0;
+}
+
+.controlsBar .u-btn {
+  max-width: none;
+  width: 100%;
+  justify-self: stretch;
+}
+
+@media (max-width: 576px) {
+  .controlsBar {
+    grid-template-columns: var(--ui-h-mobile) minmax(0, 1fr) var(--ui-h-mobile);
+    padding-top: 10px;
+    margin-top: 12px;
+  }
+}
+

@@ -1,4 +1,4 @@
-import { Tabs, Tab } from "react-bootstrap";
+import { Tab, Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
@@ -6,6 +6,8 @@ import type { ReactNode } from "react";
 import { randVerse } from "../api/randVerse";
 import { VerseControls } from "../components/VerseControls";
 import { VerseBox } from "../components/VerseBox";
+
+import { ThemeSwitcher } from "../theme/ThemeSwitcher";
 
 type TabKey = "verse" | "hermeneutics";
 
@@ -61,20 +63,39 @@ export const RandVersePage = () => {
   const newVerse = Object.values(data).join(" ");
 
   return (
-    <Tabs
-      id="verse-tabs"
+    <Tab.Container
+      id="rand-verse-tabs"
       activeKey={activeTab}
       onSelect={(k) => k && setActiveTab(k as TabKey)}
-      className="custom-tabs"
       mountOnEnter
     >
-      <Tab eventKey="verse" title="Verse">
-        <VerseBox textMd={newVerse} childrenTop={Signature} childrenBottom={controls} />
-      </Tab>
+      {/* Tabs bar + Theme switcher on the right */}
+      <Nav variant="tabs" className="custom-tabs tabsWithTools">
+        <Nav.Item>
+          <Nav.Link eventKey="verse">Verse</Nav.Link>
+        </Nav.Item>
 
-      <Tab eventKey="hermeneutics" title="Hermeneutics">
-        <VerseBox childrenTop={Signature} childrenBottom={controls} />
-      </Tab>
-    </Tabs>
+        <Nav.Item>
+          <Nav.Link eventKey="hermeneutics">Hermeneutics</Nav.Link>
+        </Nav.Item>
+
+        {/* Right-aligned tool area */}
+        <Nav.Item className="ms-auto d-flex align-items-center">
+          <div className="tabsTool">
+            <ThemeSwitcher />
+          </div>
+        </Nav.Item>
+      </Nav>
+
+      <Tab.Content>
+        <Tab.Pane eventKey="verse">
+          <VerseBox textMd={newVerse} childrenTop={Signature} childrenBottom={controls} />
+        </Tab.Pane>
+
+        <Tab.Pane eventKey="hermeneutics">
+          <VerseBox childrenTop={Signature} childrenBottom={controls} />
+        </Tab.Pane>
+      </Tab.Content>
+    </Tab.Container>
   );
 };

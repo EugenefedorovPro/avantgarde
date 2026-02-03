@@ -3,6 +3,7 @@
    Light theme inspired by Paul Klee: playful color fields,
    musical geometry, irregular “hand” edges. No text overlaps.
    — Opaque layers only over empty areas.
+   Mobile: tabs + theme switcher never overflow screen.
    ========================================================= */
 
 
@@ -52,13 +53,25 @@
   --tabs-bar-h: calc(
     (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) + var(--ui-border)
   );
+
+  /* Tool sizing + safety so it can never exceed viewport */
+  --tabs-tool-w: 128px;
+  --tabs-tool-gap: 10px;
+  --tabs-safe-pad: 6px;
+  --tabs-tool-max: calc(100vw - (var(--tabs-safe-pad) * 2));
 }
 
 *,
 *::before,
-*::after { box-sizing: border-box; }
+*::after {
+  box-sizing: border-box;
+}
 
-html, body { min-height: 100%; overflow-x: hidden; }
+html,
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+}
 
 body {
   margin: 0;
@@ -104,7 +117,7 @@ body::before {
   position: relative;
   z-index: 1;
   min-height: 100vh;
-  padding: calc(var(--tabs-bar-h) + 6px) 14px 28px; /* tightened from +18px to +6px */
+  padding: calc(var(--tabs-bar-h) + 6px) 14px 28px;
 }
 
 
@@ -115,7 +128,9 @@ body::before {
 .custom-tabs .nav-tabs,
 .custom-tabs.nav-tabs {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
 
   margin: 0 !important;
@@ -127,6 +142,7 @@ body::before {
 
   flex-wrap: nowrap;
   overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
 
   /* opaque strip with faint color bands like a staff */
@@ -143,9 +159,17 @@ body::before {
   border-bottom: 0 !important;
   box-shadow: 0 var(--ui-border) 0 0 var(--ink);
   scrollbar-width: none;
+
+  /* keep sticky-right tools clipped inside the bar */
+  max-width: 100vw;
+  box-sizing: border-box;
+  contain: layout paint;
 }
+
 .custom-tabs .nav-tabs::-webkit-scrollbar,
-.custom-tabs.nav-tabs::-webkit-scrollbar { display: none; }
+.custom-tabs.nav-tabs::-webkit-scrollbar {
+  display: none;
+}
 
 .custom-tabs .nav-tabs::after,
 .custom-tabs.nav-tabs::after {
@@ -159,10 +183,13 @@ body::before {
 }
 
 .custom-tabs .nav-tabs > .nav-item,
-.custom-tabs.nav-tabs > .nav-item { flex: 0 0 auto; }
+.custom-tabs.nav-tabs > .nav-item {
+  flex: 0 0 auto;
+}
 
 /* Tabs: rectangles with “ink bleed” using double outline */
-.custom-tabs .nav-link {
+.custom-tabs .nav-link,
+.custom-tabs .nav-link:visited {
   background: var(--paper);
   color: var(--ink);
   border: var(--ui-border) solid var(--ink) !important;
@@ -183,18 +210,27 @@ body::before {
 
   /* slightly “hand-cut” */
   transform: rotate(-0.2deg);
+
+  text-decoration: none;
 }
 
-.custom-tabs .nav-link:not(.active):hover {
+/* non-active hover: change bg + keep text non-blue */
+.custom-tabs .nav-link:not(.active):hover,
+.custom-tabs .nav-link:not(.active):focus {
   background: color-mix(in srgb, var(--klee-sky) 28%, var(--paper));
   outline-color: rgba(20,20,18,0.38);
+  color: var(--ink) !important; /* prevent default blue */
+  text-decoration: none;
 }
 
+/* active tab */
 .custom-tabs .nav-link.active,
-.custom-tabs .nav-link.active:hover {
+.custom-tabs .nav-link.active:hover,
+.custom-tabs .nav-link.active:focus {
   background: color-mix(in srgb, var(--klee-coral) 78%, #fff);
   color: #181614 !important;
   outline-color: rgba(20,20,18,0.5);
+  text-decoration: none;
 }
 
 @media (max-width: 576px) {
@@ -203,6 +239,23 @@ body::before {
     --tabs-bar-h: calc(
       (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) + var(--ui-border)
     );
+
+    /* tighter tool on phones */
+    --tabs-tool-w: 116px;
+  }
+
+  .custom-tabs .nav-tabs,
+  .custom-tabs.nav-tabs {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    gap: 8px;
+  }
+
+  .custom-tabs .nav-link,
+  .custom-tabs .nav-link:visited {
+    padding: 0 10px;
+    font-size: 0.86rem;
+    letter-spacing: 0.07em;
   }
 }
 
@@ -213,7 +266,7 @@ body::before {
 
 .verseBox {
   width: min(100%, var(--content-max));
-  margin: clamp(6px, 2vh, 20px) auto 0; /* tightened from clamp(12px, 6vh, 56px) */
+  margin: clamp(6px, 2vh, 20px) auto 0;
   padding: var(--ui-pad);
 
   background: var(--paper);
@@ -232,8 +285,11 @@ body::before {
 /* Top stitch line + tiny geometric notes (never under text) */
 .verseBox::before {
   content: "";
-  position: absolute; left: 0; top: 0;
-  width: 100%; height: 10px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 10px;
   background:
     linear-gradient(90deg,
       var(--ink) 0 32%,
@@ -243,10 +299,15 @@ body::before {
       var(--ink) 72% 100%
     );
 }
+
 .verseBox::after {
   content: "";
-  position: absolute; right: 12px; top: 12px;
-  width: 10px; height: 10px; background: var(--klee-olive);
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 10px;
+  height: 10px;
+  background: var(--klee-olive);
   box-shadow:
     -16px 0 0 0 var(--klee-sea),
     0 16px 0 0 var(--klee-coral);
@@ -275,8 +336,12 @@ body::before {
   color: color-mix(in srgb, var(--ink) 88%, #000 12%);
 }
 
-.verseTop   { margin-top: 8px; }
-.verseBottom{ margin-top: 12px; }
+.verseTop {
+  margin-top: 8px;
+}
+.verseBottom {
+  margin-top: 12px;
+}
 
 
 /* =========================
@@ -320,12 +385,23 @@ body::before {
   transform: translate(2px, 2px);
 }
 
-.u-btn--wide   { max-width: min(92vw, 980px); }
-.u-btn--square { width: var(--ui-h); max-width: var(--ui-h); padding: 0; }
+.u-btn--wide {
+  max-width: min(92vw, 980px);
+}
+.u-btn--square {
+  width: var(--ui-h);
+  max-width: var(--ui-h);
+  padding: 0;
+}
 
 @media (max-width: 576px) {
-  .u-btn { height: var(--ui-h-mobile); }
-  .u-btn--square { width: var(--ui-h-mobile); max-width: var(--ui-h-mobile); }
+  .u-btn {
+    height: var(--ui-h-mobile);
+  }
+  .u-btn--square {
+    width: var(--ui-h-mobile);
+    max-width: var(--ui-h-mobile);
+  }
 }
 
 
@@ -343,25 +419,41 @@ body::before {
   background: color-mix(in srgb, var(--paper) 82%, var(--klee-rose) 18%);
   cursor: pointer;
 
-  display: inline-flex; align-items: center; justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0;
   transform: rotate(-0.3deg);
 }
 
 .tri-btn::before {
   content: "";
-  width: 0; height: 0;
+  width: 0;
+  height: 0;
   border-top: calc(var(--box) * 0.26) solid transparent;
   border-bottom: calc(var(--box) * 0.26) solid transparent;
 }
-.tri-btn--left::before  { border-right: calc(var(--box) * 0.36) solid var(--ink); }
-.tri-btn--right::before { border-left:  calc(var(--box) * 0.36) solid var(--ink); }
 
-.tri-btn:hover  { background: color-mix(in srgb, var(--klee-sea) 42%, #fff); }
-.tri-btn:active { background: color-mix(in srgb, var(--klee-coral) 65%, #fff); transform: translate(2px,2px); }
+.tri-btn--left::before {
+  border-right: calc(var(--box) * 0.36) solid var(--ink);
+}
+.tri-btn--right::before {
+  border-left: calc(var(--box) * 0.36) solid var(--ink);
+}
+
+.tri-btn:hover {
+  background: color-mix(in srgb, var(--klee-sea) 42%, #fff);
+}
+
+.tri-btn:active {
+  background: color-mix(in srgb, var(--klee-coral) 65%, #fff);
+  transform: translate(2px, 2px);
+}
 
 @media (max-width: 576px) {
-  .tri-btn { --box: var(--ui-h-mobile); }
+  .tri-btn {
+    --box: var(--ui-h-mobile);
+  }
 }
 
 
@@ -369,7 +461,9 @@ body::before {
    AUDIO (FRAMED TILE)
    ========================= */
 
-.audio-box { width: 100%; }
+.audio-box {
+  width: 100%;
+}
 
 .audio-frame {
   width: 100%;
@@ -381,12 +475,23 @@ body::before {
   box-shadow: 12px 12px 0 rgba(20,20,18,0.08);
 }
 
-.audio-frame:hover       { border-color: color-mix(in srgb, var(--klee-gold) 70%, var(--ink)); }
-.audio-frame:focus-within{ border-color: color-mix(in srgb, var(--klee-coral) 70%, var(--ink)); }
+.audio-frame:hover {
+  border-color: color-mix(in srgb, var(--klee-gold) 70%, var(--ink));
+}
+.audio-frame:focus-within {
+  border-color: color-mix(in srgb, var(--klee-coral) 70%, var(--ink));
+}
 
-.square-audio { width: 100%; display: block; border-radius: 0 !important; }
+.square-audio {
+  width: 100%;
+  display: block;
+  border-radius: 0 !important;
+}
+
 .square-audio::-webkit-media-controls-enclosure,
-.square-audio::-webkit-media-controls-panel { border-radius: 0 !important; }
+.square-audio::-webkit-media-controls-panel {
+  border-radius: 0 !important;
+}
 
 
 /* =========================
@@ -395,7 +500,7 @@ body::before {
 
 .controlsBar {
   display: grid;
-  grid-template-columns: var(--ui-h) minmax(0,1fr) var(--ui-h);
+  grid-template-columns: var(--ui-h) minmax(0, 1fr) var(--ui-h);
   gap: var(--ui-gap);
   align-items: center;
   width: 100%;
@@ -410,20 +515,205 @@ body::before {
 /* little “notes” on the line */
 .controlsBar::before {
   content: "";
-  position: absolute; left: 0; top: -2px;
-  width: 12px; height: 12px; background: var(--klee-plum);
+  position: absolute;
+  left: 0;
+  top: -2px;
+  width: 12px;
+  height: 12px;
+  background: var(--klee-plum);
   box-shadow:
     18px 0 0 0 var(--klee-sky),
     36px 0 0 0 var(--klee-gold);
   pointer-events: none;
 }
 
-.controlsBar > * { min-width: 0; }
-.controlsBar .u-btn { max-width: none; width: 100%; justify-self: stretch; }
+.controlsBar > * {
+  min-width: 0;
+}
+.controlsBar .u-btn {
+  max-width: none;
+  width: 100%;
+  justify-self: stretch;
+}
 
 @media (max-width: 576px) {
   .controlsBar {
-    grid-template-columns: var(--ui-h-mobile) minmax(0,1fr) var(--ui-h-mobile);
-    padding-top: 10px; margin-top: 12px;
+    grid-template-columns: var(--ui-h-mobile) minmax(0, 1fr) var(--ui-h-mobile);
+    padding-top: 10px;
+    margin-top: 12px;
+  }
+}
+
+
+/* =========================
+   TABS + TOOLS (Theme switcher)
+   Mobile-safe: never overflow viewport
+   ========================= */
+
+/* Tabs row that also hosts tools (theme switcher) */
+.tabsWithTools {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+/* Keeps the tool aligned and not “tab-like” */
+.tabsWithTools .tabsTool {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  padding-left: var(--tabs-tool-gap);
+
+  /* Sticky-right tool that stays visible while tabs scroll */
+  position: sticky;
+  right: 0;
+
+  /* Opaque patch so it reads over scrolling tabs */
+  background: var(--paper);
+
+  /* Hard safety: never paint outside viewport */
+  max-width: var(--tabs-tool-max);
+  overflow: hidden;
+  padding-right: var(--tabs-safe-pad);
+}
+
+/* Give the sticky tool space so it doesn't cover the last tab */
+.custom-tabs .nav-tabs.tabsWithTools,
+.custom-tabs.nav-tabs.tabsWithTools {
+  padding-right: calc(
+    var(--tabs-pad-x) + min(var(--tabs-tool-w), var(--tabs-tool-max)) + var(--tabs-tool-gap)
+  ) !important;
+}
+
+/* Mobile tweaks: tighter spacing, still single-row + safe */
+@media (max-width: 576px) {
+  .tabsWithTools {
+    flex-wrap: nowrap;
+  }
+
+  .tabsWithTools .tabsTool {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .custom-tabs .nav-tabs.tabsWithTools,
+  .custom-tabs.nav-tabs.tabsWithTools {
+    padding-right: calc(
+      8px + min(var(--tabs-tool-w), var(--tabs-tool-max)) + 8px
+    ) !important;
+  }
+}
+
+
+/* =========================
+   THEME SWITCHER (KLEE) — refined + mobile-safe
+   ========================= */
+
+.themeSwitch {
+  /* Never exceed viewport */
+  width: min(var(--tabs-tool-w), var(--tabs-tool-max));
+  max-width: 100%;
+
+  height: var(--tabs-h);
+
+  border-radius: 0;
+  border: var(--ui-border) solid var(--ink);
+  background: color-mix(in srgb, var(--paper) 88%, var(--klee-sky) 12%);
+  color: var(--ink);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  line-height: 1;
+
+  cursor: pointer;
+  user-select: none;
+
+  padding: 0 10px;
+
+  /* Hand-cut refinement */
+  transform: rotate(-0.2deg);
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--klee-gold) 18%, transparent);
+
+  /* Don’t let content force overflow */
+  min-width: 0;
+  overflow: hidden;
+
+  /* nicer interaction */
+  transition: background-color 140ms linear, border-color 140ms linear,
+    box-shadow 140ms linear, transform 90ms linear;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Little “note” + “paint chip” inside */
+.themeSwitch::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: var(--klee-plum);
+  display: inline-block;
+  flex: 0 0 auto;
+
+  outline: 1px solid rgba(20,20,18,0.45);
+  outline-offset: -3px;
+
+  box-shadow:
+    14px 0 0 0 var(--klee-olive),
+    0 14px 0 0 var(--klee-coral);
+}
+
+/* Hover: warmer */
+.themeSwitch:hover {
+  background: color-mix(in srgb, var(--klee-gold) 42%, var(--paper));
+  border-color: color-mix(in srgb, var(--klee-umber) 55%, var(--ink));
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--klee-gold) 26%, transparent);
+}
+
+/* Active: coral “stamp” */
+.themeSwitch:active {
+  background: color-mix(in srgb, var(--klee-coral) 62%, #fff);
+  border-color: var(--ink);
+  transform: translate(2px, 2px) rotate(-0.2deg);
+}
+
+/* Keyboard: visible but Klee-soft */
+.themeSwitch:focus-visible {
+  outline: var(--ui-border) solid color-mix(in srgb, var(--klee-sea) 55%, var(--ink));
+  outline-offset: 3px;
+}
+
+.themeSwitch__label {
+  display: inline-block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Mobile: compact, still safe */
+@media (max-width: 576px) {
+  .themeSwitch {
+    gap: 8px;
+    padding: 0 8px;
+    box-shadow:
+      0 0 0 5px color-mix(in srgb, var(--klee-gold) 18%, transparent);
+  }
+
+  .themeSwitch__label {
+    font-size: 0.82rem;
+    letter-spacing: 0.07em;
+  }
+
+  .themeSwitch::before {
+    width: 11px;
+    height: 11px;
   }
 }

@@ -1,8 +1,6 @@
-// import reactLogo from './assets/react.svg'
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Verse } from "./pages/Verse";
 import { RandVersePage } from "./pages/RandVerse";
-import "./ui.css";
 
 function App() {
   return (

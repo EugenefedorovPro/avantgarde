@@ -1,0 +1,735 @@
+/* =========================================================
+   ui_boychuk.css — BOYCHUKISM VARIANT (MONUMENTAL ICON PANEL)
+   Ukrainian neo-Byzantine fresco: matte plaster, icon gold,
+   deep blue and ruby accents, strict rectangles, no rounded corners.
+   Tabs + theme switcher are fixed and mobile-safe (single row via scroll).
+   ========================================================= */
+
+
+/* =========================
+   TOKENS / BASE
+   ========================= */
+
+:root {
+  /* Typography: calm, readable, slightly “bookish” */
+  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    sans-serif;
+
+  /* Fresco wall + pigment ink */
+  --plaster: #f4ecdd;     /* light warm plaster */
+  --ink: #1a130d;         /* dark brown / ink */
+
+  /* Boychukist pigments (tempera-like, muted) */
+  --icon-gold: #c99a3b;
+  --deep-blue: #1f3c69;
+  --ruby: #8b2730;
+  --olive: #8a7c4c;
+  --shadow: #1a130d;
+
+  /* UI scale */
+  --ui-border: 2px;
+  --ui-gap: 10px;
+
+  --ui-h: 52px;
+  --ui-h-mobile: 44px;
+
+  --ui-pad: 20px;
+  --ui-pad-mobile: 14px;
+
+  --content-max: 820px;
+
+  /* Tabs bar (fixed) */
+  --tabs-pad-y: 8px;
+  --tabs-pad-x: 12px;
+  --tabs-h: var(--ui-h);
+  --tabs-rule-gap: 8px;
+  --tabs-bar-h: calc(
+    (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) +
+      var(--ui-border)
+  );
+
+  /* Theme switcher sizing + mobile safety */
+  --tabs-tool-w: 130px;
+  --tabs-tool-gap: 10px;
+  --tabs-safe-pad: 6px;
+  --tabs-tool-max: calc(100vw - (var(--tabs-safe-pad) * 2));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--plaster);
+  font: 400 16px/1.7 var(--font-body);
+}
+
+/* Fresco wall with vertical “icon strips” on sides (never under box) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    linear-gradient(90deg,
+      rgba(31,60,105,0.20) 0 7%,
+      transparent 7% 93%,
+      rgba(31,60,105,0.20) 93% 100%
+    ),
+    radial-gradient(circle at 0 0, rgba(0,0,0,0.09), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(0,0,0,0.07), transparent 55%);
+  mix-blend-mode: multiply;
+  opacity: 0.8;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  /* faint ornamental band above, like painted frieze */
+  background:
+    linear-gradient(180deg,
+      rgba(201,154,59,0.35) 0 4%,
+      transparent 4% 100%
+    );
+  mix-blend-mode: soft-light;
+}
+
+/* Content layer sits above fresco */
+#root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding: calc(var(--tabs-bar-h) + 8px) 12px 32px;
+}
+
+
+/* =========================
+   TABS (FIXED “ICON PANEL LABELS”)
+   ========================= */
+
+.custom-tabs .nav-tabs,
+.custom-tabs.nav-tabs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+
+  margin: 0 !important;
+  padding: var(--tabs-pad-y) var(--tabs-pad-x) 0 !important;
+
+  display: flex;
+  align-items: center;
+  gap: var(--ui-gap);
+
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  background:
+    linear-gradient(180deg, #f7efe0 0 60%, #e5dac4 60% 100%);
+  border-bottom: 0 !important;
+
+  /* bottom icon-frame rule */
+  box-shadow: 0 var(--ui-border) 0 0 var(--ink);
+  scrollbar-width: none;
+
+  max-width: 100vw;
+  box-sizing: border-box;
+  contain: layout paint; /* keep sticky tools clipped inside */
+}
+.custom-tabs .nav-tabs::-webkit-scrollbar,
+.custom-tabs.nav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* extra rule under the row */
+.custom-tabs .nav-tabs::after,
+.custom-tabs.nav-tabs::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: var(--ui-border);
+  margin-top: var(--tabs-rule-gap);
+  background: var(--ink);
+  flex: 0 0 100%;
+}
+
+.custom-tabs .nav-tabs > .nav-item,
+.custom-tabs.nav-tabs > .nav-item {
+  flex: 0 0 auto;
+}
+
+/* tabs as rectangular icon labels */
+.custom-tabs .nav-link,
+.custom-tabs .nav-link:visited {
+  background: #fdf6e7;
+  color: var(--ink);
+  border: var(--ui-border) solid var(--ink) !important;
+  border-radius: 0 !important;
+
+  height: var(--tabs-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  box-shadow:
+    0 0 0 3px rgba(201,154,59,0.35),
+    0 4px 0 rgba(26,19,13,0.45);
+
+  text-decoration: none;
+}
+
+/* non-active hover: warm gold wash */
+.custom-tabs .nav-link:not(.active):hover,
+.custom-tabs .nav-link:not(.active):focus {
+  background: #f1e0bf;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* active tab: deep-blue ground with icon gold border */
+.custom-tabs .nav-link.active,
+.custom-tabs .nav-link.active:hover,
+.custom-tabs .nav-link.active:focus {
+  background: var(--deep-blue) !important;
+  color: #f7e7c0 !important;
+  border-color: var(--ruby) !important;
+  box-shadow:
+    0 0 0 3px rgba(139,39,48,0.55),
+    0 4px 0 rgba(26,19,13,0.55);
+  text-decoration: none;
+}
+
+
+/* =========================
+   TABS + TOOLS (Theme switcher)
+   ========================= */
+
+.tabsWithTools {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+/* sticky-right container for ThemeSwitcher */
+.tabsWithTools .tabsTool {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+
+  margin-left: var(--tabs-tool-gap);
+
+  position: sticky;
+  right: 0;
+
+  background:
+    linear-gradient(180deg, #f7efe0 0 60%, #e5dac4 60% 100%);
+  padding-left: var(--tabs-tool-gap);
+  padding-right: var(--tabs-safe-pad);
+
+  max-width: var(--tabs-tool-max);
+  overflow: hidden;
+}
+
+/* ensure last tab is not under the tool */
+.custom-tabs .nav-tabs.tabsWithTools,
+.custom-tabs.nav-tabs.tabsWithTools {
+  padding-right: calc(
+    var(--tabs-pad-x) + min(var(--tabs-tool-w), var(--tabs-tool-max)) +
+      var(--tabs-tool-gap)
+  ) !important;
+}
+
+
+/* =========================
+   MOBILE TABS
+   ========================= */
+
+@media (max-width: 576px) {
+  :root {
+    --tabs-h: var(--ui-h-mobile);
+    --tabs-bar-h: calc(
+      (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) +
+        var(--ui-border)
+    );
+    --tabs-tool-w: 104px;
+  }
+
+  #root {
+    padding-top: calc(var(--tabs-bar-h) + 6px);
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .custom-tabs .nav-tabs,
+  .custom-tabs.nav-tabs {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    gap: 6px;
+  }
+
+  .custom-tabs .nav-link,
+  .custom-tabs .nav-link:visited {
+    height: var(--tabs-h);
+    padding: 0 10px;
+    font-size: 0.84rem;
+    letter-spacing: 0.07em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tabsWithTools .tabsTool {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .custom-tabs .nav-tabs.tabsWithTools,
+  .custom-tabs.nav-tabs.tabsWithTools {
+    padding-right: calc(
+      6px + min(var(--tabs-tool-w), var(--tabs-tool-max)) + 10px
+    ) !important;
+  }
+}
+
+
+/* =========================
+   VERSE BOX (ICON PANEL)
+   ========================= */
+
+.verseBox {
+  width: min(100%, var(--content-max));
+  margin: clamp(6px, 2vh, 20px) auto 0;
+  padding: var(--ui-pad);
+
+  background: #fdf6e7;
+  border: var(--ui-border) solid var(--ink);
+  border-radius: 0;
+
+  position: relative;
+  overflow: hidden;
+
+  box-shadow:
+    0 0 0 8px rgba(201,154,59,0.35),
+    16px 16px 0 rgba(26,19,13,0.22);
+}
+
+/* top and left “icon” rules */
+.verseBox::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: var(--ui-border);
+  background: var(--ruby);
+}
+.verseBox::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--ui-border);
+  height: 100%;
+  background: var(--deep-blue);
+}
+
+@media (max-width: 576px) {
+  .verseBox {
+    /* full-width on phone, no side margins */
+    width: 100vw;
+    margin: 0;
+    padding: var(--ui-pad-mobile);
+    border-left-width: var(--ui-border);
+    border-right-width: var(--ui-border);
+    box-shadow:
+      0 0 0 6px rgba(201,154,59,0.3),
+      10px 10px 0 rgba(26,19,13,0.18);
+  }
+}
+
+/* markdown text inside should inherit color */
+.verseBox p,
+.verseBox li,
+.verseBox ul,
+.verseBox ol,
+.verseBox blockquote,
+.verseBox pre,
+.verseBox code,
+.verseBox h1,
+.verseBox h2,
+.verseBox h3,
+.verseBox h4,
+.verseBox h5,
+.verseBox h6 {
+  color: var(--ink);
+}
+
+.verseTitle {
+  margin: 0 0 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--deep-blue);
+}
+
+.verseText {
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+.verseTop {
+  margin-top: 8px;
+}
+.verseBottom {
+  margin-top: 12px;
+}
+
+
+/* =========================
+   THEME SWITCHER (Boychukist plaque)
+   ========================= */
+
+.themeSwitch {
+  width: min(var(--tabs-tool-w), var(--tabs-tool-max));
+  max-width: 100%;
+  height: var(--tabs-h);
+
+  border-radius: 0;
+  border: var(--ui-border) solid var(--ink);
+  background: #fdf2df;
+  color: var(--ink);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+
+  cursor: pointer;
+  user-select: none;
+
+  padding: 0 10px;
+
+  box-shadow:
+    0 0 0 3px rgba(201,154,59,0.4),
+    0 4px 0 rgba(26,19,13,0.5);
+
+  min-width: 0;
+  overflow: hidden;
+
+  transition: background-color 140ms linear, border-color 140ms linear,
+    box-shadow 140ms linear, transform 90ms linear;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* pigment “tile” at left */
+.themeSwitch::before {
+  content: "";
+  width: 11px;
+  height: 11px;
+  background: var(--ruby);
+  flex: 0 0 auto;
+  box-shadow:
+    13px 0 0 0 var(--icon-gold),
+    0 13px 0 0 var(--deep-blue);
+}
+
+/* label text */
+.themeSwitch__label {
+  display: inline-block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Hover: warmer, more gold */
+.themeSwitch:hover {
+  background: #f0e0c1;
+  border-color: var(--icon-gold);
+  box-shadow:
+    0 0 0 3px rgba(201,154,59,0.55),
+    0 4px 0 rgba(26,19,13,0.5);
+}
+
+/* Active: deep-blue ground, light text */
+.themeSwitch:active {
+  background: var(--deep-blue);
+  color: #f7e4be;
+  border-color: var(--ruby);
+  transform: translate(2px, 2px);
+}
+
+.themeSwitch:focus-visible {
+  outline: var(--ui-border) solid var(--deep-blue);
+  outline-offset: 3px;
+}
+
+/* Mobile: slightly tighter */
+@media (max-width: 576px) {
+  .themeSwitch {
+    height: var(--tabs-h);
+    padding: 0 8px;
+  }
+
+  .themeSwitch__label {
+    font-size: 0.8rem;
+    letter-spacing: 0.07em;
+  }
+
+  .themeSwitch::before {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+.u-btn {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+
+  background: #fdf6e7 !important;
+  color: var(--ink) !important;
+  border: var(--ui-border) solid var(--ink) !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+
+  width: 100%;
+  max-width: min(92vw, 880px);
+  height: var(--ui-h);
+  padding: 0 18px;
+
+  box-shadow:
+    0 0 0 4px rgba(201,154,59,0.35),
+    0 6px 0 rgba(26,19,13,0.45);
+}
+
+.u-btn:hover {
+  background: #f1dfbf !important;
+}
+
+.u-btn:active {
+  background: var(--deep-blue) !important;
+  color: #f7e4be !important;
+  transform: translate(2px, 2px);
+}
+
+.u-btn--wide {
+  max-width: min(92vw, 980px);
+}
+
+.u-btn--square {
+  width: var(--ui-h);
+  max-width: var(--ui-h);
+  padding: 0;
+}
+
+@media (max-width: 576px) {
+  .u-btn {
+    height: var(--ui-h-mobile);
+  }
+
+  .u-btn--square {
+    width: var(--ui-h-mobile);
+    max-width: var(--ui-h-mobile);
+  }
+}
+
+
+/* =========================
+   TRIANGLE BUTTONS (direction tiles)
+   ========================= */
+
+.tri-btn {
+  --box: var(--ui-h);
+
+  width: var(--box);
+  height: var(--box);
+
+  border: var(--ui-border) solid var(--ink);
+  border-radius: 0;
+  background: #fdf2df;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  box-shadow:
+    0 0 0 3px rgba(201,154,59,0.35),
+    0 6px 0 rgba(26,19,13,0.45);
+}
+
+.tri-btn::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: calc(var(--box) * 0.26) solid transparent;
+  border-bottom: calc(var(--box) * 0.26) solid transparent;
+}
+
+.tri-btn--left::before {
+  border-right: calc(var(--box) * 0.36) solid var(--ink);
+}
+.tri-btn--right::before {
+  border-left: calc(var(--box) * 0.36) solid var(--ink);
+}
+
+.tri-btn:hover {
+  background: #f0e0c1;
+}
+
+.tri-btn:active {
+  background: var(--ruby);
+  box-shadow:
+    0 0 0 3px rgba(139,39,48,0.6),
+    0 4px 0 rgba(26,19,13,0.5);
+}
+.tri-btn:active.tri-btn--left::before,
+.tri-btn:active.tri-btn--right::before {
+  border-color: #fdf6e7;
+}
+
+@media (max-width: 576px) {
+  .tri-btn {
+    --box: var(--ui-h-mobile);
+  }
+}
+
+
+/* =========================
+   AUDIO (icon “reliquary”)
+   ========================= */
+
+.audio-box {
+  width: 100%;
+}
+
+.audio-frame {
+  width: 100%;
+  border: var(--ui-border) solid var(--ink);
+  border-radius: 0;
+  overflow: hidden;
+
+  background:
+    linear-gradient(180deg,
+      #f7ecd7 0 50%,
+      #ead5b3 50% 100%
+    );
+  box-shadow:
+    0 0 0 4px rgba(201,154,59,0.35),
+    12px 12px 0 rgba(26,19,13,0.22);
+}
+
+.audio-frame:hover {
+  border-color: var(--deep-blue);
+}
+.audio-frame:focus-within {
+  border-color: var(--ruby);
+}
+
+.square-audio {
+  width: 100%;
+  display: block;
+  border-radius: 0 !important;
+}
+.square-audio::-webkit-media-controls-enclosure,
+.square-audio::-webkit-media-controls-panel {
+  border-radius: 0 !important;
+}
+
+
+/* =========================
+   CONTROLS BAR
+   ========================= */
+
+.controlsBar {
+  display: grid;
+  grid-template-columns: var(--ui-h) minmax(0, 1fr) var(--ui-h);
+  gap: var(--ui-gap);
+  align-items: center;
+  width: 100%;
+
+  margin-top: 14px;
+  padding-top: 12px;
+
+  border-top: var(--ui-border) solid rgba(26,19,13,0.7);
+  position: relative;
+}
+
+/* small ornamental squares on the rule */
+.controlsBar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -3px;
+  width: 11px;
+  height: 11px;
+  background: var(--icon-gold);
+  box-shadow:
+    18px 0 0 0 var(--deep-blue),
+    36px 0 0 0 var(--ruby);
+  pointer-events: none;
+}
+
+.controlsBar > * {
+  min-width: 0;
+}
+
+.controlsBar .u-btn {
+  max-width: none;
+  width: 100%;
+  justify-self: stretch;
+}
+
+@media (max-width: 576px) {
+  .controlsBar {
+    grid-template-columns: var(--ui-h-mobile) minmax(0, 1fr) var(--ui-h-mobile);
+    padding-top: 10px;
+    margin-top: 12px;
+  }
+}
+
