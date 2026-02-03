@@ -665,3 +665,38 @@ body::before {
   }
 }
 
+
+/* =========================================================
+   MOBILE TIGHTENING — TAB GAPS (UNIFIED)
+   Narrower gaps between tabs, and between tabs & theme switch,
+   only on smartphone screens.
+   ========================================================= */
+
+@media (max-width: 576px) {
+  :root{
+    /* unify the “tool reserve” math while keeping theme visuals intact */
+    --tabs-tool-gap: 6px;
+  }
+
+  /* Narrower gaps between tab buttons */
+  .custom-tabs .nav-tabs,
+  .custom-tabs.nav-tabs{
+    gap: 6px !important;
+  }
+
+  /* Narrower gap between tabs row and the tool area (theme switch) */
+  .tabsWithTools .tabsTool{
+    margin-left: 0 !important;  /* avoid double-spacing on mobile */
+    padding-left: 6px !important;
+  }
+
+  /* Keep end-of-row reserve consistent with the new tool gap */
+  .custom-tabs .nav-tabs.tabsWithTools,
+  .custom-tabs.nav-tabs.tabsWithTools{
+    padding-right: calc(
+      var(--tabs-pad-x, 12px)
+      + min(var(--tabs-tool-w, 116px), var(--tabs-tool-max, 100vw))
+      + var(--tabs-tool-gap, 6px)
+    ) !important;
+  }
+}

@@ -464,6 +464,8 @@ body::after {
   align-items: center;
   justify-content: center;
 
+  position: relative;
+
   font-weight: 900;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -473,6 +475,8 @@ body::after {
   user-select: none;
 
   padding: 0 10px;
+  padding-left: 30px;
+
   box-shadow: none;
   outline: none;
 
@@ -484,6 +488,23 @@ body::after {
   /* keep label/contents from forcing overflow */
   min-width: 0;
   overflow: hidden;
+}
+
+/* Malevich: small suprematist square inside the switch */
+.themeSwitch::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translateY(-50%);
+  background: var(--sup-red);
+}
+
+.themeSwitch:hover::before,
+.themeSwitch:active::before {
+  background: var(--color-bg-main);
 }
 
 .themeSwitch:hover {
@@ -519,6 +540,7 @@ body::after {
     padding: 0 10px;
     font-size: 0.78rem;
     letter-spacing: 0.04em;
+    padding-left: 30px;
   }
 
   .themeSwitch__label {
@@ -769,3 +791,38 @@ body::after {
   }
 }
 
+
+/* =========================================================
+   MOBILE TIGHTENING — TAB GAPS (UNIFIED)
+   Narrower gaps between tabs, and between tabs & theme switch,
+   only on smartphone screens.
+   ========================================================= */
+
+@media (max-width: 576px) {
+  :root{
+    /* unify the “tool reserve” math while keeping theme visuals intact */
+    --tabs-tool-gap: 6px;
+  }
+
+  /* Narrower gaps between tab buttons */
+  .custom-tabs .nav-tabs,
+  .custom-tabs.nav-tabs{
+    gap: 6px !important;
+  }
+
+  /* Narrower gap between tabs row and the tool area (theme switch) */
+  .tabsWithTools .tabsTool{
+    margin-left: 0 !important;  /* avoid double-spacing on mobile */
+    padding-left: 6px !important;
+  }
+
+  /* Keep end-of-row reserve consistent with the new tool gap */
+  .custom-tabs .nav-tabs.tabsWithTools,
+  .custom-tabs.nav-tabs.tabsWithTools{
+    padding-right: calc(
+      var(--tabs-pad-x, 12px)
+      + min(var(--tabs-tool-w, 116px), var(--tabs-tool-max, 100vw))
+      + var(--tabs-tool-gap, 6px)
+    ) !important;
+  }
+}
