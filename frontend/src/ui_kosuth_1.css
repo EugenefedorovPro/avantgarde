@@ -1,0 +1,326 @@
+/* =========================================================
+   ui.css — KOSUTH VARIANT (DEFINITION PANELS)
+   Conceptual, didactic, text-as-object.
+   White gallery walls, black rules, monospaced taxonomy.
+   No translucent overlays. No images under text.
+   ========================================================= */
+
+
+/* =========================
+   TOKENS / BASE
+   ========================= */
+
+:root {
+  /* Kosuth: text is the medium → monospace */
+  --font-body: ui-monospace, SFMono-Regular, Menlo, Monaco, "Courier New", monospace;
+
+  /* Gallery palette */
+  --wall: #ffffff;
+  --ink: #111111;
+
+  /* Accents (sparingly used for state) */
+  --accent: #111111;      /* active black */
+  --hover:  #e6e6e6;      /* paper gray */
+
+  /* Scale */
+  --ui-border: 2px;       /* strict line */
+  --ui-gap: 12px;
+
+  --ui-h: 48px;
+  --ui-h-mobile: 42px;
+
+  --ui-pad: 18px;
+  --ui-pad-mobile: 14px;
+
+  --content-max: 820px;
+
+  /* Tabs bar (fixed) */
+  --tabs-pad-y: 8px;
+  --tabs-pad-x: 16px;
+  --tabs-h: var(--ui-h);
+  --tabs-rule-gap: 8px;
+  --tabs-bar-h: calc(
+    (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) + var(--ui-border)
+  );
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { min-height: 100%; overflow-x: hidden; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--wall);
+  font: 400 16px/1.6 var(--font-body);
+  letter-spacing: 0.01em;
+}
+
+/* No decorative wallpapers in Kosuth mode */
+body::before,
+body::after { content: none !important; }
+
+/* Content layer — keep close to the fixed “label” (tabs) */
+#root {
+  min-height: 100vh;
+  padding: calc(var(--tabs-bar-h) + 6px) 16px 28px; /* close start to tabs */
+}
+
+
+/* =========================
+   TABS — “LABELS FOR WORKS”
+   Fixed, opaque, like museum labels in a row.
+   ========================= */
+
+.custom-tabs .nav-tabs,
+.custom-tabs.nav-tabs {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+
+  margin: 0 !important;
+  padding: var(--tabs-pad-y) var(--tabs-pad-x) 0 !important;
+
+  display: flex;
+  align-items: center;
+  gap: var(--ui-gap);
+
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  background: var(--wall);      /* opaque */
+  border-bottom: 0 !important;
+
+  /* underline = assertion line */
+  box-shadow: 0 var(--ui-border) 0 0 var(--ink);
+  scrollbar-width: none;
+}
+.custom-tabs .nav-tabs::-webkit-scrollbar,
+.custom-tabs.nav-tabs::-webkit-scrollbar { display: none; }
+
+/* additional bottom rule */
+.custom-tabs .nav-tabs::after,
+.custom-tabs.nav-tabs::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: var(--ui-border);
+  margin-top: var(--tabs-rule-gap);
+  background: var(--ink);
+  flex: 0 0 100%;
+}
+
+/* Each tab = a catalogue card */
+.custom-tabs .nav-tabs > .nav-item,
+.custom-tabs.nav-tabs > .nav-item { flex: 0 0 auto; }
+
+.custom-tabs .nav-link {
+  background: var(--wall);
+  color: var(--ink);
+  border: var(--ui-border) solid var(--ink) !important;
+  border-radius: 0 !important;
+
+  height: var(--tabs-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 14px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.custom-tabs .nav-link:not(.active):hover { background: var(--hover); }
+
+.custom-tabs .nav-link.active,
+.custom-tabs .nav-link.active:hover {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+}
+
+@media (max-width: 576px) {
+  :root {
+    --tabs-h: var(--ui-h-mobile);
+    --tabs-bar-h: calc(
+      (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) + var(--ui-border)
+    );
+  }
+}
+
+
+/* =========================
+   VERSE BOX — “DEFINITION PANEL”
+   A bordered panel with title line and body text.
+   ========================= */
+
+.verseBox {
+  width: min(100%, var(--content-max));
+  margin: clamp(6px, 2vh, 20px) auto 0; /* closer to tabs */
+  padding: var(--ui-pad);
+
+  background: var(--wall);
+  border: var(--ui-border) solid var(--ink);
+  border-radius: 0;
+
+  position: relative;
+}
+
+/* Top rule = title separator */
+.verseBox::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: var(--ui-border);
+  background: var(--ink);
+}
+
+/* No corner decorations; conceptual austerity */
+.verseBox::after { content: none; }
+
+.verseTitle {
+  margin: 0 0 8px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  /* emulate a dictionary headword */
+}
+
+.verseText {
+  line-height: 1.75;
+  word-wrap: break-word;
+}
+
+.verseTop   { margin-top: 6px; }
+.verseBottom{ margin-top: 12px; }
+
+
+/* =========================
+   BUTTONS — “INSTRUCTION PLAQUES”
+   ========================= */
+
+.u-btn {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+
+  background: var(--wall) !important;
+  color: var(--ink) !important;
+  border: var(--ui-border) solid var(--ink) !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+
+  width: 100%;
+  max-width: min(92vw, 900px);
+  height: var(--ui-h);
+  padding: 0 14px;
+}
+
+.u-btn:hover   { background: var(--hover) !important; }
+.u-btn:active  { background: var(--accent) !important; color: #fff !important; }
+
+.u-btn--wide   { max-width: min(92vw, 1040px); }
+.u-btn--square { width: var(--ui-h); max-width: var(--ui-h); padding: 0; }
+
+@media (max-width: 576px) {
+  .u-btn { height: var(--ui-h-mobile); }
+  .u-btn--square { width: var(--ui-h-mobile); max-width: var(--ui-h-mobile); }
+}
+
+
+/* =========================
+   TRIANGLE BUTTON — “DIRECTION MARK”
+   ========================= */
+
+.tri-btn {
+  --box: var(--ui-h);
+
+  width: var(--box);
+  height: var(--box);
+  border: var(--ui-border) solid var(--ink);
+  border-radius: 0;
+  background: var(--wall);
+  cursor: pointer;
+
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0;
+}
+
+.tri-btn::before {
+  content: "";
+  width: 0; height: 0;
+  border-top: calc(var(--box) * 0.26) solid transparent;
+  border-bottom: calc(var(--box) * 0.26) solid transparent;
+}
+.tri-btn--left::before  { border-right: calc(var(--box) * 0.36) solid var(--ink); }
+.tri-btn--right::before { border-left:  calc(var(--box) * 0.36) solid var(--ink); }
+
+.tri-btn:hover  { background: var(--hover); }
+.tri-btn:active { background: var(--accent); }
+.tri-btn:active.tri-btn--left::before,
+.tri-btn:active.tri-btn--right::before { border-color: #ffffff; }
+
+@media (max-width: 576px) {
+  .tri-btn { --box: var(--ui-h-mobile); }
+}
+
+
+/* =========================
+   AUDIO — “REFERENCE OBJECT”
+   ========================= */
+
+.audio-box { width: 100%; }
+
+.audio-frame {
+  width: 100%;
+  border: var(--ui-border) solid var(--ink);
+  border-radius: 0;
+  overflow: hidden;
+  background: var(--wall);
+}
+
+.audio-frame:hover        { background: var(--hover); }
+.audio-frame:focus-within { outline: var(--ui-border) solid var(--ink); outline-offset: -2px; }
+
+.square-audio { width: 100%; display: block; border-radius: 0 !important; }
+.square-audio::-webkit-media-controls-enclosure,
+.square-audio::-webkit-media-controls-panel { border-radius: 0 !important; }
+
+
+/* =========================
+   CONTROLS BAR — “FOOTNOTE RULE”
+   ========================= */
+
+.controlsBar {
+  display: grid;
+  grid-template-columns: var(--ui-h) minmax(0,1fr) var(--ui-h);
+  gap: var(--ui-gap);
+  align-items: center;
+  width: 100%;
+
+  margin-top: 12px;
+  padding-top: 10px;
+
+  border-top: var(--ui-border) solid var(--ink);
+  position: relative;
+}
+
+.controlsBar > * { min-width: 0; }
+.controlsBar .u-btn { max-width: none; width: 100%; justify-self: stretch; }
+
+@media (max-width: 576px) {
+  .controlsBar {
+    grid-template-columns: var(--ui-h-mobile) minmax(0,1fr) var(--ui-h-mobile);
+    padding-top: 8px; margin-top: 10px;
+  }
+}

@@ -1,0 +1,356 @@
+/* =========================================================
+   ui.css — DONALD JUDD VARIANT (SERIAL MINIMAL MODULES)
+   Industrial clarity. Orthogonal boxes. No gradients.
+   Flat color, precise spacing, no overlays under text.
+   — Mobile tweak: tabs visually sit INSIDE the box borders.
+   ========================================================= */
+
+
+/* =========================
+   TOKENS / BASE
+   ========================= */
+
+:root {
+  /* Typeface: neutral, engineered */
+  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+
+  /* Gallery wall + ink */
+  --wall: #fcfcfc;
+  --ink: #111111;
+
+  /* Judd-like flat colors (cadmium red, ultramarine, aluminum, plywood) */
+  --cadmium-red: #d01a1a;
+  --ultramarine: #1f3ea3;
+  --aluminum: #c7c7c7;
+  --plywood: #c6a777;
+
+  /* Scale (strict, modular) */
+  --step: 8px;             /* base unit */
+  --ui-border: 2px;        /* crisp rule */
+  --ui-gap: calc(var(--step) * 1.5);
+
+  --ui-h: calc(var(--step) * 6 + var(--ui-border));
+  --ui-h-mobile: calc(var(--step) * 5 + var(--ui-border));
+
+  --ui-pad: calc(var(--step) * 2 + var(--ui-border));
+  --ui-pad-mobile: calc(var(--step) * 1.5 + var(--ui-border));
+
+  --content-max: 860px;
+
+  /* Tabs bar (fixed) */
+  --tabs-pad-y: calc(var(--step) * 1.5);
+  --tabs-pad-x: calc(var(--step) * 2);
+  --tabs-h: var(--ui-h);
+  --tabs-rule-gap: var(--step);
+  --tabs-bar-h: calc(
+    (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) + var(--ui-border)
+  );
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { min-height: 100%; overflow-x: hidden; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--wall);
+  color: var(--ink);
+  font: 400 16px/1.6 var(--font-body);
+}
+
+/* No decorative wallpapers in Judd variant */
+body::before,
+body::after { content: none !important; }
+
+/* Content starts close to the fixed tabs (modular) */
+#root {
+  min-height: 100vh;
+  padding: calc(var(--tabs-bar-h) + var(--step)) calc(var(--step) * 2) calc(var(--step) * 3);
+}
+
+
+/* =========================
+   TABS — SERIAL BAR
+   ========================= */
+
+.custom-tabs .nav-tabs,
+.custom-tabs.nav-tabs {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+
+  margin: 0 !important;
+  padding: var(--tabs-pad-y) var(--tabs-pad-x) 0 !important;
+
+  display: flex;
+  align-items: center;
+  gap: var(--ui-gap);
+
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  background: var(--wall);                 /* opaque, flat */
+  border-bottom: 0 !important;
+  box-shadow: 0 var(--ui-border) 0 0 var(--ink);  /* single industrial rule */
+  scrollbar-width: none;
+}
+.custom-tabs .nav-tabs::-webkit-scrollbar,
+.custom-tabs.nav-tabs::-webkit-scrollbar { display: none; }
+
+.custom-tabs .nav-tabs::after,
+.custom-tabs.nav-tabs::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: var(--ui-border);
+  margin-top: var(--tabs-rule-gap);
+  background: var(--ink);
+  flex: 0 0 100%;
+}
+
+.custom-tabs .nav-tabs > .nav-item,
+.custom-tabs.nav-tabs > .nav-item { flex: 0 0 auto; }
+
+/* Each tab = a module (identical spec, serial) */
+.custom-tabs .nav-link {
+  background: #ffffff;
+  color: var(--ink);
+  border: var(--ui-border) solid var(--ink) !important;
+  border-radius: 0 !important;
+
+  height: var(--tabs-h);
+  min-width: calc(var(--step) * 14);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 calc(var(--step) * 2);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.custom-tabs .nav-link:not(.active):hover { background: var(--aluminum); }
+
+.custom-tabs .nav-link.active,
+.custom-tabs .nav-link.active:hover {
+  background: var(--cadmium-red) !important;
+  color: #ffffff !important;
+}
+
+
+/* === MOBILE OVERRIDE: keep the tabs visually INSIDE the box borders === */
+@media (max-width: 576px) {
+  :root {
+    --tabs-h: var(--ui-h-mobile);
+    --tabs-bar-h: calc(
+      (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) + var(--ui-border)
+    );
+  }
+
+  /* Center the fixed strip and give it left/right borders
+     identical to .verseBox so it “sits” inside the box on phone. */
+  .custom-tabs .nav-tabs,
+  .custom-tabs.nav-tabs {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: var(--content-max);
+    box-sizing: border-box;
+
+    /* side borders to match the box */
+    border-left: var(--ui-border) solid var(--ink) !important;
+    border-right: var(--ui-border) solid var(--ink) !important;
+
+    /* match inner padding of the box */
+    padding-left: var(--ui-pad-mobile) !important;
+    padding-right: var(--ui-pad-mobile) !important;
+
+    gap: calc(var(--ui-gap) - 4px);
+  }
+
+  /* Tighter tabs so they don’t wrap; still scrollable horizontally */
+  .custom-tabs .nav-link {
+    min-width: auto;
+    padding: 0 calc(var(--step) * 1.25);
+    font-size: 0.92rem;
+    letter-spacing: 0.04em;
+  }
+}
+
+
+/* =========================
+   VERSE BOX — STACK MODULE
+   (hard box with structural left bar)
+   ========================= */
+
+.verseBox {
+  width: min(100%, var(--content-max));
+  margin: clamp(var(--step), 2vh, calc(var(--step) * 2)) auto 0; /* close to tabs */
+  padding: var(--ui-pad);
+
+  background: #ffffff;
+  border: var(--ui-border) solid var(--ink);
+  border-left: calc(var(--ui-border) * 6) solid var(--cadmium-red); /* Judd bar */
+  border-radius: 0;
+
+  position: relative;
+}
+
+/* No overlays; no ::before/::after paint over content */
+
+@media (max-width: 576px) {
+  .verseBox { padding: var(--ui-pad-mobile); }
+}
+
+.verseTitle {
+  margin: 0 0 calc(var(--step) * 1.25);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.verseText {
+  line-height: 1.75;
+  word-wrap: break-word;
+  letter-spacing: 0.01em;
+}
+
+.verseTop   { margin-top: var(--step); }
+.verseBottom{ margin-top: calc(var(--step) * 1.5); }
+
+
+/* =========================
+   BUTTONS — UNIT BOXES
+   ========================= */
+
+.u-btn {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+
+  background: #ffffff !important;
+  color: var(--ink) !important;
+  border: var(--ui-border) solid var(--ink) !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  width: 100%;
+  max-width: min(92vw, 980px);
+  height: var(--ui-h);
+  padding: 0 calc(var(--step) * 2);
+}
+
+.u-btn:hover  { background: var(--aluminum) !important; }
+.u-btn:active { background: var(--cadmium-red) !important; color: #fff !important; }
+
+.u-btn--wide   { max-width: min(92vw, 1120px); }
+.u-btn--square { width: var(--ui-h); max-width: var(--ui-h); padding: 0; }
+
+@media (max-width: 576px) {
+  .u-btn { height: var(--ui-h-mobile); }
+  .u-btn--square { width: var(--ui-h-mobile); max-width: var(--ui-h-mobile); }
+}
+
+
+/* =========================
+   TRIANGLE BUTTON — DIRECTION UNIT
+   (kept minimal; solid, no decorations)
+   ========================= */
+
+.tri-btn {
+  --box: var(--ui-h);
+  width: var(--box);
+  height: var(--box);
+
+  border: var(--ui-border) solid var(--ink);
+  border-radius: 0;
+  background: #ffffff;
+  cursor: pointer;
+
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0;
+}
+
+.tri-btn::before {
+  content: "";
+  width: 0; height: 0;
+  border-top: calc(var(--box) * 0.26) solid transparent;
+  border-bottom: calc(var(--box) * 0.26) solid transparent;
+}
+.tri-btn--left::before  { border-right: calc(var(--box) * 0.36) solid var(--ink); }
+.tri-btn--right::before { border-left:  calc(var(--box) * 0.36) solid var(--ink); }
+
+.tri-btn:hover  { background: var(--aluminum); }
+.tri-btn:active { background: var(--cadmium-red); }
+.tri-btn:active.tri-btn--left::before,
+.tri-btn:active.tri-btn--right::before { border-color: #ffffff; }
+
+@media (max-width: 576px) {
+  .tri-btn { --box: var(--ui-h-mobile); }
+}
+
+
+/* =========================
+   AUDIO — RACK MODULE
+   (stacked unit with aluminum face)
+   ========================= */
+
+.audio-box { width: 100%; }
+
+.audio-frame {
+  width: 100%;
+  border: var(--ui-border) solid var(--ink);
+  border-radius: 0;
+  overflow: hidden;
+  background: #ffffff;
+  outline: calc(var(--ui-border) * 6) solid var(--aluminum); /* aluminum frame */
+  outline-offset: calc(var(--ui-border) * -6);
+}
+
+.audio-frame:hover        { border-color: var(--ultramarine); }
+.audio-frame:focus-within { border-color: var(--cadmium-red); }
+
+.square-audio { width: 100%; display: block; border-radius: 0 !important; }
+.square-audio::-webkit-media-controls-enclosure,
+.square-audio::-webkit-media-controls-panel { border-radius: 0 !important; }
+
+
+/* =========================
+   CONTROLS BAR — SERIAL LINE
+   ========================= */
+
+.controlsBar {
+  display: grid;
+  grid-template-columns: var(--ui-h) minmax(0,1fr) var(--ui-h);
+  gap: var(--ui-gap);
+  align-items: center;
+  width: 100%;
+
+  margin-top: calc(var(--step) * 2);
+  padding-top: calc(var(--step) * 1.5);
+
+  border-top: var(--ui-border) solid var(--ink);
+}
+
+.controlsBar > * { min-width: 0; }
+.controlsBar .u-btn { max-width: none; width: 100%; justify-self: stretch; }
+
+@media (max-width: 576px) {
+  .controlsBar {
+    grid-template-columns: var(--ui-h-mobile) minmax(0,1fr) var(--ui-h-mobile);
+    padding-top: var(--step);
+    margin-top: var(--step);
+  }
+}
