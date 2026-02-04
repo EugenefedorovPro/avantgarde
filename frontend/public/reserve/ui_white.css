@@ -464,6 +464,8 @@ body::after {
   align-items: center;
   justify-content: center;
 
+  position: relative;
+
   font-weight: 900;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -473,6 +475,8 @@ body::after {
   user-select: none;
 
   padding: 0 10px;
+  padding-left: 30px;
+
   box-shadow: none;
   outline: none;
 
@@ -484,6 +488,23 @@ body::after {
   /* keep label/contents from forcing overflow */
   min-width: 0;
   overflow: hidden;
+}
+
+/* Malevich: small suprematist square inside the switch */
+.themeSwitch::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translateY(-50%);
+  background: var(--sup-red);
+}
+
+.themeSwitch:hover::before,
+.themeSwitch:active::before {
+  background: var(--color-bg-main);
 }
 
 .themeSwitch:hover {
@@ -519,6 +540,7 @@ body::after {
     padding: 0 10px;
     font-size: 0.78rem;
     letter-spacing: 0.04em;
+    padding-left: 30px;
   }
 
   .themeSwitch__label {
@@ -713,4 +735,185 @@ body::after {
     padding-top: 8px;
     margin-top: 10px;
   }
+}
+
+/* =========================================================
+   UNIFIED LAYOUT CONTRACT
+   Keeps each theme’s visuals intact; standardizes page padding
+   and VerseBox placement across themes.
+   Requested: VerseBox left edge ~15vw (not 25vw).
+   ========================================================= */
+
+:root{
+  /* Unified reading width (used by VerseBox) */
+  --content-max: 820px;
+
+  /* Unified page side padding */
+  --page-pad-x: 32px;
+  --page-pad-x-mobile: 14px;
+
+  /* VerseBox anchor */
+  --versebox-edge: 15vw;
+  --versebox-left: clamp(0px, calc(var(--versebox-edge) - var(--page-pad-x)), 240px);
+  --versebox-top: clamp(0px, 6vh, 56px);
+}
+
+@media (max-width: 576px){
+  :root{ --page-pad-x: var(--page-pad-x-mobile); }
+}
+
+/* Normalize root side padding without touching top/bottom reserves */
+#root{
+  padding-left: var(--page-pad-x);
+  padding-right: var(--page-pad-x);
+}
+
+/* VerseBox: unified width + consistent top spacing */
+.verseBox{
+  width: min(100%, var(--content-max));
+  margin-top: var(--versebox-top);
+}
+
+/* Desktop: anchor from the left (edge starts ~15vw) */
+@media (min-width: 992px){
+  .verseBox{
+    margin-left: var(--versebox-left);
+    margin-right: auto;
+  }
+}
+
+/* Phones: no horizontal offset */
+@media (max-width: 576px){
+  .verseBox{
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+  }
+}
+
+
+/* =========================================================
+   MOBILE TIGHTENING — TAB GAPS (UNIFIED)
+   Narrower gaps between tabs, and between tabs & theme switch,
+   only on smartphone screens.
+   ========================================================= */
+
+@media (max-width: 576px) {
+  :root{
+    /* unify the “tool reserve” math while keeping theme visuals intact */
+    --tabs-tool-gap: 6px;
+  }
+
+  /* Narrower gaps between tab buttons */
+  .custom-tabs .nav-tabs,
+  .custom-tabs.nav-tabs{
+    gap: 6px !important;
+  }
+
+  /* Narrower gap between tabs row and the tool area (theme switch) */
+  .tabsWithTools .tabsTool{
+    margin-left: 0 !important;  /* avoid double-spacing on mobile */
+    padding-left: 6px !important;
+  }
+
+  /* Keep end-of-row reserve consistent with the new tool gap */
+  .custom-tabs .nav-tabs.tabsWithTools,
+  .custom-tabs.nav-tabs.tabsWithTools{
+    padding-right: calc(
+      var(--tabs-pad-x, 12px)
+      + min(var(--tabs-tool-w, 116px), var(--tabs-tool-max, 100vw))
+      + var(--tabs-tool-gap, 6px)
+    ) !important;
+  }
+}
+
+/* =========================================================
+   FIXED READER FRAME — TABS + BOTTOM CONTROLS (UNIFIED)
+   Goal:
+   - Tabs already fixed at top.
+   - Fix bottom navigation + “This is not poetry” to viewport bottom
+     (wide → smartphone).
+   - Make the VerseBox the scroll container so the frame/background stays fixed.
+   Notes:
+   - Visual style (colors/textures) is NOT changed here — only layout behavior.
+   ========================================================= */
+
+:root{
+  /* iOS/Android safe areas */
+  --safe-top: max(env(safe-area-inset-top), 0px);
+  --safe-bottom: max(env(safe-area-inset-bottom), 0px);
+
+  /* Left anchor for fixed-position elements (true viewport coordinates) */
+  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge, 15vw), 240px);
+
+  /* Estimated rails height for the fixed tabs bar (safe, theme-agnostic) */
+  --tabs-rail-h: calc(var(--ui-h, 52px) + (var(--tabs-pad-y, 8px) * 2));
+  --tabs-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + (var(--tabs-pad-y, 8px) * 2));
+
+  /* Bottom controls bar occupies roughly a control height + rule/padding */
+  --controls-rail-h: calc(var(--ui-h, 52px) + 16px + var(--ui-border, 2px));
+  --controls-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + 14px + var(--ui-border, 2px));
+
+  /* Frame top offset: tabs rail + small breathing room */
+  --frame-top: calc(var(--tabs-rail-h) + 8px + var(--safe-top));
+  --frame-bottom-pad: calc(var(--controls-rail-h) + env(safe-area-inset-bottom));
+}
+
+@media (max-width: 576px){
+  :root{
+    --frame-left: var(--page-pad-x);
+    --frame-top: calc(var(--tabs-rail-h-mobile) + 6px);
+    --frame-bottom-pad: calc(var(--controls-rail-h-mobile) + env(safe-area-inset-bottom));
+  }
+}
+
+/* Lock the page: scrolling happens inside the VerseBox */
+html, body, #root{
+  height: 100%;
+}
+
+body{
+  overflow: hidden;
+}
+
+/* VerseBox becomes the fixed reading frame (scroll container) */
+.verseBox{
+  position: fixed !important;
+
+  top: var(--frame-top) !important;
+  bottom: var(--safe-bottom) !important;
+
+  left: var(--frame-left) !important;
+  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
+
+  margin: 0 !important;
+
+  /* scrolling content, fixed background/frame */
+  overflow: auto !important;
+  overscroll-behavior: contain;
+
+  /* keep last lines visible above the fixed bottom controls */
+  padding-bottom: calc(var(--ui-pad, 20px) + var(--frame-bottom-pad)) !important;
+
+  /* smooth iOS scroll */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Bottom controls: pinned to viewport bottom and aligned with the VerseBox */
+.controlsBar{
+  position: fixed !important;
+  bottom: var(--safe-bottom) !important;
+
+  left: var(--frame-left) !important;
+  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
+
+  margin: 0 !important;
+
+  z-index: 1050;
+
+  box-sizing: border-box;
+  max-width: 100vw;
+
+  /* make sure scrolled text never shows through */
+  background: inherit;
 }
