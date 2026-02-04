@@ -7,32 +7,11 @@
     <title>frontend</title>
     <link rel="icon" type="image/png" href="/square.png" />
 
-    <!-- Theme stylesheet -->
-    <link id="theme-css" rel="stylesheet" href="/ui.css" />
+    <!-- Default theme (safe fallback) -->
+    <link id="theme-css" rel="stylesheet" href="/ui_kosuth.css" />
 
-    <script>
-      (function () {
-        try {
-          var theme = localStorage.getItem("theme");
-          if (!theme) return;
-
-          var map = {
-            default: "/ui.css",
-            malevitch: "/ui_malevitch.css",
-            judd: "/ui_judd.css",
-            klee: "/ui_klee.css",
-            kosuth: "/ui_kosuth.css",
-            white: "/ui_white.css",
-          };
-
-          var href = map[theme];
-          if (!href) return;
-
-          var link = document.getElementById("theme-css");
-          if (link) link.href = href;
-        } catch (e) {}
-      })();
-    </script>
+    <!-- Tiny boot: reads localStorage + uses THEMES map -->
+    <script type="module" src="/src/theme/themeBoot.ts"></script>
   </head>
 
   <body>
