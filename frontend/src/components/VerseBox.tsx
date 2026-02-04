@@ -19,6 +19,7 @@ export const VerseBox = ({
   const hasTitle = Boolean(titleMd?.trim());
   const hasText = Boolean(textMd?.trim());
 
+
   return (
     <section className={className}>
       {hasTitle && (

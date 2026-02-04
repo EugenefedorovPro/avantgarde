@@ -12,6 +12,9 @@ import { ThemeSwitcher } from "../theme/ThemeSwitcher";
 type TabKey = "verse" | "hermeneutics";
 
 export const RandVersePage = () => {
+  const firstTitle = "слово";
+  const secondTitle = "тень";
+
   const navigate = useNavigate();
 
   const [data, setData] = useState<Record<string, string> | null>(null);
@@ -72,11 +75,11 @@ export const RandVersePage = () => {
       {/* Tabs bar + Theme switcher on the right */}
       <Nav variant="tabs" className="custom-tabs tabsWithTools">
         <Nav.Item>
-          <Nav.Link eventKey="verse">Verse</Nav.Link>
+          <Nav.Link eventKey="verse">{firstTitle}</Nav.Link>
         </Nav.Item>
 
         <Nav.Item>
-          <Nav.Link eventKey="hermeneutics">Hermeneutics</Nav.Link>
+          <Nav.Link eventKey="hermeneutics">{secondTitle}</Nav.Link>
         </Nav.Item>
 
         {/* Right-aligned tool area */}
