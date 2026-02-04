@@ -725,3 +725,32 @@ body{
   /* make sure scrolled text never shows through */
   background: inherit;
 }
+/* =========================================================
+   WIDE-SCREEN CONTROLS LAYOUT — VARIANT 3
+   Sticky bottom rail: controls stay reachable while reading.
+   ========================================================= */
+
+@media (min-width: 768px) {
+  .controlsBar {
+    position: sticky;
+    bottom: 0;
+    z-index: 30;
+
+    margin-top: 18px;
+    padding: 12px 0 14px;
+
+    background: rgba(255,255,255,0.96);
+    border-top: 0;
+
+    /* Subtle separation from content while keeping themes intact */
+    box-shadow: 0 -10px 0 rgba(0,0,0,0.04);
+  }
+
+  .controlsBar::before {
+    display: none;
+  }
+
+  .controlsBar .u-btn {
+    width: 100%;
+  }
+}

@@ -760,3 +760,101 @@ body{
   /* make sure scrolled text never shows through */
   background: inherit;
 }
+
+/* =========================================================
+   PATCH — Feb 2026 polish (layout + accessibility)
+   - Prevent overflows on mobile (tabs, switcher, tables, long text)
+   - Better keyboard focus
+   - Smoother horizontal scrolling for tabs
+   ========================================================= */
+
+:where(*, *::before, *::after) { box-sizing: border-box; }
+
+/* Never let the top UI row exceed viewport width */
+.custom-tabs { max-width: 100vw; }
+.custom-tabs .nav-tabs,
+.custom-tabs.nav-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+}
+.custom-tabs .nav-item { scroll-snap-align: start; }
+.custom-tabs .nav-tabs::-webkit-scrollbar,
+.custom-tabs.nav-tabs::-webkit-scrollbar { display: none; }
+
+/* Theme switcher: keep it inside the viewport even with long labels */
+.themeSwitch,
+.theme-switcher {
+  max-width: min(260px, calc(100vw - 24px));
+}
+.themeSwitch {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.themeSwitch__label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Content: keep long words, media and code blocks contained */
+.verseBox,
+.audio-box {
+  max-width: min(100%, var(--content-max, 820px));
+}
+.verseBox :where(p, li, h1, h2, h3, h4, h5, h6) {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.verseBox :where(img, video, canvas, svg) {
+  max-width: 100%;
+  height: auto;
+}
+.verseBox :where(pre) {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.verseBox :where(code) { word-break: break-word; }
+
+/* Tables: always scroll inside the box on narrow screens */
+.verseBox :where(table) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+}
+.verseBox :where(th, td) { vertical-align: top; }
+
+/* Controls: avoid horizontal overflow */
+.controlsBar { max-width: 100%; }
+.controlsBar :where(button, a, input, select) { max-width: 100%; }
+
+/* Accessible focus (keyboard) */
+:where(a, button, input, select, textarea, .nav-link, .themeSwitch):focus-visible {
+  outline: max(2px, var(--ui-border, 2px)) solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Ultra-narrow phones */
+@media (max-width: 360px) {
+  .controlsBar {
+    flex-wrap: wrap;
+    gap: var(--ui-gap, 10px);
+  }
+}
+
+/* Reduce motion when requested */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
