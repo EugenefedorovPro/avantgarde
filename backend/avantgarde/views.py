@@ -2,7 +2,7 @@ import ipdb
 import logging
 from itertools import cycle
 from rest_framework.views import APIView
-from avantgarde.models import Audio, RawVerse, Hermeneutics
+from avantgarde.models import Audio, RawVerse, Hermeneutics, HermRandVerse
 from avantgarde.serializers import VerseSerializer, HermSerializer, AudioSerializer
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
@@ -39,11 +39,16 @@ class RandVerseView(APIView):
     def get(self, request):
         rand_verse: dict[int, str] = RandVerse().rand_verse()
         calc = CalcCombinations()
-        combinations: int = calc.calc_combinations()
-        print(f"combinations = {combinations}")
-        if not rand_verse:
+        universe: str = calc.calc_times_longer_than_universe()
+        herm = HermRandVerse.objects.first()
+        if not rand_verse or not universe or not herm:
             return Response(status=HTTP_404_NOT_FOUND)
-        return Response(data=rand_verse, status=HTTP_200_OK)
+
+        data = {
+            "rand_verse": rand_verse,
+            "herm": herm.text.format(univ_placeholder = universe),
+        }
+        return Response(data=data, status=HTTP_200_OK)
 
 
 class VerseView(APIView):

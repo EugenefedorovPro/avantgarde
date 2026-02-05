@@ -1,6 +1,13 @@
 from django.db import models
 
 
+class HermRandVerse(models.Model):
+    text = models.TextField(default="")
+    html_name = models.SlugField(blank=True, null=True, unique=True)
+
+    def __str__(self):
+        return f"{self.text[: 30]} - {self.html_name}"
+
 
 class Reclamation(models.Model):
     text = models.TextField(default="")

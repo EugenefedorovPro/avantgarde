@@ -6,7 +6,12 @@ from .models import (
     Audio,
     Reclamation,
     AnswerToReclamation,
+    HermRandVerse,
 )
+
+@admin.register(HermRandVerse)
+class HermRandVerseAdmin(admin.ModelAdmin):
+    list_display = ["text", "html_name"]
 
 
 @admin.register(Reclamation)

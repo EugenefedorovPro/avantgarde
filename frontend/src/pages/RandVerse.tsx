@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 
 import { randVerse } from "../api/randVerse";
+import type { RandVerseInterface } from "../api/randVerse";
 import { VerseControls } from "../components/VerseControls";
 import { VerseBox } from "../components/VerseBox";
 
@@ -17,7 +18,7 @@ export const RandVersePage = () => {
 
   const navigate = useNavigate();
 
-  const [data, setData] = useState<Record<string, string> | null>(null);
+  const [data, setData] = useState<RandVerseInterface | null>(null);
   const [loading, setLoading] = useState(true);
   const [reload, setReload] = useState(true);
 
@@ -63,7 +64,7 @@ export const RandVersePage = () => {
   if (loading) return <div>loading...</div>;
   if (!data) return <div>no data</div>;
 
-  const newVerse = Object.values(data).join(" ");
+  const newVerse = Object.values(data.rand_verse).join(" ");
 
   return (
     <Tab.Container
@@ -100,7 +101,7 @@ export const RandVersePage = () => {
         </Tab.Pane>
 
         <Tab.Pane eventKey="hermeneutics">
-          <VerseBox childrenTop={Signature} childrenBottom={controls} />
+          <VerseBox textMd={data.herm} childrenTop={Signature} childrenBottom={controls} />
         </Tab.Pane>
       </Tab.Content>
     </Tab.Container>

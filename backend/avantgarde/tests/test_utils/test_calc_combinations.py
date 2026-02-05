@@ -5,8 +5,8 @@ from avantgarde.tests.create_test_verses import CreateTestVerses
 from avantgarde.models import RawVerse
 from django.urls import reverse
 
+NUMBER_WORDS_IN_TEXT = 60
 
-NUMBER_WORDS_IN_TEXT = 3
 
 class TestRandVerse(CreateTestVerses):
 
@@ -16,7 +16,6 @@ class TestRandVerse(CreateTestVerses):
             verse.text = verse.text + f" {' a' * (NUMBER_WORDS_IN_TEXT - 1)}"
             verse.save()
 
-
     def test_calc_combinations(self):
         self.make_longer_texts()
         actual_combinations = CalcCombinations().calc_combinations()
@@ -24,4 +23,9 @@ class TestRandVerse(CreateTestVerses):
         print(f"number_of_combinations = {actual_combinations}")
         self.assertEqual(actual_combinations, expected)
 
-
+    def test_calc_times_longer_than_universe(self):
+        self.make_longer_texts()
+        actual_billions = CalcCombinations().calc_times_longer_than_universe()
+        print(f"longer_than_universe= {actual_billions}")
+        expected: str = "1"
+        self.assertEqual(actual_billions, expected)
