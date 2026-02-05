@@ -1,6 +1,7 @@
 from django.db import models
 
 
+
 class Reclamation(models.Model):
     text = models.TextField(default="")
     html_name = models.SlugField(blank=True, null=True, unique=True)

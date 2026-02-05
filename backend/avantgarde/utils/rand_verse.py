@@ -2,12 +2,21 @@ import re
 import random
 from avantgarde.models import RawVerse
 
-BR_INTERVAL = 5
+BR_INTERVAL = 4
+
+class CalcCombinations:
+
+    def calc_combinations(self):
+        texts = RawVerse.objects.values_list("text", flat=True)
+        pass
 
 class RandVerse:
 
+    def clean_text(self, text: str) -> list[str]:
+        return re.findall(r"[^\W\d_]+", text, flags=re.UNICODE)
+
     def select_word(self, text: str) -> str:
-        words = re.findall(r"[^\W\d_]+", text, flags=re.UNICODE)
+        words = self.clean_text(text)
         word = random.choices(words)[0]
         word = word.lower()
         return word
@@ -15,7 +24,7 @@ class RandVerse:
     def add_br(self, order_word: dict[str, str]):
         br_order_word = {}
         for i, (order, word) in enumerate(order_word.items()):
-            if i > 0 and i % BR_INTERVAL == 0:
+            if i % BR_INTERVAL == 0:
                 br_order_word[order] = word + "  \n"
             else:
                 br_order_word[order] = word

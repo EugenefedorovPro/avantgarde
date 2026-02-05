@@ -92,7 +92,11 @@ export const RandVersePage = () => {
 
       <Tab.Content>
         <Tab.Pane eventKey="verse">
-          <VerseBox textMd={newVerse} childrenTop={Signature} childrenBottom={controls} />
+          <VerseBox
+            textMd={newVerse}
+            childrenTop={Signature}
+            childrenBottom={controls}
+          />
         </Tab.Pane>
 
         <Tab.Pane eventKey="hermeneutics">

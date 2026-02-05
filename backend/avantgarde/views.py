@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
 from django.shortcuts import get_object_or_404
 from avantgarde.utils.rand_verse import RandVerse
+from avantgarde.utils.calc_combinations import CalcCombinations
 
 logger = logging.getLogger(__file__)
 
@@ -37,6 +38,9 @@ def get_new_order(cur: int, next_to_return: bool) -> int | None:
 class RandVerseView(APIView):
     def get(self, request):
         rand_verse: dict[int, str] = RandVerse().rand_verse()
+        calc = CalcCombinations()
+        combinations: int = calc.calc_combinations()
+        print(f"combinations = {combinations}")
         if not rand_verse:
             return Response(status=HTTP_404_NOT_FOUND)
         return Response(data=rand_verse, status=HTTP_200_OK)
