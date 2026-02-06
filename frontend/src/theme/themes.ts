@@ -6,6 +6,9 @@ export const THEME_FILES = {
   malevitch: "ui_white.css",
   boychuk: "ui_boychuk.css",
   ekster: "ui_ekster.css",
+  bacon: "ui_bacon.css",
+  calder: "ui_calder.css",
+  gropius: "ui_gropius.css",
 } as const;
 
 export type ThemeName = keyof typeof THEME_FILES;
@@ -18,6 +21,9 @@ export const THEME_LABELS: Record<ThemeName, string> = {
   malevitch: "Malevich",
   boychuk: "Boychuk",
   ekster: "Ekster",
+  bacon: "Bacon",
+  calder: "Calder",
+  gropius: "Gropius",
 };
 
 export const THEME_BASE_PATH = "/";

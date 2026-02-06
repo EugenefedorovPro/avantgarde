@@ -10,7 +10,7 @@ class HermRandVerse(models.Model):
 
 
 class Reclamation(models.Model):
-    text = models.TextField(default="")
+    text = models.CharField(max_length=30, default="")
     html_name = models.SlugField(blank=True, null=True, unique=True)
 
     def __str__(self):

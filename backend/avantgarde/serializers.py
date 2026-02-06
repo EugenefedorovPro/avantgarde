@@ -1,6 +1,24 @@
 from django.db.models import fields
 from rest_framework.serializers import ModelSerializer
-from avantgarde.models import RawVerse, Hermeneutics, Audio
+from avantgarde.models import (
+    RawVerse,
+    Hermeneutics,
+    Audio,
+    Reclamation,
+    AnswerToReclamation,
+)
+
+
+class ReclamationSerializer(ModelSerializer):
+    class Meta:
+        model = Reclamation
+        fields = ["pk", "text", "html_name"]
+
+
+class AnserToReclamationSerializer(ModelSerializer):
+    class Meta:
+        model = AnswerToReclamation
+        fields = ["pk", "text", "repeat"]
 
 
 class VerseSerializer(ModelSerializer):

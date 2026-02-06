@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 
 type VerseBoxProps = {
   titleMd?: string;
-  textMd?: string;
+  textMd?: string | ReactNode;   // 👈 changed
   className?: string;
   childrenTop?: ReactNode;
   childrenBottom?: ReactNode;
@@ -16,9 +16,15 @@ export const VerseBox = ({
   childrenTop,
   childrenBottom,
 }: VerseBoxProps) => {
-  const hasTitle = Boolean(titleMd?.trim());
-  const hasText = Boolean(textMd?.trim());
+  const hasTitle = Boolean(titleMd && titleMd.trim());
 
+  // text exists if:
+  // - string with non-whitespace
+  // - OR any ReactNode
+  const hasText =
+    typeof textMd === "string"
+      ? Boolean(textMd.trim())
+      : textMd != null;
 
   return (
     <section className={className}>
@@ -30,7 +36,11 @@ export const VerseBox = ({
 
       {hasText && (
         <div className="verseText">
-          <ReactMarkdown>{textMd!}</ReactMarkdown>
+          {typeof textMd === "string" ? (
+            <ReactMarkdown>{textMd}</ReactMarkdown>
+          ) : (
+            textMd
+          )}
         </div>
       )}
 

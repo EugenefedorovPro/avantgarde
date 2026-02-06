@@ -1,0 +1,269 @@
+/* =========================================================
+   ui_calder_mobile.css — CALDER VARIANT (MOBILE FIRST)
+   Alexander Calder: thin “wires”, floating plates, playful balance.
+   Square corners. No overflow on phones.
+   Designed to work with React-Bootstrap Tabs + a VerseBox layout.
+   ========================================================= */
+
+/* =========================
+   TOKENS / BASE
+   ========================= */
+
+:root{
+  /* Typography */
+  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+
+  /* Gallery night + paper */
+  --bg: #0b0d10;
+  --paper: #f2f2f2;
+  --ink: #111214;
+
+  /* Calder primaries (used sparingly) */
+  --red:   #d91818;
+  --blue:  #1f5cff;
+  --yellow:#f2c400;
+
+  /* Wire + plate */
+  --wire: rgba(242,242,242,0.85);
+  --wire-weak: rgba(242,242,242,0.35);
+  --plate: rgba(242,242,242,0.06);
+
+  /* Layout */
+  --border: 2px;
+  --radius: 0px; /* keep square */
+  --ui-h: 44px;
+  --pad: 14px;
+
+  /* Box sizing */
+  --content-max: 720px;
+}
+
+/* Make sizing predictable everywhere */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body{
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--paper);
+  overflow-x: hidden; /* prevent tiny horizontal scroll */
+}
+
+/* =========================
+   APP SAFE AREA
+   ========================= */
+
+#root{
+  min-height: 100%;
+  padding: clamp(10px, 3vw, 18px);
+}
+
+/* =========================
+   VERSE BOX (your main card)
+   ========================= */
+
+.verseBox{
+  width: min(100%, var(--content-max));
+  margin: clamp(10px, 6vh, 42px) auto 18px;
+  padding: var(--pad);
+
+  background: linear-gradient(180deg, rgba(242,242,242,0.05), rgba(242,242,242,0.02));
+  border: var(--border) solid var(--wire);
+  border-radius: var(--radius);
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* Calder “wire” */
+.verseBox::before{
+  content:"";
+  position:absolute;
+  left: 14px;
+  top: 12px;
+  width: 2px;
+  height: calc(100% - 24px);
+  background: var(--wire-weak);
+}
+
+/* Floating plates */
+.verseBox::after{
+  content:"";
+  position:absolute;
+  inset: -40px -40px auto auto;
+  width: 220px;
+  height: 220px;
+  background:
+    radial-gradient(circle at 55% 45%, rgba(217,24,24,0.18), transparent 55%),
+    radial-gradient(circle at 38% 64%, rgba(31,92,255,0.16), transparent 55%),
+    radial-gradient(circle at 62% 72%, rgba(242,196,0,0.14), transparent 55%),
+    radial-gradient(circle at 50% 50%, var(--plate), transparent 70%);
+  transform: rotate(8deg);
+  pointer-events:none;
+}
+
+/* =========================
+   TITLE + TEXT
+   ========================= */
+
+.verseTitle{
+  margin: 0 0 10px 0;
+  padding-left: 10px;
+  border-left: 6px solid var(--wire);
+  font-size: clamp(18px, 4.6vw, 22px);
+  line-height: 1.2;
+}
+
+.verseText{
+  position: relative;
+  z-index: 1;
+  padding-left: 10px;
+  border-left: 2px solid var(--wire-weak);
+
+  font-size: clamp(15px, 4.1vw, 18px);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Markdown safety */
+.verseText p{ margin: 0 0 10px 0; }
+.verseText pre{
+  max-width: 100%;
+  overflow: auto;
+  padding: 10px;
+  border: 2px solid var(--wire-weak);
+  background: rgba(242,242,242,0.04);
+}
+
+/* Tables: never exceed box */
+.verseText table{
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+}
+.verseText th, .verseText td{
+  border: 2px solid var(--wire-weak);
+  padding: 8px;
+  white-space: nowrap;
+}
+
+/* =========================
+   TABS (React-Bootstrap)
+   ========================= */
+
+.custom-tabs,
+.nav-tabs{
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+
+  padding: 6px 4px 2px;
+  margin: 0 0 10px 0;
+  border-bottom: var(--border) solid var(--wire);
+}
+
+.nav-tabs .nav-link{ border-radius: 0 !important; }
+
+.nav-tabs .nav-link{
+  min-height: var(--ui-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 12px;
+  white-space: nowrap;
+
+  color: var(--paper) !important;
+  background: rgba(242,242,242,0.03) !important;
+  border: var(--border) solid var(--wire-weak) !important;
+}
+
+.nav-tabs .nav-link:hover{
+  background: linear-gradient(90deg, rgba(31,92,255,0.12), rgba(242,196,0,0.10)) !important;
+  border-color: var(--wire) !important;
+}
+
+.nav-tabs .nav-link.active{
+  background: linear-gradient(90deg, rgba(217,24,24,0.18), rgba(31,92,255,0.12)) !important;
+  border-color: var(--wire) !important;
+  box-shadow: 0 0 0 2px rgba(242,242,242,0.12) inset;
+}
+
+.tab-content{ max-width: 100%; }
+
+/* =========================
+   BUTTONS / CONTROLS
+   ========================= */
+
+.controlsRow{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.btn, button{ border-radius: 0 !important; }
+
+.calderBtn,
+.btn-primary,
+.btn-secondary,
+.btn-outline-light{
+  min-height: var(--ui-h);
+  padding: 0 14px;
+
+  background: rgba(242,242,242,0.03);
+  color: var(--paper);
+  border: var(--border) solid var(--wire);
+}
+
+.calderBtn:hover,
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-outline-light:hover{
+  background: rgba(242,196,0,0.10);
+}
+
+/* =========================
+   THEME SWITCHER (optional)
+   ========================= */
+
+.themeSwitcher{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.themeSwitcher select,
+.themeSwitcher button{
+  min-height: var(--ui-h);
+  border-radius: 0;
+  border: var(--border) solid var(--wire);
+  background: rgba(242,242,242,0.03);
+  color: var(--paper);
+}
+
+/* =========================
+   MOBILE TIGHTENING
+   ========================= */
+
+@media (max-width: 420px){
+  :root{ --pad: 12px; --ui-h: 42px; }
+  .verseTitle{ padding-left: 8px; border-left-width: 5px; }
+  .verseText{ padding-left: 8px; }
+}
+
+/* Optional: calmer on large screens */
+@media (min-width: 900px){
+  .verseBox{ margin-top: 56px; }
+}

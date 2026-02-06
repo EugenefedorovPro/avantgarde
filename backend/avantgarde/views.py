@@ -2,8 +2,22 @@ import ipdb
 import logging
 from itertools import cycle
 from rest_framework.views import APIView
-from avantgarde.models import Audio, RawVerse, Hermeneutics, HermRandVerse
-from avantgarde.serializers import VerseSerializer, HermSerializer, AudioSerializer
+from django.db.models import Count
+from avantgarde.models import (
+    Audio,
+    RawVerse,
+    Hermeneutics,
+    HermRandVerse,
+    Reclamation,
+    AnswerToReclamation,
+)
+from avantgarde.serializers import (
+    VerseSerializer,
+    HermSerializer,
+    AudioSerializer,
+    ReclamationSerializer,
+    AnserToReclamationSerializer,
+)
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
 from django.shortcuts import get_object_or_404
@@ -35,6 +49,29 @@ def get_new_order(cur: int, next_to_return: bool) -> int | None:
             return next(order_iter)
 
 
+class ReclamationView(APIView):
+    def get(self, request):
+        qs = Reclamation.objects.annotate(
+            answer_count=Count("answertoreclamation")
+        ).filter(answer_count__gt=0)
+
+        recl = qs.order_by("?").first()
+        if not recl:
+            return Response(status=HTTP_404_NOT_FOUND)
+        recl_ser = ReclamationSerializer(recl)
+
+        answer = recl.answertoreclamation_set.first()
+        if not answer:
+            return Response(status=HTTP_404_NOT_FOUND)
+        answer_ser = AnserToReclamationSerializer(answer)
+
+        data = {
+            "reclamation": recl_ser.data,
+            "answer": answer_ser.data,
+        }
+        return Response(data=data, status=HTTP_200_OK)
+
+
 class RandVerseView(APIView):
     def get(self, request):
         rand_verse: dict[int, str] = RandVerse().rand_verse()
@@ -46,7 +83,7 @@ class RandVerseView(APIView):
 
         data = {
             "rand_verse": rand_verse,
-            "herm": herm.text.format(univ_placeholder = universe),
+            "herm": herm.text.format(univ_placeholder=universe),
         }
         return Response(data=data, status=HTTP_200_OK)
 

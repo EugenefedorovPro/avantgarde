@@ -1,14 +1,27 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { useSearchParams } from "react-router-dom";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { useSearchParams, useNavigate } from "react-router-dom"; // ✅ add useNavigate
 import { Tab, Nav } from "react-bootstrap";
 
 import { verse } from "../api/verse";
-import type { VerseInterface, VerseType, AudioType, HermType } from "../api/verse";
+import { reclamationApi } from "../api/reclamation";
+import type { ReclamationInterface } from "../api/reclamation";
+import type {
+  VerseInterface,
+  VerseType,
+  AudioType,
+  HermType,
+} from "../api/verse";
 
 import { AudioBox } from "../components/AudioBox";
 import { VerseBox } from "../components/VerseBox";
 import { VerseControls } from "../components/VerseControls";
-
 import { ThemeSwitcher } from "../theme/ThemeSwitcher";
 
 type TabKey = "verse" | "hermeneutics" | "audio";
@@ -24,14 +37,13 @@ export const Verse = ({
   initialVerseOrder = "-1",
 }: VerseProps) => {
   const [sp] = useSearchParams();
+  const navigate = useNavigate(); // ✅
 
-  // Status from URL (one-time at mount)
   const [status, setStatus] = useState<VerseStatus>(() => {
     const s = sp.get("initialStatus") as VerseStatus | null;
     return s ?? initialStatus;
   });
 
-  // Verse order: URL -> prop -> localStorage (if prop is "-1") -> "0"
   const [verseOrder, setVerseOrder] = useState<string>(() => {
     const fromUrl = sp.get("initialVerseOrder");
     if (fromUrl) return fromUrl;
@@ -44,16 +56,50 @@ export const Verse = ({
   const [vrs, setVrs] = useState<VerseType | null>(null);
   const [herm, setHerm] = useState<HermType | null>(null);
   const [audio, setAudio] = useState<AudioType | null>(null);
+  const [recl, setRecl] = useState<ReclamationInterface | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabKey>("verse");
 
-  // Prevent a "second fetch" after we reset status back to "current"
   const hasLoadedOnceRef = useRef(false);
 
+  const onPrev = useCallback(() => setStatus("prev"), []);
+  const onNext = useCallback(() => setStatus("next"), []);
+
+  // ✅ this is the "top" button handler
+  const onTop = useCallback(() => {
+    // simplest:
+    navigate("/reclamation");
+
+    // If you want to pass the current reclamation in the URL:
+    // const id = recl?.reclamation?.id;
+    // navigate(id ? `/reclamation?id=${id}` : "/reclamation");
+  }, [navigate]);
+
+  const headerTop: ReactNode = useMemo(
+    () => (
+      <div className="verseMetaRow">
+        <div className="fst-italic mb-0">Евгений Проскуликов</div>
+      </div>
+    ),
+    []
+  );
+
+  const controls = useMemo(
+    () => (
+      <VerseControls
+        tagText={recl?.reclamation?.text}
+        prevText="сюда"
+        nextText="туда"
+        onTop={onTop} // ✅ pass it
+        onPrev={onPrev}
+        onNext={onNext}
+      />
+    ),
+    [recl, onTop, onPrev, onNext]
+  );
+
   useEffect(() => {
-    // If we already loaded once, and status is "current" (because we reset it),
-    // do NOT fetch again.
     if (hasLoadedOnceRef.current && status === "current") return;
 
     let cancelled = false;
@@ -61,7 +107,11 @@ export const Verse = ({
     const load = async () => {
       setLoading(true);
       try {
-        const data: VerseInterface | null = await verse(status, verseOrder);
+        const [data, reclData]: [
+          VerseInterface | null,
+          ReclamationInterface | null
+        ] = await Promise.all([verse(status, verseOrder), reclamationApi()]);
+
         if (cancelled) return;
 
         hasLoadedOnceRef.current = true;
@@ -71,16 +121,23 @@ export const Verse = ({
           setHerm(data.herm);
           setAudio(data.audio);
 
-          // If API helper updates localStorage("verseOrder"), sync it back.
-          const stored = localStorage.getItem("verseOrder");
-          if (stored) setVerseOrder(stored);
+          setActiveTab((prev) => {
+            if (prev === "hermeneutics" && !data.herm) return "verse";
+            if (prev === "audio" && !data.audio) return "verse";
+            return prev;
+          });
 
-          // If current tab no longer exists, fallback to Verse.
-          if (!data.herm && activeTab === "hermeneutics") setActiveTab("verse");
-          if (!data.audio && activeTab === "audio") setActiveTab("verse");
+          const stored = localStorage.getItem("verseOrder");
+          if (stored && stored !== verseOrder) setVerseOrder(stored);
+        } else {
+          setVrs(null);
+          setHerm(null);
+          setAudio(null);
+          setActiveTab("verse");
         }
 
-        // Reset command-like status back to "current" WITHOUT triggering another fetch
+        setRecl(reclData ?? null);
+
         if (status !== "current") setStatus("current");
       } catch (err) {
         if (!cancelled) console.error(err);
@@ -94,31 +151,7 @@ export const Verse = ({
     return () => {
       cancelled = true;
     };
-  }, [status, verseOrder, activeTab]);
-
-  // Controls (stable JSX, no re-creation noise)
-  const controls = useMemo(
-    () => (
-      <VerseControls
-        tagText="This is not poetry"
-        prevText="сюда"
-        nextText="туда"
-        onPrev={() => setStatus("prev")}
-        onNext={() => setStatus("next")}
-      />
-    ),
-    []
-  );
-
-  // Top inside VerseBox: ONLY signature now (ThemeSwitcher is global in tabs bar)
-  const headerTop: ReactNode = useMemo(
-    () => (
-      <div className="verseMetaRow">
-        <div className="fst-italic mb-0">Евгений Проскуликов</div>
-      </div>
-    ),
-    []
-  );
+  }, [status, verseOrder]);
 
   if (loading || !vrs) {
     return <div>No text, wait…</div>;
@@ -131,7 +164,6 @@ export const Verse = ({
       onSelect={(k) => k && setActiveTab(k as TabKey)}
       mountOnEnter
     >
-      {/* Tabs bar + Theme switcher on the right */}
       <Nav variant="tabs" className="custom-tabs tabsWithTools">
         <Nav.Item>
           <Nav.Link eventKey="verse">стих</Nav.Link>
@@ -149,7 +181,6 @@ export const Verse = ({
           </Nav.Item>
         )}
 
-        {/* Right-aligned tool area */}
         <Nav.Item className="ms-auto d-flex align-items-center">
           <div className="tabsTool">
             <ThemeSwitcher />

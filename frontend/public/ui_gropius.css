@@ -1,0 +1,377 @@
+/* =========================================================
+   ui_gropius.css — BAUHAUS / GROPIUS VARIANT (WORKSHOP GRID)
+   Form follows function. Clean geometry, primary accents,
+   strong rules, no rounded corners, no translucency under text.
+   Mobile-safe tabs + theme switcher. Tables never overflow.
+   ========================================================= */
+
+/* =========================
+   TOKENS / BASE
+   ========================= */
+
+:root{
+  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+
+  /* Bauhaus neutrals */
+  --bg: #f6f6f2;
+  --panel: #ffffff;
+  --ink: #111111;
+  --muted: #5b5b5b;
+
+  /* Bauhaus primaries */
+  --red:  #d62220;
+  --blue: #1f4ed8;
+  --yellow:#f2c400;
+
+  /* Rules / spacing */
+  --border: 2px;
+  --gap: 12px;
+  --pad: 18px;
+  --pad-m: 14px;
+
+  --ui-h: 48px;
+  --ui-h-m: 42px;
+
+  --content-max: 820px;
+
+  /* Focus */
+  --focus: 3px solid var(--blue);
+}
+
+/* Global reset-ish */
+*{ box-sizing: border-box; }
+html, body{ height: 100%; }
+body{
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* Prevent horizontal overflow on mobile */
+#root{
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+/* =========================
+   VERSE BOX (main card)
+   ========================= */
+
+.verseBox{
+  width: min(100%, var(--content-max));
+  margin: clamp(10px, 5vh, 56px) auto 0;
+  padding: var(--pad);
+
+  background: var(--panel);
+  border: var(--border) solid var(--ink);
+  border-radius: 0;
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* Bauhaus “workshop grid” frame accents (no text overlap) */
+.verseBox::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* thin internal frame line */
+  box-shadow:
+    inset 0 0 0 var(--border) var(--ink),
+    inset 0 0 0 calc(var(--border) + 10px) transparent;
+}
+
+/* Corner color chips */
+.verseBox::after{
+  content:"";
+  position:absolute;
+  top: 0;
+  right: 0;
+  width: 84px;
+  height: 84px;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg, var(--red) 0 33.33%, var(--yellow) 33.33% 66.66%, var(--blue) 66.66% 100%);
+  border-left: var(--border) solid var(--ink);
+  border-bottom: var(--border) solid var(--ink);
+}
+
+/* Inner content area spacing so the chip never covers text */
+.verseBox > *{
+  position: relative;
+  z-index: 1;
+}
+
+/* On small screens, reduce padding */
+@media (max-width: 480px){
+  .verseBox{
+    padding: var(--pad-m);
+  }
+  .verseBox::after{
+    width: 70px;
+    height: 70px;
+  }
+}
+
+/* =========================
+   TITLE / TEXT
+   ========================= */
+
+.verseTitle{
+  margin: 0 0 14px;
+  padding-right: 96px; /* keep clear of corner chip */
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.verseText{
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink);
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Markdown headings inside verse box (if you render them) */
+.verseBox h1, .verseBox h2, .verseBox h3{
+  margin: 14px 0 10px;
+  line-height: 1.2;
+}
+.verseBox p{
+  margin: 0 0 10px;
+}
+.verseBox p:last-child{
+  margin-bottom: 0;
+}
+
+/* =========================
+   TABS (react-bootstrap)
+   ========================= */
+
+.custom-tabs{
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  align-items: center;
+
+  margin: 0 0 14px;
+  padding: 0;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  max-width: 100%;
+}
+
+.custom-tabs::-webkit-scrollbar{ height: 6px; }
+.custom-tabs::-webkit-scrollbar-thumb{ background: #00000022; }
+
+.custom-tabs .nav-link{
+  height: var(--ui-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 14px;
+  border: var(--border) solid var(--ink);
+  border-radius: 0;
+
+  background: var(--panel);
+  color: var(--ink);
+
+  font-weight: 700;
+  letter-spacing: 0.2px;
+
+  white-space: nowrap;
+}
+
+.custom-tabs .nav-link:hover{
+  background: var(--yellow);
+}
+.custom-tabs .nav-link.active{
+  background: var(--red);
+  color: #ffffff;
+  border-color: var(--ink);
+}
+.custom-tabs .nav-link:focus-visible{
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px){
+  .custom-tabs .nav-link{
+    height: var(--ui-h-m);
+    padding: 0 12px;
+    font-weight: 700;
+  }
+}
+
+/* =========================
+   THEME SWITCHER AREA
+   ========================= */
+
+.themeSwitcherWrap{
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 12px;
+}
+
+button{
+  font-family: inherit;
+}
+
+.themeSwitcherWrap button,
+.theme-switcher button,
+.themeSwitcher button{
+  height: var(--ui-h);
+  padding: 0 14px;
+  border: var(--border) solid var(--ink);
+  border-radius: 0;
+  background: var(--panel);
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.themeSwitcherWrap button:hover,
+.theme-switcher button:hover,
+.themeSwitcher button:hover{
+  background: var(--blue);
+  color: #ffffff;
+}
+
+.themeSwitcherWrap button:focus-visible,
+.theme-switcher button:focus-visible,
+.themeSwitcher button:focus-visible{
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px){
+  .themeSwitcherWrap button,
+  .theme-switcher button,
+  .themeSwitcher button{
+    height: var(--ui-h-m);
+    padding: 0 12px;
+  }
+}
+
+/* =========================
+   CONTROLS (bottom buttons)
+   ========================= */
+
+.controlsRow{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.controlBtn, .controlsRow button{
+  height: var(--ui-h);
+  padding: 0 14px;
+  border: var(--border) solid var(--ink);
+  border-radius: 0;
+  background: var(--panel);
+  color: var(--ink);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.controlBtn:hover, .controlsRow button:hover{
+  background: var(--yellow);
+}
+
+.controlBtn:active, .controlsRow button:active{
+  transform: translateY(1px);
+  background: var(--red);
+  color: #fff;
+}
+
+.controlBtn:focus-visible, .controlsRow button:focus-visible{
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px){
+  .controlBtn, .controlsRow button{
+    height: var(--ui-h-m);
+    padding: 0 12px;
+  }
+}
+
+/* =========================
+   TABLES (never overflow box)
+   ========================= */
+
+.verseBox table{
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  overflow: hidden;
+}
+
+.verseBox th, .verseBox td{
+  border: var(--border) solid var(--ink);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.verseBox th{
+  background: #efefea;
+  font-weight: 800;
+}
+
+.tableWrap{
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: var(--border) solid var(--ink);
+}
+
+/* =========================
+   LINKS / CODE
+   ========================= */
+
+a{
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+a:hover{
+  color: var(--red);
+}
+
+code, pre{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+pre{
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 12px;
+  border: var(--border) solid var(--ink);
+  border-radius: 0;
+  background: #efefea;
+}
+
+/* =========================
+   OPTIONAL: UTILITY
+   ========================= */
+
+.caption{
+  color: var(--muted);
+  font-size: 13px;
+}

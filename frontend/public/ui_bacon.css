@@ -1,0 +1,371 @@
+/* =========================================================
+   ui_bacon.css — FRANCIS BACON VARIANT (CAGE & SMEAR)
+   Dark studio void + flesh tones + “cage” frames.
+   Mobile-first: tabs and switcher never overflow.
+   No rounded corners (square, strict).
+   ========================================================= */
+
+/* =========================
+   TOKENS / BASE
+   ========================= */
+
+:root {
+  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+  /* Bacon-ish palette: void, bruises, flesh, acid */
+  --void: #0b0a0a;
+  --char: #141010;
+  --ink:  #f2ede6;
+
+  --flesh-1: #d2a38a;
+  --flesh-2: #b77666;
+  --bruise-1: #5b2d3a;
+  --bruise-2: #2e1b3a;
+  --acid:    #b9ff2c;
+
+  --paper-dim: rgba(242, 237, 230, 0.12);
+  --paper-mid: rgba(242, 237, 230, 0.22);
+  --paper-hi:  rgba(242, 237, 230, 0.32);
+
+  --ui-border: 2px;
+  --ui-border-strong: 3px;
+  --ui-gap: 12px;
+
+  --ui-h: 48px;
+  --ui-h-mobile: 44px;
+
+  --pad: 18px;
+  --pad-m: 14px;
+
+  --content-max: 860px;
+
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: radial-gradient(1200px 900px at 20% 10%, #1a0f12 0%, var(--void) 55%, #070606 100%);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: var(--ink); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+#root {
+  min-height: 100%;
+  padding: 18px 12px 26px;
+}
+
+/* =========================
+   “STUDIO FLOOR” GRAIN
+   ========================= */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(242, 237, 230, 0.06) 0px,
+      rgba(242, 237, 230, 0.06) 1px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0) 6px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 10px,
+      rgba(242, 237, 230, 0.03) 11px
+    );
+}
+
+/* =========================
+   VERSE BOX (THE “CAGE”)
+   ========================= */
+
+.verseBox {
+  width: min(100%, var(--content-max));
+  margin: clamp(10px, 7vh, 56px) auto 0;
+  padding: var(--pad);
+
+  background:
+    radial-gradient(900px 420px at 50% 0%, rgba(183,118,102,0.18) 0%, rgba(0,0,0,0) 65%),
+    radial-gradient(700px 520px at 80% 90%, rgba(46,27,58,0.22) 0%, rgba(0,0,0,0) 60%),
+    linear-gradient(180deg, rgba(20,16,16,0.92) 0%, rgba(11,10,10,0.92) 100%);
+
+  border: var(--ui-border-strong) solid rgba(242,237,230,0.55);
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+
+  box-shadow:
+    0 18px 46px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(0,0,0,0.6) inset;
+}
+
+/* Cage lines: a skewed inner frame + vertical “bars” */
+.verseBox::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: var(--ui-border) solid rgba(242,237,230,0.38);
+  transform: skewX(-2.5deg);
+  transform-origin: center;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+
+.verseBox::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.25;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(242,237,230,0.18) 0px,
+      rgba(242,237,230,0.18) 1px,
+      rgba(0,0,0,0) 26px,
+      rgba(0,0,0,0) 28px
+    );
+  mix-blend-mode: overlay;
+}
+
+/* “Smear” patches */
+.verseBox .smear {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  opacity: 0.22;
+  background:
+    radial-gradient(360px 220px at 25% 35%, rgba(210,163,138,0.55) 0%, rgba(183,118,102,0.18) 45%, rgba(0,0,0,0) 70%),
+    radial-gradient(420px 260px at 70% 55%, rgba(91,45,58,0.48) 0%, rgba(46,27,58,0.20) 45%, rgba(0,0,0,0) 72%),
+    radial-gradient(260px 200px at 55% 85%, rgba(185,255,44,0.25) 0%, rgba(0,0,0,0) 60%);
+  filter: blur(1px);
+  mix-blend-mode: screen;
+}
+
+/* =========================
+   HEADERS / TEXT
+   ========================= */
+
+.verseTitle, .verseBox h1, .verseBox h2, .verseBox h3 {
+  margin: 0 0 10px 0;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.verseTitle {
+  font-size: clamp(18px, 2.3vw, 24px);
+  border-left: 6px solid rgba(185,255,44,0.75);
+  padding-left: 12px;
+}
+
+.verseText, .verseBox p, .verseBox li {
+  font-size: clamp(15px, 1.7vw, 17px);
+  color: rgba(242,237,230,0.92);
+}
+
+.verseBox code, .verseBox pre {
+  font-family: var(--font-mono);
+  background: rgba(242,237,230,0.08);
+  border: var(--ui-border) solid rgba(242,237,230,0.22);
+  padding: 2px 6px;
+  border-radius: 0;
+}
+
+/* =========================
+   TABS (React-Bootstrap)
+   ========================= */
+
+.custom-tabs,
+.nav.nav-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  padding: 6px 4px 2px;
+  border-bottom: var(--ui-border) solid rgba(242,237,230,0.35);
+  margin: 0 0 12px 0;
+}
+
+.custom-tabs::-webkit-scrollbar,
+.nav.nav-tabs::-webkit-scrollbar { height: 8px; }
+.custom-tabs::-webkit-scrollbar-thumb,
+.nav.nav-tabs::-webkit-scrollbar-thumb { background: rgba(242,237,230,0.22); }
+
+.nav-tabs .nav-link {
+  height: var(--ui-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+
+  padding: 0 14px;
+  border-radius: 0;
+  border: var(--ui-border) solid rgba(242,237,230,0.30);
+  background: rgba(242,237,230,0.06);
+  color: rgba(242,237,230,0.88);
+
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 650;
+  font-size: 12px;
+
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.nav-tabs .nav-link:hover {
+  background:
+    linear-gradient(180deg, rgba(210,163,138,0.14), rgba(0,0,0,0)),
+    rgba(242,237,230,0.06);
+  border-color: rgba(185,255,44,0.55);
+  transform: translateY(-1px);
+}
+
+.nav-tabs .nav-link.active {
+  background:
+    radial-gradient(180px 80px at 50% 0%, rgba(185,255,44,0.18) 0%, rgba(0,0,0,0) 70%),
+    rgba(242,237,230,0.10);
+  border-color: rgba(242,237,230,0.65);
+  color: var(--ink);
+}
+
+/* =========================
+   BUTTONS / CONTROLS
+   ========================= */
+
+button, .btn { border-radius: 0 !important; }
+
+.btn, .btn-primary, .btn-secondary, .btn-outline-primary, .btn-outline-secondary {
+  height: var(--ui-h);
+  padding: 0 14px;
+  border: var(--ui-border) solid rgba(242,237,230,0.45);
+  background: rgba(242,237,230,0.06);
+  color: rgba(242,237,230,0.92);
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.btn:hover {
+  background:
+    radial-gradient(220px 120px at 50% 0%, rgba(183,118,102,0.20) 0%, rgba(0,0,0,0) 70%),
+    rgba(242,237,230,0.08);
+  border-color: rgba(185,255,44,0.55);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0px);
+  background: rgba(242,237,230,0.10);
+  border-color: rgba(242,237,230,0.70);
+}
+
+/* Acid focus */
+:focus-visible {
+  outline: 3px solid rgba(185,255,44,0.65);
+  outline-offset: 2px;
+}
+
+/* =========================
+   THEME SWITCHER PLATE
+   ========================= */
+
+.themeSwitcher, .theme-switcher, .themeSwitch, .theme-switch {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 10px;
+  border: var(--ui-border) solid rgba(242,237,230,0.40);
+  background:
+    linear-gradient(180deg, rgba(242,237,230,0.10), rgba(242,237,230,0.04));
+  border-radius: 0;
+}
+
+.themeSwitcher select,
+.theme-switcher select {
+  height: var(--ui-h);
+  border-radius: 0;
+  border: var(--ui-border) solid rgba(242,237,230,0.35);
+  background: rgba(11,10,10,0.85);
+  color: rgba(242,237,230,0.92);
+  padding: 0 12px;
+}
+
+/* =========================
+   TABLES (never overflow on phone)
+   ========================= */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: var(--ui-border) solid rgba(242,237,230,0.25);
+  background: rgba(242,237,230,0.04);
+}
+
+th, td {
+  border: var(--ui-border) solid rgba(242,237,230,0.18);
+  padding: 10px 10px;
+  vertical-align: top;
+}
+
+.tableWrap, .table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* =========================
+   MOBILE TUNING
+   ========================= */
+
+@media (max-width: 520px) {
+  #root { padding: 14px 10px 22px; }
+
+  .verseBox { padding: var(--pad-m); border-width: var(--ui-border); }
+  .verseBox::before { inset: 10px; }
+
+  .nav-tabs .nav-link { height: var(--ui-h-mobile); padding: 0 12px; font-size: 11px; }
+  .btn, .btn-primary, .btn-secondary { height: var(--ui-h-mobile); padding: 0 12px; font-size: 12px; }
+
+  .verseTitle { border-left-width: 5px; padding-left: 10px; }
+}
+
+/* =========================
+   CONTROLS BAR
+   ========================= */
+
+.controlsBar, .controls, .bottomControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: var(--ui-border) solid rgba(242,237,230,0.25);
+}
+
+@media (max-width: 520px) {
+  .controlsBar, .controls, .bottomControls { justify-content: center; }
+}
