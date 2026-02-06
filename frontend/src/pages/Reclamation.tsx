@@ -12,14 +12,11 @@ import { VerseBox } from "../components/VerseBox";
 import { ThemeSwitcher } from "../theme/ThemeSwitcher";
 import { TypewriterRepeat } from "../components/TypewriterRepeat";
 
-type TabKey = "verse" | "hermeneutics";
-
 export const ReclamationPage = () => {
   const navigate = useNavigate();
 
   const [data, setData] = useState<ReclamationInterface | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<TabKey>("verse");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -58,19 +55,10 @@ export const ReclamationPage = () => {
   if (!data) return <div>no data</div>;
 
   return (
-    <Tab.Container
-      id="reclamation-tabs"
-      activeKey={activeTab}
-      onSelect={(k) => k && setActiveTab(k as TabKey)}
-      mountOnEnter
-    >
+    <Tab.Container id="reclamation-tabs" activeKey="shadow">
       <Nav variant="tabs" className="custom-tabs tabsWithTools">
         <Nav.Item>
-          <Nav.Link eventKey="verse">ответ</Nav.Link>
-        </Nav.Item>
-
-        <Nav.Item>
-          <Nav.Link eventKey="hermeneutics">тень</Nav.Link>
+          <Nav.Link eventKey="shadow">тень</Nav.Link>
         </Nav.Item>
 
         <Nav.Item className="ms-auto d-flex align-items-center">
@@ -81,28 +69,15 @@ export const ReclamationPage = () => {
       </Nav>
 
       <Tab.Content>
-        <Tab.Pane eventKey="verse">
+        <Tab.Pane eventKey="shadow">
           <VerseBox
             textMd={
               <TypewriterRepeat
                 markdown={data.answer.text}
                 repeat={data.answer.repeat}
-                msPerChar={65} // slower/smoother: try 80–110 if you want
+                msPerChar={65}
               />
             }
-            childrenTop={Signature}
-            childrenBottom={controls}
-          />
-        </Tab.Pane>
-
-        <Tab.Pane eventKey="hermeneutics">
-          <VerseBox
-            textMd={[
-              `reclamation: ${data.reclamation.text}`,
-              `html_name: ${data.reclamation.html_name}`,
-              `answer: ${data.answer.text}`,
-              `repeat: ${data.answer.repeat}`,
-            ].join("\n")}
             childrenTop={Signature}
             childrenBottom={controls}
           />
