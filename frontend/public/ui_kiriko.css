@@ -785,11 +785,18 @@ body{
 
   z-index: 1050;
 
+  padding: 12px 0 14px;
+  /* OPAQUE PLATE (prevents text showing through) */
+  background: var(--stucco) !important;
+  isolation: isolate;
+  border-top: var(--hair) solid rgba(0,0,0,.25);
+
+  opacity: 1;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
   box-sizing: border-box;
   max-width: 100vw;
-
-  /* make sure scrolled text never shows through */
-  background: inherit;
 }
 /* =========================================================
    WIDE-SCREEN CONTROLS LAYOUT — VARIANT 3

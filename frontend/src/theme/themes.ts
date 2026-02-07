@@ -20,6 +20,7 @@ export const THEME_LABELS: Record<ThemeName, string> = {
   ekster: "Ekster",
   calder: "Calder",
   gropius: "Gropius",
+
 };
 
 export const THEME_BASE_PATH = "/";

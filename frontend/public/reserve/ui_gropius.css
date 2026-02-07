@@ -409,18 +409,16 @@ body::before{
   z-index: 1050;
 
   padding: 12px 0 14px;
-
-  /* OPAQUE PLATE */
+/* ensures stacking context */
+  /* OPAQUE PLATE (prevents text showing through) */
   background: var(--wall) !important;
-  isolation: isolate;              /* ensures stacking context */
+  isolation: isolate;
   border-top: var(--ui-border) solid var(--black);
 
-  /* extra insurance against any transparency from ancestors */
   opacity: 1;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-
-  box-sizing:border-box;
+box-sizing:border-box;
   max-width: 100vw;
 }
 

@@ -478,9 +478,18 @@ body{ overflow: hidden; }
   margin: 0 !important;
   z-index: 1050;
 
+  padding: 12px 0 14px;
+  /* OPAQUE PLATE (prevents text showing through) */
+  background: #ffffff !important;
+  isolation: isolate;
+  border-top: var(--ui-border) solid var(--calder-ink);
+
+  opacity: 1;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
   box-sizing: border-box;
   max-width: 100vw;
-  background: inherit;
 }
 
 @media (max-width: 576px){

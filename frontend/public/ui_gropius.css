@@ -1,11 +1,13 @@
 /* =========================================================
-   ui_gropius.css — WALTER GROPIUS (BAUHAUS WORKSHOP, MORE BAUHAUS)
-   Focus: workshop rationalism + graphic typography + construction grid.
-   - Strict orthogonal rules, primary accents, black/white discipline
-   - “Workshop label” tabs
-   - VerseBox is scroll container; bottom controls pinned
-   - IMPORTANT FIX: bottom controls are fully opaque (no text showing through)
-   No rounded corners. No overlays under text.
+   ui_gropius.css — WALTER GROPIUS (BAUHAUS / WEIMAR WORKSHOP)
+   More Bauhaus-focused: primary blocks, strict black rules,
+   modular grid, signage typography, asymmetrical accents.
+   No rounded corners. No translucent overlays under text.
+   Layout contract preserved:
+   - Tabs fixed at top (single row, scrollable)
+   - VerseBox is the scroll container (fixed reader frame)
+   - Bottom controls pinned to viewport bottom
+   - Mobile: tabs visually sit INSIDE the box borders
    ========================================================= */
 
 /* =========================
@@ -13,25 +15,27 @@
    ========================= */
 
 :root{
+  /* Neutral sans (Bauhaus signage; use your system stack) */
   --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 
-  /* Bauhaus paper + ink */
-  --wall: #f7f7f5;
-  --ink:  #111111;
-
-  /* Workshop primaries */
+  /* Bauhaus workshop palette */
+  --wall: #f6f3ea;          /* warm paper / studio wall */
+  --ink:  #111111;          /* black rule */
   --black: #111111;
-  --red:   #d01818;
-  --blue:  #1f3ea3;
-  --yellow:#f2c200;
-  --grey:  #d6d6d6;
 
-  /* Bauhaus “signage” */
-  --type-tight: 0.06em;
-  --type-wide:  0.10em;
+  /* Primaries (sparingly, as structure) */
+  --red:    #d81f1f;
+  --blue:   #1f3ea3;
+  --yellow: #f2c200;
 
-  /* Scale */
-  --ui-border: 2px;
+  /* Neutrals */
+  --grey-1: #efefe9;        /* card fill */
+  --grey-2: #d8d6cf;        /* hover */
+  --steel:  #b7bcc5;        /* tool metal */
+
+  /* Modularity */
+  --u: 8px;                 /* Bauhaus unit */
+  --ui-border: 2px;         /* black rule thickness */
   --ui-gap: 12px;
 
   --ui-h: 52px;
@@ -46,125 +50,117 @@
   --tabs-h: var(--ui-h);
   --tabs-rule-gap: 10px;
 
-  /* Tool sizing */
-  --tabs-tool-w: 132px;
+  /* Tool sizing + hard safety so it can never exceed viewport */
+  --tabs-tool-w: 136px;
   --tabs-tool-gap: 10px;
   --tabs-safe-pad: 6px;
   --tabs-tool-max: calc(100vw - (var(--tabs-safe-pad) * 2));
 
-  /* Unified layout / frame */
+  /* Reading width */
   --content-max: 820px;
 
-  --page-pad-x: 32px;
-  --page-pad-x-mobile: 14px;
-
-  --versebox-edge: 15vw;
-  --versebox-left: clamp(0px, calc(var(--versebox-edge) - var(--page-pad-x)), 240px);
-
-  --safe-top: max(env(safe-area-inset-top), 0px);
-  --safe-bottom: max(env(safe-area-inset-bottom), 0px);
-
-  /* rails */
-  --tabs-rail-h: calc(var(--ui-h) + (var(--tabs-pad-y) * 2) + var(--ui-border));
-  --tabs-rail-h-mobile: calc(var(--ui-h-mobile) + (var(--tabs-pad-y) * 2) + var(--ui-border));
-
-  --controls-rail-h: calc(var(--ui-h) + 16px + var(--ui-border));
-  --controls-rail-h-mobile: calc(var(--ui-h-mobile) + 14px + var(--ui-border));
-
-  /* Frame left is true viewport coordinate */
-  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge), 240px);
-  --frame-top: calc(var(--tabs-rail-h) + 8px + var(--safe-top));
-  --frame-bottom-pad: calc(var(--controls-rail-h) + var(--safe-bottom));
-}
-
-@media (max-width: 576px){
-  :root{
-    --page-pad-x: var(--page-pad-x-mobile);
-    --frame-left: var(--page-pad-x);
-    --frame-top: calc(var(--tabs-rail-h-mobile) + 6px + var(--safe-top));
-    --frame-bottom-pad: calc(var(--controls-rail-h-mobile) + var(--safe-bottom));
-    --tabs-h: var(--ui-h-mobile);
-    --tabs-tool-gap: 6px;
-  }
+  /* Controls background */
+  --controls-bg: var(--wall);
 }
 
 *,
 *::before,
-*::after{ box-sizing:border-box; }
+*::after{ box-sizing: border-box; }
 
-html, body, #root{ height: 100%; }
+html, body{ min-height: 100%; overflow-x: hidden; }
+
 body{
-  margin:0;
+  margin: 0;
   background: var(--wall);
   color: var(--ink);
   font: 400 16px/1.65 var(--font-body);
-  overflow: hidden; /* scrolling is inside VerseBox */
+  letter-spacing: 0.01em;
 }
 
-/* Bauhaus workshop paper with a faint construction grid */
+/* =========================================================
+   BAUHAUS WORKSHOP BACKDROP (BEHIND CONTENT ONLY)
+   - construction grid (thin)
+   - a few primary geometry marks in margins
+   ========================================================= */
 body::before{
   content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:0;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  /* grid + faint drafting marks */
   background:
-    /* construction grid */
-    linear-gradient(0deg, rgba(17,17,17,0.05) 1px, transparent 1px) 0 0/24px 24px,
-    linear-gradient(90deg, rgba(17,17,17,0.05) 1px, transparent 1px) 0 0/24px 24px,
-    /* workshop “wash” */
-    radial-gradient(900px 600px at 18% 18%, rgba(242,194,0,0.10), transparent 62%),
-    radial-gradient(900px 700px at 82% 78%, rgba(31,62,163,0.10), transparent 62%);
-  opacity:0.95;
+    /* thin modular grid */
+    linear-gradient(0deg, rgba(17,17,17,0.06) 1px, transparent 1px) 0 0 / calc(var(--u)*3) calc(var(--u)*3),
+    linear-gradient(90deg, rgba(17,17,17,0.06) 1px, transparent 1px) 0 0 / calc(var(--u)*3) calc(var(--u)*3),
+
+    /* heavier "mullion" lines every 6 units */
+    linear-gradient(0deg, rgba(17,17,17,0.08) 2px, transparent 2px) 0 0 / calc(var(--u)*6) calc(var(--u)*6),
+    linear-gradient(90deg, rgba(17,17,17,0.08) 2px, transparent 2px) 0 0 / calc(var(--u)*6) calc(var(--u)*6),
+
+    /* margin primaries (kept away from the text panel visually) */
+    radial-gradient(circle at 12% 18%, rgba(216,31,31,0.18) 0 14px, transparent 15px),
+    radial-gradient(circle at 88% 22%, rgba(242,194,0,0.16) 0 18px, transparent 19px),
+    radial-gradient(circle at 86% 84%, rgba(31,62,163,0.16) 0 16px, transparent 17px),
+
+    /* diagonal construction hint (very subtle) */
+    linear-gradient(135deg, transparent 0 49.7%, rgba(17,17,17,0.045) 49.7% 50.3%, transparent 50.3% 100%);
+
+  opacity: 0.9;
 }
 
+/* Content layer sits above backdrop */
 #root{
-  position:relative;
-  z-index:1;
-  padding-left: var(--page-pad-x);
-  padding-right: var(--page-pad-x);
+  position: relative;
+  z-index: 1;
+
+  /* side padding normalized by the fixed-frame section below */
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* =========================
-   TABS — WORKSHOP LABELS
+   TABS — BAUHAUS LABEL STRIP
+   (fixed, scrollable, strict underline)
    ========================= */
 
 .custom-tabs .nav-tabs,
 .custom-tabs.nav-tabs{
-  position:fixed;
-  top:0; left:0; right:0;
-  z-index:1000;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
 
-  margin:0 !important;
+  margin: 0 !important;
   padding: var(--tabs-pad-y) var(--tabs-pad-x) 0 !important;
 
-  display:flex;
-  align-items:center;
+  display: flex;
+  align-items: center;
   gap: var(--ui-gap);
 
-  flex-wrap:nowrap;
-  overflow-x:auto;
-  overflow-y:hidden;
-  -webkit-overflow-scrolling:touch;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 
   background: var(--wall);
-  border-bottom:0 !important;
+  border-bottom: 0 !important;
 
-  /* strict line */
+  /* strong black rule (Gropius “workshop line”) */
   box-shadow: 0 var(--ui-border) 0 0 var(--black);
-  scrollbar-width:none;
+  scrollbar-width: none;
 
-  max-width:100vw;
+  max-width: 100vw;
   contain: layout paint;
 }
 .custom-tabs .nav-tabs::-webkit-scrollbar,
-.custom-tabs.nav-tabs::-webkit-scrollbar{ display:none; }
+.custom-tabs.nav-tabs::-webkit-scrollbar{ display: none; }
 
 .custom-tabs .nav-tabs::after,
 .custom-tabs.nav-tabs::after{
   content:"";
   display:block;
-  width:100%;
+  width: 100%;
   height: var(--ui-border);
   margin-top: var(--tabs-rule-gap);
   background: var(--black);
@@ -172,58 +168,65 @@ body::before{
 }
 
 .custom-tabs .nav-tabs > .nav-item,
-.custom-tabs.nav-tabs > .nav-item{ flex:0 0 auto; }
+.custom-tabs.nav-tabs > .nav-item{ flex: 0 0 auto; }
 
+/* Tab modules: white card, black rule, micro “registration mark” */
 .custom-tabs .nav-link,
 .custom-tabs .nav-link:visited{
   height: var(--tabs-h);
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  padding: 0 14px;
-  white-space:nowrap;
+  padding: 0 calc(var(--u)*2);
+  white-space: nowrap;
 
   background: #ffffff;
   color: var(--black) !important;
+  text-decoration: none;
 
   border: var(--ui-border) solid var(--black) !important;
-  border-radius:0 !important;
+  border-radius: 0 !important;
 
   font-weight: 800;
-  letter-spacing: var(--type-tight);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  text-decoration:none;
 
-  /* “construction corner” = printed label feel */
+  /* Bauhaus “registration” corner */
   box-shadow:
     inset 0 0 0 2px rgba(0,0,0,0.10),
-    inset -10px 0 0 0 rgba(242,194,0,0.10); /* subtle yellow edge */
+    inset calc(var(--ui-border)*-1) calc(var(--ui-border)*-1) 0 0 rgba(0,0,0,0.12);
 }
 
 .custom-tabs .nav-link:not(.active):hover,
 .custom-tabs .nav-link:not(.active):focus{
-  background: var(--grey);
+  background: var(--grey-2);
   color: var(--black) !important;
-  text-decoration:none;
+  text-decoration: none;
 }
 
+/* Active = blue block (Bauhaus primary emphasis) */
 .custom-tabs .nav-link.active,
 .custom-tabs .nav-link.active:hover,
 .custom-tabs .nav-link.active:focus{
   background: var(--blue) !important;
   color: #ffffff !important;
-  text-decoration:none;
+  text-decoration: none;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,0.20),
+    inset calc(var(--ui-border)*-1) calc(var(--ui-border)*-1) 0 0 rgba(0,0,0,0.10);
 }
 
-/* Mobile: tabs visually “inside” the VerseBox edges */
-@media (max-width:576px){
+/* Mobile: tabs visually sit INSIDE the box borders */
+@media (max-width: 576px){
+  :root{ --tabs-h: var(--ui-h-mobile); }
+
   .custom-tabs .nav-tabs,
   .custom-tabs.nav-tabs{
-    left:50%;
-    right:auto;
+    left: 50%;
+    right: auto;
     transform: translateX(-50%);
-    width:100%;
+    width: 100%;
     max-width: var(--content-max);
 
     border-left: var(--ui-border) solid var(--black) !important;
@@ -237,210 +240,192 @@ body::before{
 
   .custom-tabs .nav-link,
   .custom-tabs .nav-link:visited{
-    padding: 0 10px;
-    font-size:0.86rem;
-    letter-spacing: 0.05em;
+    padding: 0 calc(var(--u)*1.25);
+    font-size: 0.86rem;
+    letter-spacing: 0.06em;
   }
 }
 
 /* =========================
-   VERSE BOX — BAUHAUS PANEL
-   (fixed reading frame, scroll container)
+   VERSE BOX — “WORKSHOP PANEL”
+   - service spine at left (red)
+   - mullion cap (black) at top
+   - small primary marks in the margin
    ========================= */
 
 .verseBox{
-  background:#ffffff;
+  background: var(--grey-1);
+  color: var(--ink);
+
   border: var(--ui-border) solid var(--black);
   border-left: calc(var(--ui-border) * 6) solid var(--red);
-  border-radius:0;
+  border-radius: 0;
 
   padding: var(--ui-pad);
-  position: fixed !important;
-  top: var(--frame-top) !important;
-  bottom: var(--safe-bottom) !important;
+  position: relative;
 
-  left: var(--frame-left) !important;
-  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
-
-  margin: 0 !important;
-
-  overflow: auto !important;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-
-  /* keep last lines visible above fixed bottom controls */
-  padding-bottom: calc(var(--ui-pad) + var(--frame-bottom-pad)) !important;
-
-  /* “workshop stack” */
+  /* stacked, constructed object */
   box-shadow:
     0 0 0 10px rgba(242,194,0,0.16),
     14px 14px 0 rgba(0,0,0,0.06);
 }
 
-/* tiny bauhaus marks (top-right) */
+/* black mullion cap (structure, not decoration over text) */
 .verseBox::before{
   content:"";
-  position:absolute;
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%;
+  height: var(--ui-border);
+  background: var(--black);
+  pointer-events: none;
+}
+
+/* tiny Bauhaus marks (top-right margin area inside panel) */
+.verseBox::after{
+  content:"";
+  position: absolute;
   right: 12px; top: 12px;
   width: 10px; height: 10px;
   background: var(--yellow);
-  box-shadow: -16px 0 0 var(--red), 0 16px 0 var(--blue);
-  pointer-events:none;
+  box-shadow:
+    -16px 0 0 var(--red),
+    0 16px 0 var(--blue);
+  pointer-events: none;
 }
 
-@media (max-width:576px){ .verseBox{ padding: var(--ui-pad-mobile); } }
-
+/* Keep actual text on plain background (no overlays under text) */
 .verseTitle{
-  margin:0 0 10px;
+  margin: 0 0 10px;
   font-weight: 900;
-  letter-spacing: var(--type-wide);
+  letter-spacing: 0.09em;
   text-transform: uppercase;
 }
-
 .verseText{ line-height: 1.78; word-wrap: break-word; }
-
 .verseTop{ margin-top: 8px; }
 .verseBottom{ margin-top: 12px; }
 
+@media (max-width: 576px){
+  .verseBox{ padding: var(--ui-pad-mobile); }
+}
+
 /* =========================
-   BUTTONS — WORKSHOP MODULES
+   BUTTONS — “WORKSHOP MODULES”
    ========================= */
 
 .u-btn{
-  border-radius:0 !important;
-  box-shadow:none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 
-  background:#ffffff !important;
+  background: #ffffff !important;
   color: var(--black) !important;
   border: var(--ui-border) solid var(--black) !important;
 
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 
   height: var(--ui-h);
   width: 100%;
-  max-width: none;
+  max-width: min(92vw, 980px);
 
   font-weight: 800;
-  letter-spacing: var(--type-tight);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   padding: 0 14px;
 }
-.u-btn:hover{ background: var(--grey) !important; }
-.u-btn:active{ background: var(--red) !important; color:#fff !important; transform: translate(2px,2px); }
+.u-btn:hover{ background: var(--grey-2) !important; }
+.u-btn:active{ background: var(--red) !important; color: #ffffff !important; }
 
-.u-btn--wide{ max-width: none; }
-.u-btn--square{ width: var(--ui-h); max-width: var(--ui-h); padding:0; }
+.u-btn--wide{ max-width: min(92vw, 1120px); }
+.u-btn--square{ width: var(--ui-h); max-width: var(--ui-h); padding: 0; }
 
-@media (max-width:576px){
+@media (max-width: 576px){
   .u-btn{ height: var(--ui-h-mobile); }
   .u-btn--square{ width: var(--ui-h-mobile); max-width: var(--ui-h-mobile); }
 }
 
-/* Triangle arrows */
+/* Triangle arrows (strict signage) */
 .tri-btn{
   --box: var(--ui-h);
   width: var(--box);
   height: var(--box);
+
   border: var(--ui-border) solid var(--black);
-  border-radius:0;
-  background:#ffffff;
-  cursor:pointer;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:0;
+  border-radius: 0;
+  background: #ffffff;
+
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 .tri-btn::before{
   content:"";
-  width:0; height:0;
+  width: 0; height: 0;
   border-top: calc(var(--box) * 0.26) solid transparent;
   border-bottom: calc(var(--box) * 0.26) solid transparent;
 }
 .tri-btn--left::before{ border-right: calc(var(--box) * 0.36) solid var(--black); }
 .tri-btn--right::before{ border-left: calc(var(--box) * 0.36) solid var(--black); }
 
-.tri-btn:hover{ background: var(--grey); }
+.tri-btn:hover{ background: var(--grey-2); }
 .tri-btn:active{ background: var(--yellow); }
 .tri-btn:active.tri-btn--left::before,
-.tri-btn:active.tri-btn--right::before{ border-color: var(--black); transform: translate(1px,1px); }
+.tri-btn:active.tri-btn--right::before{ border-color: var(--black); }
 
-@media (max-width:576px){ .tri-btn{ --box: var(--ui-h-mobile); } }
+@media (max-width: 576px){
+  .tri-btn{ --box: var(--ui-h-mobile); }
+}
 
 /* =========================
-   AUDIO — PANEL OBJECT
+   AUDIO — “MACHINE PLATE”
    ========================= */
 
+.audio-box{ width: 100%; }
+
 .audio-frame{
-  width:100%;
+  width: 100%;
   border: var(--ui-border) solid var(--black);
-  border-radius:0;
-  overflow:hidden;
-  background:#ffffff;
-  outline: calc(var(--ui-border) * 6) solid var(--grey);
+  border-radius: 0;
+  overflow: hidden;
+
+  background: #ffffff;
+  outline: calc(var(--ui-border) * 6) solid var(--steel);
   outline-offset: calc(var(--ui-border) * -6);
 }
 .audio-frame:hover{ border-color: var(--blue); }
 .audio-frame:focus-within{ border-color: var(--red); }
 
-.square-audio{ width:100%; display:block; border-radius:0 !important; }
+.square-audio{
+  width: 100%;
+  display: block;
+  border-radius: 0 !important;
+}
 .square-audio::-webkit-media-controls-enclosure,
-.square-audio::-webkit-media-controls-panel{ border-radius:0 !important; }
+.square-audio::-webkit-media-controls-panel{ border-radius: 0 !important; }
 
 /* =========================
-   CONTROLS BAR — FOOT RAIL
-   IMPORTANT FIX: fully opaque (Kosuth-like), so text never shows through.
+   CONTROLS BAR — BOTTOM RAIL
    ========================= */
 
 .controlsBar{
-  position: fixed !important;
-  bottom: var(--safe-bottom) !important;
-
-  left: var(--frame-left) !important;
-  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
-
-  display:grid;
-  grid-template-columns: var(--ui-h) minmax(0,1fr) var(--ui-h);
+  display: grid;
+  grid-template-columns: var(--ui-h) minmax(0, 1fr) var(--ui-h);
   gap: var(--ui-gap);
-  align-items:center;
-
-  margin: 0 !important;
-  z-index: 1050;
+  align-items: center;
 
   padding: 12px 0 14px;
-
-  /* OPAQUE PLATE */
-  background: var(--wall) !important;
-  isolation: isolate;              /* ensures stacking context */
   border-top: var(--ui-border) solid var(--black);
-
-  /* extra insurance against any transparency from ancestors */
-  opacity: 1;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-
-  box-sizing:border-box;
-  max-width: 100vw;
+  background: var(--controls-bg);
 }
+.controlsBar > *{ min-width: 0; }
+.controlsBar .u-btn{ max-width: none; width: 100%; }
 
-/* Solid “plate” behind the whole bar, including gaps */
-.controlsBar::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:-1;
-  background: var(--wall);
-}
-
-/* Keep all children above the plate */
-.controlsBar > *{ position: relative; min-width:0; }
-.controlsBar .u-btn{ width:100%; }
-
-/* mobile sizing */
-@media (max-width:576px){
+@media (max-width: 576px){
   .controlsBar{
-    grid-template-columns: var(--ui-h-mobile) minmax(0,1fr) var(--ui-h-mobile);
+    grid-template-columns: var(--ui-h-mobile) minmax(0, 1fr) var(--ui-h-mobile);
     padding: 10px 0 12px;
   }
 }
@@ -449,28 +434,41 @@ body::before{
    TABS + TOOLS (Theme switcher)
    ========================= */
 
-.tabsWithTools{ display:flex; align-items:center; flex-wrap:nowrap; width:100%; }
+.tabsWithTools{
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+}
 
 .tabsWithTools .tabsTool{
-  flex:0 0 auto;
-  display:flex;
-  align-items:center;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+
   padding-left: var(--tabs-tool-gap);
+
   position: sticky;
-  right:0;
+  right: 0;
+
   background: var(--wall);
   max-width: var(--tabs-tool-max);
-  overflow:hidden;
+  overflow: hidden;
+
   padding-right: var(--tabs-safe-pad);
 }
 
+/* Give the sticky tool space so it doesn't cover the last tab */
 .custom-tabs .nav-tabs.tabsWithTools,
 .custom-tabs.nav-tabs.tabsWithTools{
   padding-right: calc(
-    var(--tabs-pad-x) + min(var(--tabs-tool-w), var(--tabs-tool-max)) + var(--tabs-tool-gap)
+    var(--tabs-pad-x)
+    + min(var(--tabs-tool-w), var(--tabs-tool-max))
+    + var(--tabs-tool-gap)
   ) !important;
 }
 
+/* Theme switch (Bauhaus: label + primary chip) */
 .themeSwitch,
 .theme-switcher,
 .tabsTool .theme-switcher,
@@ -479,62 +477,72 @@ body::before{
   max-width: 100%;
   height: var(--tabs-h);
 
-  border-radius:0;
+  border-radius: 0;
   border: var(--ui-border) solid var(--black);
+
   background: #ffffff;
   color: var(--black);
 
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: 10px;
 
-  font-weight: 800;
-  letter-spacing: var(--type-tight);
+  font: 800 0.82rem/1 var(--font-body);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 
-  cursor:pointer;
-  user-select:none;
+  cursor: pointer;
+  user-select: none;
 
   padding: 0 12px;
-  min-width:0;
-  overflow:hidden;
-  white-space:nowrap;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
 
   -webkit-tap-highlight-color: transparent;
+
+  /* tool feels like a plate */
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,0.10);
 }
+
 .themeSwitch::before,
 .theme-switcher::before{
   content:"";
-  width: 10px; height: 10px;
+  width: 10px;
+  height: 10px;
   background: var(--red);
   flex: 0 0 auto;
   box-shadow: 14px 0 0 var(--yellow);
 }
+
 .themeSwitch:hover,
 .theme-switcher:hover,
-.tabsTool button:hover{ background: var(--grey); }
+.tabsTool .theme-switcher:hover,
+.tabsTool button:hover{
+  background: var(--grey-2);
+}
 
 .themeSwitch:active,
 .theme-switcher:active,
+.tabsTool .theme-switcher:active,
 .tabsTool button:active{
-  background: var(--red);
-  color:#fff;
-  transform: translate(2px,2px);
+  background: var(--blue);
+  color: #ffffff;
+  transform: translate(2px, 2px);
 }
 
 .themeSwitch__label{
-  min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Mobile tightening: narrower gaps between tabs + tool area */
 @media (max-width: 576px){
-  .custom-tabs .nav-tabs,
-  .custom-tabs.nav-tabs{ gap: 6px !important; }
-
-  .tabsWithTools .tabsTool{
-    margin-left: 0 !important;
-    padding-left: 6px !important;
+  :root{
+    --tabs-tool-w: 118px;
+    --tabs-tool-gap: 6px;
   }
 
   .themeSwitch,
@@ -548,9 +556,100 @@ body::before{
   }
 }
 
-/* Optional: if you ever enable “sticky controls” on wide screens, keep it opaque */
-@media (min-width: 768px){
-  .controlsBar{
-    box-shadow: 0 -10px 0 rgba(0,0,0,0.04);
+/* =========================================================
+   UNIFIED LAYOUT CONTRACT + FIXED READER FRAME
+   - Tabs fixed at top
+   - Controls pinned to bottom
+   - VerseBox is the scroll container
+   - Desktop VerseBox starts ~15vw from left
+   - Mobile: no offset, tabs inside borders, tighter gaps
+   ========================================================= */
+
+:root{
+  --page-pad-x: 32px;
+  --page-pad-x-mobile: 14px;
+
+  --versebox-edge: 15vw;
+
+  /* safe areas */
+  --safe-top: max(env(safe-area-inset-top), 0px);
+  --safe-bottom: max(env(safe-area-inset-bottom), 0px);
+
+  /* rails */
+  --tabs-rail-h: calc(var(--ui-h, 52px) + (var(--tabs-pad-y, 8px) * 2) + var(--ui-border, 2px));
+  --tabs-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + (var(--tabs-pad-y, 8px) * 2) + var(--ui-border, 2px));
+
+  --controls-rail-h: calc(var(--ui-h, 52px) + 16px + var(--ui-border, 2px));
+  --controls-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + 14px + var(--ui-border, 2px));
+
+  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge), 240px);
+  --frame-top: calc(var(--tabs-rail-h) + 8px + var(--safe-top));
+  --frame-bottom-pad: calc(var(--controls-rail-h) + var(--safe-bottom));
+}
+
+@media (max-width: 576px){
+  :root{
+    --page-pad-x: var(--page-pad-x-mobile);
+    --frame-left: var(--page-pad-x);
+    --frame-top: calc(var(--tabs-rail-h-mobile) + 6px + var(--safe-top));
+    --frame-bottom-pad: calc(var(--controls-rail-h-mobile) + var(--safe-bottom));
+  }
+}
+
+/* lock the page; scrolling happens inside VerseBox */
+html, body, #root{ height: 100%; }
+body{ overflow: hidden; }
+
+/* normalize root side padding (top/bottom handled by fixed frame) */
+#root{
+  padding-left: var(--page-pad-x);
+  padding-right: var(--page-pad-x);
+}
+
+/* VerseBox becomes fixed reading frame (scroll container) */
+.verseBox{
+  position: fixed !important;
+
+  top: var(--frame-top) !important;
+  bottom: var(--safe-bottom) !important;
+
+  left: var(--frame-left) !important;
+  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
+
+  margin: 0 !important;
+
+  overflow: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+
+  /* keep last lines visible above fixed bottom controls */
+  padding-bottom: calc(var(--ui-pad, 20px) + var(--frame-bottom-pad)) !important;
+}
+
+/* Controls pinned to viewport bottom aligned with VerseBox */
+.controlsBar{
+  position: fixed !important;
+  bottom: var(--safe-bottom) !important;
+
+  left: var(--frame-left) !important;
+  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
+
+  margin: 0 !important;
+  z-index: 1050;
+
+  box-sizing: border-box;
+  max-width: 100vw;
+
+  background: var(--controls-bg, inherit);
+}
+
+/* Mobile tightening: narrower gaps between tabs + tool area */
+@media (max-width: 576px){
+  .custom-tabs .nav-tabs,
+  .custom-tabs.nav-tabs{ gap: 6px !important; }
+
+  .tabsWithTools .tabsTool{
+    margin-left: 0 !important;
+    padding-left: 6px !important;
   }
 }
