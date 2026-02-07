@@ -1,6 +1,6 @@
 import ipdb
 from django.test import TestCase
-from avantgarde.views import VerseView, get_new_order
+from avantgarde.views import VerseView, get_new_order_verse
 from avantgarde.models import RawVerse
 from django.contrib.auth.models import User
 from avantgarde.tests.create_test_verses import CreateTestVerses
@@ -44,23 +44,23 @@ class TestVerseView(CreateTestVerses):
 
     def test_new_order_no_order(self):
         RawVerse.objects.all().delete()
-        next_order = get_new_order(cur=1, next_to_return=True)
+        next_order = get_new_order_verse(cur=1, next_to_return=True)
         self.assertFalse(next_order)
 
     def test_new_order_next(self):
         last_number: int = max(RawVerse.objects.values_list("order", flat=True))
-        next_order = get_new_order(cur=last_number, next_to_return=True)
+        next_order = get_new_order_verse(cur=last_number, next_to_return=True)
         self.assertEqual(next_order, 0)
 
-        next_order = get_new_order(cur=3, next_to_return=True)
+        next_order = get_new_order_verse(cur=3, next_to_return=True)
         self.assertEqual(next_order, 4)
 
     def test_new_order_prev(self):
         orders = RawVerse.objects.values_list("order", flat=True)
         last_number: int = max(orders)
         first_number: int = min(orders)
-        prev_order = get_new_order(cur=first_number, next_to_return=False)
+        prev_order = get_new_order_verse(cur=first_number, next_to_return=False)
         self.assertEqual(prev_order, last_number)
 
-        next_order = get_new_order(cur=3, next_to_return=False)
+        next_order = get_new_order_verse(cur=3, next_to_return=False)
         self.assertEqual(next_order, 2)

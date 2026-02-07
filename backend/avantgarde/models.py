@@ -1,6 +1,11 @@
 from django.db import models
 
 
+class ContentOrder(models.Model):
+    content = models.CharField(max_length=50, null=True, blank=True)
+    order = models.PositiveIntegerField(unique=True, blank=True, null=True)
+
+
 class HermRandVerse(models.Model):
     text = models.TextField(default="")
     html_name = models.SlugField(blank=True, null=True, unique=True)

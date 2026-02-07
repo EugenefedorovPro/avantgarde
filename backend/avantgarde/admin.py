@@ -9,7 +9,13 @@ from .models import (
     Reclamation,
     AnswerToReclamation,
     HermRandVerse,
+    ContentOrder,
 )
+
+
+@admin.register(ContentOrder)
+class ContentOrderAdmin(admin.ModelAdmin):
+    list_display = ["pk", "content", "order"]
 
 
 @admin.register(HermRandVerse)
