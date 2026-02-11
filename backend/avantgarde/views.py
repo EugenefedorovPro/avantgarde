@@ -32,14 +32,18 @@ from enum import Enum
 
 logger = logging.getLogger(__file__)
 
+
 class New(Enum):
     CURRENT = "current"
     NEXT = "next"
     PREV = "prev"
 
 
+NO_CONTENT_MESSAGE = "no content available"
+
+
 class ContentOrderView(APIView):
-    NEW_VALUES = [New.CURRENT, New.NEXT, New.PREV]
+    NEW_VALUES = [New.CURRENT.value, New.NEXT.value, New.PREV.value]
 
     def cycle_order(self, passed_order: int, passed_new: New) -> int | None:
         """
@@ -96,7 +100,7 @@ class ContentOrderView(APIView):
         3) if new next -> return next
         4) if prev return  previous
         """
-        # returns the first content available or none if no content at all
+        # if bad request returns the first content item available
         if (
             not order
             or not new
@@ -105,22 +109,21 @@ class ContentOrderView(APIView):
             or not ContentOrder.objects.filter(order=order).exists()
         ):
             content_obj = ContentOrder.objects.order_by("order").first()
+
+            # returns none if no content at all
             if not content_obj:
-                data = {"details": "error in ContentOrderView"}
+                data = {"message": NO_CONTENT_MESSAGE}
                 return Response(data=data, status=HTTP_404_NOT_FOUND)
+
+            content_ser = ContentOrderSerializer(content_obj)
+            return Response(data=content_ser.data, status=HTTP_200_OK)
 
         # returns actual content
         else:
-            content_obj = ContentOrder.objects.filter(order=order).first()
-            if not content_obj:
-                data = {"details": "error in ContentOrderView"}
-                return Response(data=data, status=HTTP_404_NOT_FOUND)
-
-        content_ser = ContentOrderSerializer(content_obj)
-        data = {
-            "content": content_ser.data,
-        }
-        return Response(data=data, status=HTTP_200_OK)
+            new_order: int | None = self.cycle_order(int(order), New(new))
+            content_obj = ContentOrder.objects.filter(order=new_order).first()
+            content_ser = ContentOrderSerializer(content_obj)
+            return Response(data=content_ser.data, status=HTTP_200_OK)
 
 
 class ReclamationView(APIView):

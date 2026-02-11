@@ -22,7 +22,7 @@ class TestContentOrderView(CreateTestVerses):
 
     def test_cycle_order(self):
         self.populate_content_order()
-        print(ContentOrder.objects.values_list("order", flat=True))
+        print(ContentOrder.objects.values_list("order", "content"))
         cov = ContentOrderView()
 
         next_order = cov.cycle_order(passed_order=80, passed_new=New.NEXT)
@@ -43,18 +43,31 @@ class TestContentOrderView(CreateTestVerses):
         current_order = cov.cycle_order(20, New.CURRENT)
         self.assertEqual(current_order, 20)
 
-    def test_success(self):
+    def test_incorrect_request(self):
         self.populate_content_order()
-        url = "/content_order/10/current/"
+
+        # no 15 in order
+        url = "/content_order/15/next/"
         response = self.client.get(url)
-        expected = {"content": {"pk": 1, "order": 10, "content": "rand_verse"}}
-        self.assertEqual(response.data, expected)
+        self.assertEqual(response.data, {"pk": 1, "order": 10, "content": "rand_verse"})
 
+        # incorrect new arg: previous instead of prev
+        url = "/content_order/10/previous/"
+        response = self.client.get(url)
+        self.assertEqual(response.data, {"pk": 1, "order": 10, "content": "rand_verse"})
 
-# if (
-# not order
-# or not new
-# or not order.isdigit()
-# or new not in NEW_VALUES
-# or not ContentOrder.objects.filter(order=order).exists()
-# ):
+    def test_correct_request(self):
+        self.populate_content_order()
+
+        url = "/content_order/10/next/"
+        response = self.client.get(url)
+        print(f"response_data = {response.data}")
+        self.assertEqual(response.data, {"pk": 2, "order": 20, "content": "verse"})
+
+        url = "/content_order/100/next/"
+        response = self.client.get(url)
+        self.assertEqual(response.data, {"pk": 1, "order": 10, "content": "rand_verse"})
+
+        url = "/content_order/10/prev/"
+        response = self.client.get(url)
+        self.assertEqual(response.data, {"pk": 10, "order": 100, "content": "end"})
