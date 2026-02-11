@@ -1,44 +1,51 @@
+import logging
+from django.db import transaction
 from avantgarde.models import ContentOrder, RawVerse
 
 STEP_IN_NUMERATION = 10
 
 
 class PopulateConteneOrder:
-
-    def unify_verse_order(self) -> list[int] | None:
-        """
-        get all orders from RawVerses -> make them uniform: start from 10, step of numeration. e.g. 10,20,30
-        """
-        verses = RawVerse.objects.order_by("order").only("order")
-        if not verses:
-            return None
-
-        new_verse_order = []
+    def _change_order_value(self, verses: list[RawVerse], step: int) -> list[int]:
+        new_orders: list[int] = []
         for i, verse in enumerate(verses, start=1):
-            new_order = i * STEP_IN_NUMERATION
+            new_order = i * step
             verse.order = new_order
-            verse.save()
-            new_verse_order.append(new_order)
-        return new_verse_order
+            new_orders.append(new_order)
+        return new_orders
 
     def populate_content_order(self) -> None:
         """
-        entrypoint method
-        calls unify_verse_order
-        and populate ContentOrder with new orders of verses in the format:  dict[int, "verse"]
+        One atomic operation:
+        1) renumber RawVerse.order to 10,20,30,...
+           (with a temp renumber first to avoid UNIQUE collisions)
+        2) rebuild ContentOrder rows for content="verse"
         """
-        orders: list[int] | None = self.unify_verse_order()
-        if not orders:
+        verses = list(RawVerse.objects.order_by("order", "pk").only("pk", "order"))
+        if not verses:
+            logging.warning("No verses in db")
             return None
 
-        content_objs = []
-        for order in orders:
-            content_objs.append(
-                ContentOrder(
-                    order=order,
-                    content="verse",
-                )
-            )
-        ContentOrder.objects.bulk_create(content_objs)
-        return None
+        # max existing order, NULL-safe (does NOT treat real 0 as NULL)
+        max_order = max((v.order for v in verses if v.order is not None), default=0)
 
+        # temp step must be > max_order so that i*temp_step is always > any existing order
+        temp_step = max_order + 10
+
+        with transaction.atomic():
+            # Phase 1: move away from current values to avoid UNIQUE collisions
+            self._change_order_value(verses, temp_step)
+            RawVerse.objects.bulk_update(verses, ["order"])
+
+            # Phase 2: final desired numbering 10, 20, 30, ...
+            final_orders = self._change_order_value(verses, STEP_IN_NUMERATION)
+            RawVerse.objects.bulk_update(verses, ["order"])
+
+            # Rebuild ContentOrder for verses
+            ContentOrder.objects.filter(content="verse").delete()
+            ContentOrder.objects.bulk_create(
+                [ContentOrder(order=o, content="verse") for o in final_orders]
+            )
+
+        logging.info("Content order was populated with verse orders = %s", final_orders)
+        return None

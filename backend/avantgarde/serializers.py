@@ -6,8 +6,14 @@ from avantgarde.models import (
     Audio,
     Reclamation,
     AnswerToReclamation,
+    ContentOrder,
 )
 
+
+class ContentOrderSerializer(ModelSerializer):
+    class Meta:
+        model = ContentOrder
+        fields = ["pk", "order", "content"]
 
 class ReclamationSerializer(ModelSerializer):
     class Meta:

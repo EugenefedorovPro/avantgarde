@@ -18,6 +18,7 @@ from avantgarde.serializers import (
     AudioSerializer,
     ReclamationSerializer,
     AnserToReclamationSerializer,
+    ContentOrderSerializer,
 )
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
@@ -26,17 +27,99 @@ from avantgarde.utils import get_new_order_verse
 from avantgarde.utils.rand_verse import RandVerse
 from avantgarde.utils.calc_combinations import CalcCombinations
 from avantgarde.utils.get_new_order_verse import get_new_order_verse
+from avantgarde.utils.populate_content_order import PopulateConteneOrder
+from enum import Enum
 
 logger = logging.getLogger(__file__)
 
+class New(Enum):
+    CURRENT = "current"
+    NEXT = "next"
+    PREV = "prev"
+
 
 class ContentOrderView(APIView):
-    def get(request, current_order: str):
+    NEW_VALUES = [New.CURRENT, New.NEXT, New.PREV]
 
-        content_order = ContentOrder.objects.order_by("order").all()
-        if not content_order.exists():
-            return Response(status=HTTP_404_NOT_FOUND)
-        data = ""
+    def cycle_order(self, passed_order: int, passed_new: New) -> int | None:
+        """
+        return previous or next order against the passes order
+
+        """
+        orders: list[int] = ContentOrder.objects.order_by("order").values_list(
+            "order", flat=True
+        )
+        if not orders:
+            return None
+
+        orders_iter = cycle(orders)
+
+        hit_order: int | None = None
+        prev_order = max(orders)
+        current_order = None
+        for i, ord in enumerate(orders_iter):
+            if i != 0:
+                prev_order = current_order
+            current_order = ord
+
+            # passed_order hit the same number if orders
+            if ord == passed_order:
+                hit_order = ord
+                break
+
+            # to prevent from infinite cycle if passed_order is is not contained in orders
+            if i > len(orders):
+                break
+
+        # passed_order is is not contained in orders
+        if not hit_order:
+            return None
+
+        match passed_new:
+            case New.PREV:
+                return prev_order
+
+            case New.NEXT:
+                return next(orders_iter)
+
+            case New.CURRENT:
+                return passed_order
+
+            case _:
+                return None
+
+    def get(self, request, order: str, new: str):
+        """
+        1) no current_order, no new, if either of them cannot be converted to int,
+        no current_order in db -> return 0 from ContentOrder
+        2) if new = current -> return the same as current_order.
+        3) if new next -> return next
+        4) if prev return  previous
+        """
+        # returns the first content available or none if no content at all
+        if (
+            not order
+            or not new
+            or not order.isdigit()
+            or new not in self.NEW_VALUES
+            or not ContentOrder.objects.filter(order=order).exists()
+        ):
+            content_obj = ContentOrder.objects.order_by("order").first()
+            if not content_obj:
+                data = {"details": "error in ContentOrderView"}
+                return Response(data=data, status=HTTP_404_NOT_FOUND)
+
+        # returns actual content
+        else:
+            content_obj = ContentOrder.objects.filter(order=order).first()
+            if not content_obj:
+                data = {"details": "error in ContentOrderView"}
+                return Response(data=data, status=HTTP_404_NOT_FOUND)
+
+        content_ser = ContentOrderSerializer(content_obj)
+        data = {
+            "content": content_ser.data,
+        }
         return Response(data=data, status=HTTP_200_OK)
 
 

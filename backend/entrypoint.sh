@@ -4,6 +4,9 @@ set -e
 python manage.py makemigrations
 python manage.py migrate
 python manage.py collectstatic --noinput
+#
+# commands
+python manage.py populate_content_order
 
 
 ## for development only
