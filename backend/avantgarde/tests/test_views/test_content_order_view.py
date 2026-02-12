@@ -1,9 +1,8 @@
 import ipdb
-from avantgarde.utils import populate_content_order
+from unittest import skip
 from avantgarde.views import ContentOrderView, New
 from avantgarde.tests.create_test_verses import CreateTestVerses
 from avantgarde.models import ContentOrder
-from unittest import skip
 
 
 class TestContentOrderView(CreateTestVerses):
