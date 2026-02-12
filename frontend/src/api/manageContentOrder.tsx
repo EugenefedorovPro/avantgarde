@@ -1,27 +1,40 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { fetchContentOrder } from "./fetchContentOrder";
-import type { ContentOrderInterface } from "./fetchContentOrder";
-import { Verse } from "../pages/Verse";
 
 export const ManageContentOrder = () => {
-  const [data, setData] = useState<ContentOrderInterface | null>(null);
+  const navigate = useNavigate();
+  const [sp] = useSearchParams();
+
+  const order = sp.get("order") ?? "0";
+  const dir = sp.get("dir") ?? "current";
+  console.log(`order = ${order}, dir = ${dir}`)
 
   useEffect(() => {
-    const load = async () => {
+    const run = async () => {
       try {
-        const content = await fetchContentOrder("10", "next");
-        if (content) {
-          setData(content);
+        const content = await fetchContentOrder(order, dir);
+
+        if (!content) return;
+
+        // decision logic lives here
+        if (content.content === "verse") {
+          navigate(
+            `/verse?initialVerseOrder=${content.order}&initialStatus=current`,
+            { replace: true }
+          );
+        } else if (content.content === "reclamation") {
+          navigate("/reclamation", { replace: true });
+        } else {
+          navigate("/some-other-page", { replace: true });
         }
       } catch (e) {
         console.error(e);
       }
     };
 
-    load();
-  }, []);
+    run();
+  }, [navigate, order, dir]);
 
-  if (data) {
-    <Verse initialVerseOrder={data.order} initialStatus="current" />;
-  }
+  return null; // nothing rendered
 };

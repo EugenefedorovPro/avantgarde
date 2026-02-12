@@ -6,6 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { ManageContentOrder } from "../api/manageContentOrder";
 import { useSearchParams, useNavigate } from "react-router-dom"; // ✅ add useNavigate
 import { Tab, Nav } from "react-bootstrap";
 
@@ -63,8 +64,15 @@ export const Verse = ({
 
   const hasLoadedOnceRef = useRef(false);
 
-  const onPrev = useCallback(() => setStatus("prev"), []);
-  const onNext = useCallback(() => setStatus("next"), []);
+  // const onPrev = useCallback(() => setStatus("prev"), []);
+  const onPrev = () => {
+    navigate(`/manage?order=${verseOrder}&dir=prev`);
+  };
+
+  // const onNext = useCallback(() => setStatus("next"), []);
+  const onNext = () => {
+    navigate(`/manage?order=${verseOrder}&dir=next`);
+  };
 
   // ✅ this is the "top" button handler
   const onTop = useCallback(() => {
