@@ -26,7 +26,7 @@ export const ManageContentOrder = () => {
         } else if (content.content === "reclamation") {
           navigate("/reclamation", { replace: true });
         } else {
-          navigate("/some-other-page", { replace: true });
+          navigate("/rand_verse", { replace: true });
         }
       } catch (e) {
         console.error(e);
