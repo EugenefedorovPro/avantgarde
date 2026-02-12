@@ -6,9 +6,12 @@ export const ManageContentOrder = () => {
   const navigate = useNavigate();
   const [sp] = useSearchParams();
 
-  const order = sp.get("order") ?? "0";
+  let order = sp.get("order") ?? "0";
+  if (order == "0") {
+      order = localStorage.getItem("verseOrder") ?? "0";
+  }
+
   const dir = sp.get("dir") ?? "current";
-  console.log(`order = ${order}, dir = ${dir}`)
 
   useEffect(() => {
     const run = async () => {
@@ -16,6 +19,7 @@ export const ManageContentOrder = () => {
         const content = await fetchContentOrder(order, dir);
 
         if (!content) return;
+        localStorage.setItem("verseOrder", content.order);
 
         // decision logic lives here
         if (content.content === "verse") {

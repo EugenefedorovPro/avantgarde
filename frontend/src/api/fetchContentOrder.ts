@@ -12,6 +12,7 @@ export const fetchContentOrder = async (
   passedNew: string
 ): Promise<ContentOrderInterface> => {
   const url: string = urlContentOrder + passedOrder + "/" + passedNew + "/";
+  console.log(`url=${url}`);
   try {
     const { data } = await axios.get(url);
     return data;

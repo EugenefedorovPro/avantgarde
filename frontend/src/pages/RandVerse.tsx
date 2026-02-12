@@ -33,7 +33,7 @@ export const RandVersePage = () => {
         const randData = await randVerse();
         if (!cancelled) setData(randData);
       } catch (e) {
-        console.log(e);
+        console.error(e);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -56,8 +56,8 @@ export const RandVersePage = () => {
       prevText="сюда"
       nextText="туда"
       onTop={() => setReload((prev) => !prev)}
-      onPrev={() => navigate("/verse?initialStatus=prev")}
-      onNext={() => navigate("/verse?initialStatus=next")}
+      onPrev={() => navigate("/manage?dir=prev")}
+      onNext={() => navigate("/manage?dir=next")}
     />
   );
 
