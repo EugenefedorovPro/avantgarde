@@ -11,7 +11,7 @@ import { useSearchParams, useNavigate } from "react-router-dom"; // ✅ add useN
 import { Tab, Nav } from "react-bootstrap";
 
 import { verse } from "../api/verse";
-import { reclamationApi } from "../api/reclamation";
+import { reclamationRandomApi } from "../api/reclamation";
 import type { ReclamationInterface } from "../api/reclamation";
 import type {
   VerseInterface,
@@ -76,13 +76,9 @@ export const Verse = ({
 
   // ✅ this is the "top" button handler
   const onTop = useCallback(() => {
-    // simplest:
-    navigate("/reclamation");
-
-    // If you want to pass the current reclamation in the URL:
-    // const id = recl?.reclamation?.id;
-    // navigate(id ? `/reclamation?id=${id}` : "/reclamation");
-  }, [navigate]);
+    const name = recl?.reclamation?.html_name;
+    navigate(name ? `/reclamation/${name}` : "/reclamation");
+  }, [navigate, recl]);
 
   const headerTop: ReactNode = useMemo(
     () => (
@@ -118,7 +114,7 @@ export const Verse = ({
         const [data, reclData]: [
           VerseInterface | null,
           ReclamationInterface | null
-        ] = await Promise.all([verse(status, verseOrder), reclamationApi()]);
+        ] = await Promise.all([verse(status, verseOrder), reclamationRandomApi()]);
 
         if (cancelled) return;
 

@@ -1,10 +1,15 @@
 // src/pages/Reclamation.tsx
 import { Tab, Nav } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import type { ReactNode } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 
-import { reclamationApi } from "../api/reclamation";
+import { reclamationRandomApi, reclamationByNameApi } from "../api/reclamation";
 import type { ReclamationInterface } from "../api/reclamation";
 
 import { VerseControls } from "../components/VerseControls";
@@ -14,19 +19,32 @@ import { TypewriterRepeat } from "../components/TypewriterRepeat";
 
 export const ReclamationPage = () => {
   const navigate = useNavigate();
+  const { html_name } = useParams<{ html_name?: string }>(); // ✅ /reclamation/:html_name?
 
   const [data, setData] = useState<ReclamationInterface | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // ✅ reload logic:
+  // - if url has html_name -> fetch deterministic
+  // - else -> fetch random and then rewrite url to /reclamation/<html_name>
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const d = await reclamationApi();
+      const d = html_name
+        ? await reclamationByNameApi(html_name)
+        : await reclamationRandomApi();
+
       setData(d);
+
+      // ✅ if we came to /reclamation (no param), canonize the URL
+      const got = d?.reclamation?.html_name;
+      if (!html_name && got) {
+        navigate(`/reclamation/${got}`, { replace: true });
+      }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [html_name, navigate]);
 
   useEffect(() => {
     void load();
@@ -43,7 +61,7 @@ export const ReclamationPage = () => {
         tagText={data?.reclamation?.text ?? "…"}
         prevText="сюда"
         nextText="туда"
-        onTop={load}
+        onTop={load} // ✅ "top" button reloads (random if no param; deterministic if param)
         onPrev={() => navigate("/verse?initialStatus=prev")}
         onNext={() => navigate("/verse?initialStatus=next")}
       />

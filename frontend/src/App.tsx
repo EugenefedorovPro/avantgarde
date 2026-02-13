@@ -13,6 +13,7 @@ function App() {
         <Route path="/verse" element={<Verse />} />
         <Route path="/rand_verse" element={<RandVersePage />} />
         <Route path="/reclamation" element={<ReclamationPage />} />
+        <Route path="/reclamation/:html_name" element={<ReclamationPage />} />
         <Route path="*" element={<div>404</div>} />
       </Routes>
     </BrowserRouter>

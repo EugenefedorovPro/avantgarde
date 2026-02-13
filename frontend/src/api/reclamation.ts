@@ -21,7 +21,7 @@ export interface ReclamationInterface {
   reclamation: ReclamationType;
 }
 
-export const reclamationApi = async (): Promise<ReclamationInterface> => {
+export const reclamationRandomApi = async (): Promise<ReclamationInterface> => {
   try {
     const { data } = await axios.get(urlReclamation);
     return data;
@@ -29,4 +29,13 @@ export const reclamationApi = async (): Promise<ReclamationInterface> => {
     console.error(e);
     throw e;
   }
+};
+
+export const reclamationByNameApi = async (
+  htmlName: string
+): Promise<ReclamationInterface> => {
+  const { data } = await axios.get(
+    `${urlReclamation}${encodeURIComponent(htmlName)}/`
+  );
+  return data;
 };

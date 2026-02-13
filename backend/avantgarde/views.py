@@ -126,6 +126,26 @@ class ContentOrderView(APIView):
             return Response(data=content_ser.data, status=HTTP_200_OK)
 
 
+class ReclamationByNameView(APIView):
+    def get(self, request, html_name: str):
+        recl = get_object_or_404(
+            Reclamation.objects.annotate(
+                answer_count=Count("answertoreclamation")
+            ).filter(answer_count__gt=0),
+            html_name=html_name,
+        )
+
+        answer = recl.answertoreclamation_set.first()
+        if not answer:
+            return Response(status=HTTP_404_NOT_FOUND)
+
+        data = {
+            "reclamation": ReclamationSerializer(recl).data,
+            "answer": AnserToReclamationSerializer(answer).data,
+        }
+        return Response(data=data, status=HTTP_200_OK)
+
+
 class ReclamationView(APIView):
     def get(self, request):
         qs = Reclamation.objects.annotate(
