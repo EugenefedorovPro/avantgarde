@@ -35,7 +35,7 @@ class AnswerToReclamation(models.Model):
 
 
 class RawVerse(models.Model):
-    html_name = models.CharField(max_length=50, unique=True)
+    html_name = models.SlugField(unique=True)
     title = models.TextField(null=True, blank=True)
     text = models.TextField(max_length=50000, null=True)
     date_of_writing = models.DateField(blank=True, null=True)
@@ -53,7 +53,7 @@ class Hermeneutics(models.Model):
     raw_verses = models.ForeignKey(
         RawVerse, on_delete=models.SET_NULL, null=True, blank=True
     )
-    html_name = models.CharField(max_length=50, null=True, blank=True)
+    html_name = models.SlugField(null=True, blank=True, unique=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     text = models.TextField(max_length=65535)
     date_of_writing = models.DateField(blank=True, null=True)
@@ -70,7 +70,7 @@ class Audio(models.Model):
     raw_verses = models.ForeignKey(
         RawVerse, on_delete=models.SET_NULL, null=True, blank=True
     )
-    html_name = models.CharField(max_length=50, null=True, blank=True)
+    html_name = models.SlugField(null=True, blank=True, unique=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     audio = models.FileField(upload_to="", null=True, blank=True)
     date_of_writing = models.DateField(blank=True, null=True)
@@ -84,7 +84,7 @@ class Audio(models.Model):
 
 
 class EuPro(models.Model):
-    html_name = models.CharField(max_length=50, null=True, blank=True)
+    html_name = models.SlugField(null=True, blank=True, unique=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     text = models.TextField(max_length=65535)
     date_of_writing = models.DateField(blank=True, null=True)
