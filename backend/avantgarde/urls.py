@@ -13,7 +13,7 @@ urlpatterns = [
         ContentOrderView.as_view(),
         name="content_order",
     ),
-    path("verse/<str:order>/<str:new>/", VerseView.as_view(), name="verse"),
+    path("verse/<str:order>/", VerseView.as_view(), name="verse"),
     path("rand_verse/", RandVerseView.as_view(), name="rand_verse"),
     path("reclamation/", ReclamationView.as_view(), name="reclamation"),
     path(

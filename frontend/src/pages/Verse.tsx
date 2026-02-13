@@ -6,8 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { ManageContentOrder } from "../api/manageContentOrder";
-import { useSearchParams, useNavigate } from "react-router-dom"; // ✅ add useNavigate
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { Tab, Nav } from "react-bootstrap";
 
 import { verse } from "../api/verse";
@@ -26,33 +25,15 @@ import { VerseControls } from "../components/VerseControls";
 import { ThemeSwitcher } from "../theme/ThemeSwitcher";
 
 type TabKey = "verse" | "hermeneutics" | "audio";
-type VerseStatus = "current" | "next" | "prev";
 
 type VerseProps = {
-  initialStatus?: VerseStatus;
   initialVerseOrder?: string;
 };
 
-export const Verse = ({
-  initialStatus = "current",
-  initialVerseOrder = "-1",
-}: VerseProps) => {
-  const [sp] = useSearchParams();
-  const navigate = useNavigate(); // ✅
+export const Verse = ({ initialVerseOrder = "-1" }: VerseProps) => {
+  const navigate = useNavigate();
 
-  const [status, setStatus] = useState<VerseStatus>(() => {
-    const s = sp.get("initialStatus") as VerseStatus | null;
-    return s ?? initialStatus;
-  });
-
-  const [verseOrder, setVerseOrder] = useState<string>(() => {
-    const fromUrl = sp.get("initialVerseOrder");
-    if (fromUrl) return fromUrl;
-
-    if (initialVerseOrder !== "-1") return initialVerseOrder;
-
-    return localStorage.getItem("verseOrder") ?? "0";
-  });
+  const [verseOrder, setVerseOrder] = useState<string>(initialVerseOrder);
 
   const [vrs, setVrs] = useState<VerseType | null>(null);
   const [herm, setHerm] = useState<HermType | null>(null);
@@ -64,12 +45,10 @@ export const Verse = ({
 
   const hasLoadedOnceRef = useRef(false);
 
-  // const onPrev = useCallback(() => setStatus("prev"), []);
   const onPrev = () => {
     navigate(`/manage?order=${verseOrder}&dir=prev`);
   };
 
-  // const onNext = useCallback(() => setStatus("next"), []);
   const onNext = () => {
     navigate(`/manage?order=${verseOrder}&dir=next`);
   };
@@ -95,7 +74,7 @@ export const Verse = ({
         tagText={recl?.reclamation?.text}
         prevText="сюда"
         nextText="туда"
-        onTop={onTop} // ✅ pass it
+        onTop={onTop}
         onPrev={onPrev}
         onNext={onNext}
       />
@@ -104,8 +83,6 @@ export const Verse = ({
   );
 
   useEffect(() => {
-    if (hasLoadedOnceRef.current && status === "current") return;
-
     let cancelled = false;
 
     const load = async () => {
@@ -114,7 +91,7 @@ export const Verse = ({
         const [data, reclData]: [
           VerseInterface | null,
           ReclamationInterface | null
-        ] = await Promise.all([verse(status, verseOrder), reclamationRandomApi()]);
+        ] = await Promise.all([verse(verseOrder), reclamationRandomApi()]);
 
         if (cancelled) return;
 
@@ -141,8 +118,6 @@ export const Verse = ({
         }
 
         setRecl(reclData ?? null);
-
-        if (status !== "current") setStatus("current");
       } catch (err) {
         if (!cancelled) console.error(err);
       } finally {
@@ -155,7 +130,7 @@ export const Verse = ({
     return () => {
       cancelled = true;
     };
-  }, [status, verseOrder]);
+  }, [verseOrder]);
 
   if (loading || !vrs) {
     return <div>No text, wait…</div>;

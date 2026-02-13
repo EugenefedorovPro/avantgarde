@@ -8,7 +8,7 @@ export const ManageContentOrder = () => {
 
   let order = sp.get("order") ?? "0";
   if (order == "0") {
-      order = localStorage.getItem("verseOrder") ?? "0";
+    order = localStorage.getItem("verseOrder") ?? "0";
   }
 
   const dir = sp.get("dir") ?? "current";
@@ -24,7 +24,7 @@ export const ManageContentOrder = () => {
         // decision logic lives here
         if (content.content === "verse") {
           navigate(
-            `/verse?initialVerseOrder=${content.order}&initialStatus=current`,
+            `/verse?initialVerseOrder=${content.order}`,
             { replace: true }
           );
         } else if (content.content === "reclamation") {

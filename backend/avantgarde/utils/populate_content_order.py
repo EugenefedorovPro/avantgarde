@@ -7,6 +7,10 @@ STEP_IN_NUMERATION = 10
 
 class PopulateConteneOrder:
     def _change_order_value(self, verses: list[RawVerse], step: int) -> list[int]:
+        """
+        renumerates verses by changing order field but keeping their sequence intact:
+        e. g. 1,2,5 -> 10, 20, 30.
+        """
         new_orders: list[int] = []
         for i, verse in enumerate(verses, start=1):
             new_order = i * step

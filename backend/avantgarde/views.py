@@ -187,39 +187,23 @@ class RandVerseView(APIView):
 
 class VerseView(APIView):
 
-    def get(self, request, order, new):
-        current_verse = None
+    def get(self, request, order):
+        verse = None
         # secure if order cannot be converted to number
         try:
-            current_verse = RawVerse.objects.filter(order=order).first()
+            verse = RawVerse.objects.filter(order=order).first()
         except ValueError:
             pass
 
         # secure if the requested order is not available
-        if not current_verse:
-            current_verse = RawVerse.objects.order_by("order").first()
+        if not verse:
+            verse = RawVerse.objects.order_by("order").first()
 
         # secure if no verse in db at all
-        if not current_verse:
+        if not verse:
             # not found it not verses at all in db
             data = {"verse": None, "herm": None, "audio": None}
             return Response(data=data, status=HTTP_404_NOT_FOUND)
-
-        # _____________________ verse ________________________
-        if new == "current":
-            verse = current_verse
-        elif new == "next":
-            new_order = get_new_order_verse(
-                cur=current_verse.order, next_to_return=True
-            )
-            verse = get_object_or_404(RawVerse, order=new_order)
-        elif new == "prev":
-            new_order = get_new_order_verse(
-                cur=current_verse.order, next_to_return=False
-            )
-            verse = get_object_or_404(RawVerse, order=new_order)
-        else:
-            verse = current_verse
 
         verse_ser = VerseSerializer(verse)
         data = {"verse": verse_ser.data}

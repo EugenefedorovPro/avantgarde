@@ -31,20 +31,13 @@ export interface VerseInterface {
 }
 
 export const verse = async (
-  status: string = "current",
   verseOrder: string = "0"
 ): Promise<VerseInterface | null> => {
-  const url = urlVerse + `${verseOrder}/` + `${status}/`;
+  const url = urlVerse + `${verseOrder}/`;
   console.log(url);
 
   try {
     const { data } = await axios(url);
-
-    // set the current unique html_name of the verse
-    // for user to go back and forward across verses
-    localStorage.setItem("verseOrder", data.verse.order);
-    console.log(`new_verse_order = ${localStorage.getItem("verseOrder")}`);
-
     return data;
   } catch (e: any) {
     console.error("Error in verse.ts:");
