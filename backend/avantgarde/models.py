@@ -4,6 +4,7 @@ from django.db import models
 class ContentOrder(models.Model):
     content = models.CharField(max_length=50, null=True, blank=True)
     order = models.PositiveIntegerField(unique=True, blank=True, null=True)
+    html_name = models.SlugField(blank=True, null=True, unique=True)
 
 
 class HermRandVerse(models.Model):

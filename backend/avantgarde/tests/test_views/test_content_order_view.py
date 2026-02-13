@@ -3,6 +3,7 @@ from unittest import skip
 from avantgarde.views import ContentOrderView, New
 from avantgarde.tests.create_test_verses import CreateTestVerses
 from avantgarde.models import ContentOrder
+from unittest import skip
 
 
 class TestContentOrderView(CreateTestVerses):
@@ -15,6 +16,7 @@ class TestContentOrderView(CreateTestVerses):
                 ContentOrder(
                     order=i,
                     content=c_type,
+                    html_name=f"html_name_{i}",
                 )
             )
         ContentOrder.objects.bulk_create(order_objs)
@@ -48,12 +50,28 @@ class TestContentOrderView(CreateTestVerses):
         # no 15 in order
         url = "/content_order/15/next/"
         response = self.client.get(url)
-        self.assertEqual(response.data, {"pk": 1, "order": 10, "content": "rand_verse"})
+        self.assertEqual(
+            response.data,
+            {
+                "pk": 1,
+                "order": 10,
+                "content": "rand_verse",
+                "html_name": "html_name_10",
+            },
+        )
 
         # incorrect new arg: previous instead of prev
         url = "/content_order/10/previous/"
         response = self.client.get(url)
-        self.assertEqual(response.data, {"pk": 1, "order": 10, "content": "rand_verse"})
+        self.assertEqual(
+            response.data,
+            {
+                "pk": 1,
+                "order": 10,
+                "content": "rand_verse",
+                "html_name": "html_name_10",
+            },
+        )
 
     def test_correct_request(self):
         self.populate_content_order()
@@ -61,12 +79,26 @@ class TestContentOrderView(CreateTestVerses):
         url = "/content_order/10/next/"
         response = self.client.get(url)
         print(f"response_data = {response.data}")
-        self.assertEqual(response.data, {"pk": 2, "order": 20, "content": "verse"})
+        self.assertEqual(
+            response.data,
+            {"pk": 2, "order": 20, "content": "verse", "html_name": "html_name_20"},
+        )
 
         url = "/content_order/100/next/"
         response = self.client.get(url)
-        self.assertEqual(response.data, {"pk": 1, "order": 10, "content": "rand_verse"})
+        self.assertEqual(
+            response.data,
+            {
+                "pk": 1,
+                "order": 10,
+                "content": "rand_verse",
+                "html_name": "html_name_10",
+            },
+        )
 
         url = "/content_order/10/prev/"
         response = self.client.get(url)
-        self.assertEqual(response.data, {"pk": 10, "order": 100, "content": "end"})
+        self.assertEqual(
+            response.data,
+            {"pk": 10, "order": 100, "content": "end", "html_name": "html_name_100"},
+        )

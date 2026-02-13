@@ -6,17 +6,19 @@ STEP_IN_NUMERATION = 10
 
 
 class PopulateConteneOrder:
-    def _change_order_value(self, verses: list[RawVerse], step: int) -> list[int]:
+    def _change_order_value(self, verses: list[RawVerse], step: int) -> tuple[list[int], list[str]]:
         """
         renumerates verses by changing order field but keeping their sequence intact:
         e. g. 1,2,5 -> 10, 20, 30.
         """
         new_orders: list[int] = []
+        relevant_html_names: list[str] = []
         for i, verse in enumerate(verses, start=1):
             new_order = i * step
             verse.order = new_order
             new_orders.append(new_order)
-        return new_orders
+            relevant_html_names.append(verse.html_name)
+        return new_orders, relevant_html_names
 
     def populate_content_order(self) -> None:
         """
@@ -25,7 +27,7 @@ class PopulateConteneOrder:
            (with a temp renumber first to avoid UNIQUE collisions)
         2) rebuild ContentOrder rows for content="verse"
         """
-        verses = list(RawVerse.objects.order_by("order", "pk").only("pk", "order"))
+        verses = list(RawVerse.objects.order_by("order", "pk").only("pk", "order", "html_name"))
         if not verses:
             logging.warning("No verses in db")
             return None
@@ -42,13 +44,13 @@ class PopulateConteneOrder:
             RawVerse.objects.bulk_update(verses, ["order"])
 
             # Phase 2: final desired numbering 10, 20, 30, ...
-            final_orders = self._change_order_value(verses, STEP_IN_NUMERATION)
+            final_orders, relevant_html_names = self._change_order_value(verses, STEP_IN_NUMERATION)
             RawVerse.objects.bulk_update(verses, ["order"])
 
             # Rebuild ContentOrder for verses
             ContentOrder.objects.filter(content="verse").delete()
             ContentOrder.objects.bulk_create(
-                [ContentOrder(order=o, content="verse") for o in final_orders]
+                [ContentOrder(order=o, content="verse", html_name = html) for o, html in zip(final_orders, relevant_html_names)]
             )
 
         logging.info("Content order was populated with verse orders = %s", final_orders)

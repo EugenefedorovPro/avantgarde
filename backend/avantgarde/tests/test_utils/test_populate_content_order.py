@@ -1,3 +1,4 @@
+import ipdb
 from avantgarde.utils.populate_content_order import PopulateConteneOrder
 from avantgarde.tests.create_test_verses import CreateTestVerses
 from avantgarde.models import RawVerse, ContentOrder
@@ -21,6 +22,24 @@ class TestPopulateContentOrder(CreateTestVerses):
     def assert_orders_ok(self):
         self.assertEqual(list(range(10, 110, 10)), self.get_verse_orders())
         self.assertEqual(self.expected_content_orders(), self.get_content_orders())
+
+    def test_html_names_all_present(self):
+        PopulateConteneOrder().populate_content_order()
+        expected = [
+            "html_name_0",
+            "html_name_1",
+            "html_name_2",
+            "html_name_3",
+            "html_name_4",
+            "html_name_5",
+            "html_name_6",
+            "html_name_7",
+            "html_name_8",
+            "html_name_9",
+        ]
+        self.assertEqual(
+            expected, list(ContentOrder.objects.values_list("html_name", flat=True))
+        )
 
     def test_populate_content_order_success_unique_collision_scenario(self):
         # create a potential unique-renumbering collision scenario

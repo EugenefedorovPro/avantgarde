@@ -13,7 +13,7 @@ from avantgarde.models import (
 class ContentOrderSerializer(ModelSerializer):
     class Meta:
         model = ContentOrder
-        fields = ["pk", "order", "content"]
+        fields = ["pk", "order", "content", "html_name"]
 
 class ReclamationSerializer(ModelSerializer):
     class Meta:

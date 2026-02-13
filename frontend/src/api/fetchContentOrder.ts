@@ -5,6 +5,7 @@ export interface ContentOrderInterface {
   pk: string;
   order: string;
   content: string;
+  html_name: string;
 }
 
 export const fetchContentOrder = async (
