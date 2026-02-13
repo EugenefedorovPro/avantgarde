@@ -11,10 +11,10 @@ function App() {
       <Routes>
         <Route path="/manage" element={<ManageContentOrder />} />
 
-        {/* / -> default verse */}
-        <Route path="/" element={<Navigate to={defaultVerseUrl} replace />} />
+        {/* / -> random verse */}
+        <Route path="/" element={<Navigate to="/rand_verse" replace />} />
 
-        {/* /verse -> default verse */}
+        {/* optional: keep /verse redirect to default */}
         <Route
           path="/verse"
           element={<Navigate to={defaultVerseUrl} replace />}

@@ -2,11 +2,12 @@ export const THEME_FILES = {
   default: "ui_kosuth.css",
   klee: "ui_klee.css",
   chirico: "ui_kiriko.css",
-  malevitch: "ui_white.css",
+  malevitch: "ui_malevitch.css",
   boychuk: "ui_boychuk.css",
   ekster: "ui_ekster.css",
   calder: "ui_calder.css",
   gropius: "ui_gropius.css",
+  newman: "ui_newman.css",
 } as const;
 
 export type ThemeName = keyof typeof THEME_FILES;
@@ -20,6 +21,7 @@ export const THEME_LABELS: Record<ThemeName, string> = {
   ekster: "Ekster",
   calder: "Calder",
   gropius: "Gropius",
+  newman: "Newman",
 
 };
 

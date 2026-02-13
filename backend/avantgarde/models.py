@@ -37,9 +37,9 @@ class AnswerToReclamation(models.Model):
 class RawVerse(models.Model):
     html_name = models.SlugField(unique=True)
     title = models.TextField(null=True, blank=True)
+    order = models.PositiveSmallIntegerField(blank=True, null=True, unique=True)
     text = models.TextField(max_length=50000, null=True)
     date_of_writing = models.DateField(blank=True, null=True)
-    order = models.PositiveSmallIntegerField(blank=True, null=True, unique=True)
 
     def __str__(self):
         return f"{self.pk}- {self.html_name} {self.title}"
