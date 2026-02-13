@@ -15,7 +15,7 @@ from .models import (
 
 @admin.register(ContentOrder)
 class ContentOrderAdmin(admin.ModelAdmin):
-    list_display = ["pk", "content", "order"]
+    list_display = ["order", "html_name", "content"]
 
 
 @admin.register(HermRandVerse)

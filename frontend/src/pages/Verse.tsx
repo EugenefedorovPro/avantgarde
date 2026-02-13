@@ -6,7 +6,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { defaultVerseUrl } from "../api/urls";
+import { useNavigate, useParams } from "react-router-dom";
 import { Tab, Nav } from "react-bootstrap";
 
 import { verse } from "../api/verse";
@@ -26,14 +27,9 @@ import { ThemeSwitcher } from "../theme/ThemeSwitcher";
 
 type TabKey = "verse" | "hermeneutics" | "audio";
 
-type VerseProps = {
-  initialVerseOrder?: string;
-};
-
-export const Verse = ({ initialVerseOrder = "-1" }: VerseProps) => {
+export const Verse = () => {
   const navigate = useNavigate();
-
-  const [verseOrder, setVerseOrder] = useState<string>(initialVerseOrder);
+  const { html_name } = useParams<{ html_name: string }>();
 
   const [vrs, setVrs] = useState<VerseType | null>(null);
   const [herm, setHerm] = useState<HermType | null>(null);
@@ -45,15 +41,9 @@ export const Verse = ({ initialVerseOrder = "-1" }: VerseProps) => {
 
   const hasLoadedOnceRef = useRef(false);
 
-  const onPrev = () => {
-    navigate(`/manage?order=${verseOrder}&dir=prev`);
-  };
+  const onPrev = () => navigate(`/manage?dir=prev`);
+  const onNext = () => navigate(`/manage?dir=next`);
 
-  const onNext = () => {
-    navigate(`/manage?order=${verseOrder}&dir=next`);
-  };
-
-  // ✅ this is the "top" button handler
   const onTop = useCallback(() => {
     const name = recl?.reclamation?.html_name;
     navigate(name ? `/reclamation/${name}` : "/reclamation");
@@ -79,23 +69,32 @@ export const Verse = ({ initialVerseOrder = "-1" }: VerseProps) => {
         onNext={onNext}
       />
     ),
-    [recl, onTop, onPrev, onNext]
+    [recl, onTop]
   );
 
   useEffect(() => {
     let cancelled = false;
 
+    // if you allow /verse without param, decide what to do:
+    if (!html_name) {
+      setLoading(false);
+      setVrs(null);
+      navigate(defaultVerseUrl, { replace: true });
+      return;
+    }
+
     const load = async () => {
       setLoading(true);
       try {
-        const [data, reclData]: [
-          VerseInterface | null,
-          ReclamationInterface | null
-        ] = await Promise.all([verse(verseOrder), reclamationRandomApi()]);
+        const [data, reclData] = await Promise.all([
+          verse(html_name), // now guaranteed string
+          reclamationRandomApi(),
+        ]);
 
         if (cancelled) return;
 
         hasLoadedOnceRef.current = true;
+        setRecl(reclData);
 
         if (data) {
           setVrs(data.verse);
@@ -107,19 +106,17 @@ export const Verse = ({ initialVerseOrder = "-1" }: VerseProps) => {
             if (prev === "audio" && !data.audio) return "verse";
             return prev;
           });
-
-          const stored = localStorage.getItem("verseOrder");
-          if (stored && stored !== verseOrder) setVerseOrder(stored);
         } else {
           setVrs(null);
           setHerm(null);
           setAudio(null);
-          setActiveTab("verse");
         }
-
-        setRecl(reclData ?? null);
-      } catch (err) {
-        if (!cancelled) console.error(err);
+      } catch (e) {
+        if (!cancelled) {
+          setVrs(null);
+          setHerm(null);
+          setAudio(null);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -130,10 +127,16 @@ export const Verse = ({ initialVerseOrder = "-1" }: VerseProps) => {
     return () => {
       cancelled = true;
     };
-  }, [verseOrder]);
+  }, [html_name]);
 
-  if (loading || !vrs) {
-    return <div>No text, wait…</div>;
+  if (loading) return <div>Loading…</div>;
+
+  if (!html_name) {
+    return <div>No html_name in URL. Use /verse/&lt;html_name&gt;/</div>;
+  }
+
+  if (!vrs) {
+    return <div>Verse not found: {html_name}</div>;
   }
 
   return (

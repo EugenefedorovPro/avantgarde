@@ -31,9 +31,9 @@ export interface VerseInterface {
 }
 
 export const verse = async (
-  verseOrder: string = "0"
+  htmlName: string = "noHtmlName"
 ): Promise<VerseInterface | null> => {
-  const url = urlVerse + `${verseOrder}/`;
+  const url = urlVerse + `${htmlName}/`;
   console.log(url);
 
   try {

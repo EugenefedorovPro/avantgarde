@@ -27,7 +27,7 @@ from avantgarde.utils import get_new_order_verse
 from avantgarde.utils.rand_verse import RandVerse
 from avantgarde.utils.calc_combinations import CalcCombinations
 from avantgarde.utils.get_new_order_verse import get_new_order_verse
-from avantgarde.utils.populate_content_order import PopulateConteneOrder
+from avantgarde.utils.populate_content_order import PopulateContentOrder
 from enum import Enum
 
 logger = logging.getLogger(__file__)
@@ -46,10 +46,6 @@ class ContentOrderView(APIView):
     NEW_VALUES = [New.CURRENT.value, New.NEXT.value, New.PREV.value]
 
     def cycle_order(self, passed_order: int, passed_new: New) -> int | None:
-        """
-        return previous or next order against the passes order
-
-        """
         orders: list[int] = ContentOrder.objects.order_by("order").values_list(
             "order", flat=True
         )
@@ -61,69 +57,64 @@ class ContentOrderView(APIView):
         hit_order: int | None = None
         prev_order = max(orders)
         current_order = None
-        for i, ord in enumerate(orders_iter):
+
+        for i, ord_ in enumerate(orders_iter):
             if i != 0:
                 prev_order = current_order
-            current_order = ord
+            current_order = ord_
 
-            # passed_order hit the same number if orders
-            if ord == passed_order:
-                hit_order = ord
+            if ord_ == passed_order:
+                hit_order = ord_
                 break
 
-            # to prevent from infinite cycle if passed_order is is not contained in orders
             if i > len(orders):
                 break
 
-        # passed_order is is not contained in orders
         if not hit_order:
             return None
 
         match passed_new:
             case New.PREV:
                 return prev_order
-
             case New.NEXT:
                 return next(orders_iter)
-
             case New.CURRENT:
                 return passed_order
-
             case _:
                 return None
 
-    def get(self, request, order: str, new: str):
-        """
-        1) no current_order, no new, if either of them cannot be converted to int,
-        no current_order in db -> return 0 from ContentOrder
-        2) if new = current -> return the same as current_order.
-        3) if new next -> return next
-        4) if prev return  previous
-        """
-        # if bad request returns the first content item available
-        if (
-            not order
-            or not new
-            or not order.isdigit()
-            or new not in self.NEW_VALUES
-            or not ContentOrder.objects.filter(order=order).exists()
-        ):
+    def get(self, request, html_name: str, new: str):
+        # bad request -> return first content item available
+        if not html_name or not new or new not in self.NEW_VALUES:
             content_obj = ContentOrder.objects.order_by("order").first()
-
-            # returns none if no content at all
             if not content_obj:
-                data = {"message": NO_CONTENT_MESSAGE}
-                return Response(data=data, status=HTTP_404_NOT_FOUND)
+                return Response(
+                    {"message": NO_CONTENT_MESSAGE}, status=HTTP_404_NOT_FOUND
+                )
+            return Response(
+                ContentOrderSerializer(content_obj).data, status=HTTP_200_OK
+            )
 
-            content_ser = ContentOrderSerializer(content_obj)
-            return Response(data=content_ser.data, status=HTTP_200_OK)
+        current_obj = ContentOrder.objects.filter(html_name=html_name).first()
+        if not current_obj:
+            content_obj = ContentOrder.objects.order_by("order").first()
+            if not content_obj:
+                return Response(
+                    {"message": NO_CONTENT_MESSAGE}, status=HTTP_404_NOT_FOUND
+                )
+            return Response(
+                ContentOrderSerializer(content_obj).data, status=HTTP_200_OK
+            )
 
-        # returns actual content
-        else:
-            new_order: int | None = self.cycle_order(int(order), New(new))
-            content_obj = ContentOrder.objects.filter(order=new_order).first()
-            content_ser = ContentOrderSerializer(content_obj)
-            return Response(data=content_ser.data, status=HTTP_200_OK)
+        new_order: int | None = self.cycle_order(current_obj.order, New(new))
+        if new_order is None:
+            return Response({"message": NO_CONTENT_MESSAGE}, status=HTTP_404_NOT_FOUND)
+
+        content_obj = ContentOrder.objects.filter(order=new_order).first()
+        if not content_obj:
+            return Response({"message": NO_CONTENT_MESSAGE}, status=HTTP_404_NOT_FOUND)
+
+        return Response(ContentOrderSerializer(content_obj).data, status=HTTP_200_OK)
 
 
 class ReclamationByNameView(APIView):
@@ -186,40 +177,30 @@ class RandVerseView(APIView):
 
 
 class VerseView(APIView):
-
-    def get(self, request, order):
+    def get(self, request, html_name: str):
         verse = None
-        # secure if order cannot be converted to number
-        try:
-            verse = RawVerse.objects.filter(order=order).first()
-        except ValueError:
-            pass
 
-        # secure if the requested order is not available
-        if not verse:
+        # treat these as "no selection"
+        if not html_name or html_name == "noHtmlName":
             verse = RawVerse.objects.order_by("order").first()
+        else:
+            verse = RawVerse.objects.filter(html_name=html_name).first()
 
-        # secure if no verse in db at all
+            # fallback if requested html_name not found
+            if not verse:
+                verse = RawVerse.objects.order_by("order").first()
+
         if not verse:
-            # not found it not verses at all in db
             data = {"verse": None, "herm": None, "audio": None}
             return Response(data=data, status=HTTP_404_NOT_FOUND)
 
         verse_ser = VerseSerializer(verse)
         data = {"verse": verse_ser.data}
 
-        # _____________________ herm_______________________
         herm = Hermeneutics.objects.filter(raw_verses=verse).first()
-        data["herm"] = None
-        if herm:
-            herm_ser = HermSerializer(herm)
-            data["herm"] = herm_ser.data
+        data["herm"] = HermSerializer(herm).data if herm else None
 
-        # _____________________ audio________________________
         audio = Audio.objects.filter(raw_verses=verse).first()
-        data["audio"] = None
-        if audio:
-            audio_ser = AudioSerializer(audio)
-            data["audio"] = audio_ser.data
+        data["audio"] = AudioSerializer(audio).data if audio else None
 
         return Response(data=data, status=HTTP_200_OK)

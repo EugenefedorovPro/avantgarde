@@ -6,27 +6,23 @@ export const ManageContentOrder = () => {
   const navigate = useNavigate();
   const [sp] = useSearchParams();
 
-  let order = sp.get("order") ?? "0";
-  if (order == "0") {
-    order = localStorage.getItem("verseOrder") ?? "0";
-  }
+  const htmlName = localStorage.getItem("htmlName") ?? "noHtmlName";
 
   const dir = sp.get("dir") ?? "current";
 
   useEffect(() => {
     const run = async () => {
       try {
-        const content = await fetchContentOrder(order, dir);
+        const content = await fetchContentOrder(htmlName, dir);
 
         if (!content) return;
-        localStorage.setItem("verseOrder", content.order);
+        localStorage.setItem("htmlName", content.html_name);
 
         // decision logic lives here
         if (content.content === "verse") {
-          navigate(
-            `/verse?initialVerseOrder=${content.order}`,
-            { replace: true }
-          );
+          navigate(`/verse/${content.html_name}/`, {
+            replace: true,
+          });
         } else if (content.content === "reclamation") {
           navigate("/reclamation", { replace: true });
         } else {
@@ -38,7 +34,7 @@ export const ManageContentOrder = () => {
     };
 
     run();
-  }, [navigate, order, dir]);
+  }, [navigate, htmlName, dir]);
 
   return null; // nothing rendered
 };

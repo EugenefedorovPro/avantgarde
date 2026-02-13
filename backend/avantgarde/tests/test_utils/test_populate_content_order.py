@@ -1,5 +1,5 @@
 import ipdb
-from avantgarde.utils.populate_content_order import PopulateConteneOrder
+from avantgarde.utils.populate_content_order import PopulateContentOrder
 from avantgarde.tests.create_test_verses import CreateTestVerses
 from avantgarde.models import RawVerse, ContentOrder
 
@@ -24,7 +24,7 @@ class TestPopulateContentOrder(CreateTestVerses):
         self.assertEqual(self.expected_content_orders(), self.get_content_orders())
 
     def test_html_names_all_present(self):
-        PopulateConteneOrder().populate_content_order()
+        PopulateContentOrder().populate_content_order()
         expected = [
             "html_name_0",
             "html_name_1",
@@ -52,13 +52,13 @@ class TestPopulateContentOrder(CreateTestVerses):
             last.order = 10
             last.save()
 
-        PopulateConteneOrder().populate_content_order()
+        PopulateContentOrder().populate_content_order()
         self.assert_orders_ok()
 
     def test_populate_content_order_none(self):
         RawVerse.objects.all().delete()
 
-        PopulateConteneOrder().populate_content_order()
+        PopulateContentOrder().populate_content_order()
 
         self.assertEqual([], self.get_verse_orders())
         self.assertEqual([], self.get_content_orders())
@@ -66,7 +66,7 @@ class TestPopulateContentOrder(CreateTestVerses):
     def test_populate_content_order_all_null_orders(self):
         RawVerse.objects.update(order=None)
 
-        PopulateConteneOrder().populate_content_order()
+        PopulateContentOrder().populate_content_order()
         self.assert_orders_ok()
 
     def test_populate_content_order_one_null_order(self):
@@ -75,9 +75,10 @@ class TestPopulateContentOrder(CreateTestVerses):
             v.order = None
             v.save()
 
-        PopulateConteneOrder().populate_content_order()
+        PopulateContentOrder().populate_content_order()
         self.assert_orders_ok()
 
     def test_populate_content_order_default(self):
-        PopulateConteneOrder().populate_content_order()
+        PopulateContentOrder().populate_content_order()
         self.assert_orders_ok()
+

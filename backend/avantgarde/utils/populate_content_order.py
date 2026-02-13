@@ -5,7 +5,7 @@ from avantgarde.models import ContentOrder, RawVerse
 STEP_IN_NUMERATION = 10
 
 
-class PopulateConteneOrder:
+class PopulateContentOrder:
     def _change_order_value(self, verses: list[RawVerse], step: int) -> tuple[list[int], list[str]]:
         """
         renumerates verses by changing order field but keeping their sequence intact:
