@@ -1,0 +1,131 @@
+=== Reclamation ===
+id: 1
+text: Это не поэзия
+html_name: the-poetry____shows___what-it-is
+--- Answers ---
+id: 3
+repeat: 100
+text: это не поэзия, это не поэзия
+...
+-----
+
+=== Reclamation ===
+id: 3
+text: не понимаю, о чем это
+html_name: predsedatel___zemnogo___shara
+--- Answers ---
+id: 5
+repeat: 1
+text: это простое стихотворение  
+это простое стхтврн  
+это прст стхврн  
+т прст стхврн  
+этпростих  
+тпростих  
+простих  
+стих про  
+стих Про  
+стих Е. Про
+...
+-----
+
+=== Reclamation ===
+id: 4
+text: Я так тоже могу
+html_name: None
+--- Answers ---
+-----
+
+=== Reclamation ===
+id: 5
+text: Это элитарное искусство
+html_name: None
+--- Answers ---
+-----
+
+=== Reclamation ===
+id: 6
+text: Это китч
+html_name: Clement___Greenberg
+--- Answers ---
+id: 4
+repeat: 100
+text: авангард во время войны = китч во время войны  
+авангард во время войны != китч во время войны
+...
+-----
+
+=== Reclamation ===
+id: 7
+text: Здесь нет ничего нового
+html_name: Boris____Groys
+--- Answers ---
+id: 6
+repeat: 100
+text: Сдайте меня  в архив!
+...
+-----
+
+=== Reclamation ===
+id: 8
+text: Мне скучно
+html_name: John_____Baldessari
+--- Answers ---
+id: 1
+repeat: 100
+text: Я обещаю больше не писать скучные стихи
+...
+-----
+
+=== Reclamation ===
+id: 10
+text: Якого ти пишешь російською?
+html_name: Paul____Celan
+--- Answers ---
+id: 2
+repeat: 100
+text: русский - язык матери  
+русский - язык убийц
+...
+-----
+
+=== Reclamation ===
+id: 11
+text: Это не искусство, это жест
+html_name: None
+--- Answers ---
+-----
+
+=== Reclamation ===
+id: 12
+text: cлишком герметично
+html_name: Ben____Vautier
+--- Answers ---
+id: 7
+repeat: 100
+text: только поэт знает,  о чём этот текст
+...
+-----
+
+=== Reclamation ===
+id: 15
+text: Авангард - это старьё
+html_name: avangard_out_of_date
+--- Answers ---
+id: 10
+repeat: 7
+text: Прошлое тесно. Пушкин и Шевченко непонятнее гиероглифов. Бросить Хлебникова, Семенко, Малевича и проч. и проч. с парохода Современности.
+...
+-----
+
+=== Reclamation ===
+id: 16
+text: Ради чего всё это?
+html_name: karl____jaspers
+--- Answers ---
+id: 11
+repeat: 100
+text: просто чтобы убить время
+...
+-----
+

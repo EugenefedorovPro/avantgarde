@@ -1,8 +1,6 @@
 import ipdb
-import json
 from avantgarde.utils.rand_verse import RandVerse
 from avantgarde.tests.create_test_verses import CreateTestVerses
-from avantgarde.models import RawVerse
 from django.urls import reverse
 
 
