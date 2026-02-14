@@ -1,6 +1,13 @@
 from django.db import models
 
 
+class HistoryTime(models.Model):
+    order = models.PositiveIntegerField(unique=True, blank=True, null=True)
+    year = models.CharField(max_length=50, null=True, blank=True, unique=True)
+    word_of_year = models.CharField(max_length=50, null=True, blank=True, unique=True)
+    html_name = models.SlugField(unique=True, null=True, blank=True)
+
+
 class ContentOrder(models.Model):
     content = models.CharField(max_length=50, null=True, blank=True)
     order = models.PositiveIntegerField(unique=True, blank=True, null=True)

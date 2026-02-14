@@ -10,7 +10,13 @@ from .models import (
     AnswerToReclamation,
     HermRandVerse,
     ContentOrder,
+    HistoryTime,
+
 )
+
+@admin.register(HistoryTime)
+class HistoryTime(admin.ModelAdmin):
+    list_display = ["order", "year", "word_of_year", "html_name"]
 
 
 @admin.register(ContentOrder)
