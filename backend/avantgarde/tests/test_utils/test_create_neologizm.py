@@ -1,5 +1,5 @@
 import ipdb
-from avantgarde.utils.create_neologism import CreateNeologism, Pattern
+from avantgarde.utils.create_neologism import CreateNeologism, Pattern, Harmony
 from avantgarde.tests.create_test_verses import CreateTestVerses
 from django.urls import reverse
 
@@ -15,19 +15,32 @@ class TestCreateNeologizm(CreateTestVerses):
         self.assertTrue(len(set(new_letters)) > 1)
 
     def test_generate_word(self):
-        pattern = [Pattern.ANY_V, Pattern.ANY_C, Pattern.STRESS, Pattern.ANY_V, Pattern.ANY_C]
+        pattern = [
+            Pattern.ANY_V,
+            Pattern.ANY_C,
+            Pattern.STRESS,
+            Pattern.ANY_V,
+            Pattern.ANY_C,
+        ]
         CreateN = CreateNeologism()
         new_word = CreateN.generate_word(pattern)
         print(f"new_random_word = {new_word}")
-        self.assertEqual(len(new_word), 4)
+        self.assertEqual(len(new_word), 5)
 
-    # def test_put_stress_on_word(self):
-    #     word = "лилея"
-    #     to_stress = 2
-    #     CreateN = CreateNeologism()
-    #     stressed_word = CreateN.put_stress_on_word(
-    #         word=word, number_vowel_to_stress=to_stress
-    #     )
-    #     expected = "лиле'я"
-    #     print(f"stressed_word = {stressed_word}")
-    #     self.assertEqual(expected, stressed_word)
+    def test_create_newologizm(self):
+        number_words = 30
+        CreateN = CreateNeologism()
+
+        spontaneity = []
+        harmony = []
+        disharmony = []
+        for i in range(number_words):
+            spontaneity.append(CreateN.create_neologizm(Harmony.SPONTANEITY))
+            harmony.append(CreateN.create_neologizm(Harmony.HARMONY))
+            disharmony.append(CreateN.create_neologizm(Harmony.DISHARMONY))
+
+        print(f"spantaneous_words = {spontaneity}")
+        print(f"harmonious_words = {harmony}")
+        print(f"disharmonious_words = {disharmony}")
+
+        self.assertTrue(len(spontaneity) + len(harmony) + len(disharmony), number_words * 3)

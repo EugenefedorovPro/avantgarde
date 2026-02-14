@@ -1,58 +1,85 @@
+from abc import ABC, abstractmethod
 import random
 import ipdb
 from enum import Enum
 
-ALL_VOWELS: list[str] = ["а", "е", "ё", "и", "о", "у", "ы", "э", "ю", "я"]
+# -------------------------
+# Spontaneous (general pool)
+# -------------------------
 
-ALL_CONSONANTS: list[str] = [
-    "б",
-    "в",
-    "г",
-    "д",
-    "ж",
-    "з",
-    "й",
-    "к",
-    "л",
-    "м",
-    "н",
-    "п",
-    "р",
-    "с",
-    "т",
-    "ф",
-    "х",
-    "ц",
-    "ч",
-    "ш",
-    "щ",
-]
+ALL_VOWELS: list[str] = (
+    ["а"] * 4
+    + ["о"] * 3
+    + ["е"] * 3
+    + ["и"] * 2
+    + ["у"] * 1
+    + ["я"] * 1
+    + ["ю"] * 1
+    + ["ы"] * 1
+    + ["э"] * 1
+    + ["ё"] * 1  # keep single (salient)
+)
+
+ALL_CONSONANTS: list[str] = (
+    ["н"] * 4
+    + ["р"] * 3
+    + ["л"] * 3
+    + ["м"] * 2
+    + ["в"] * 2
+    + ["с"] * 2
+    + ["т"] * 2
+    + ["к"] * 2
+    + ["п"] * 2
+    + ["д"] * 2
+    # keep the rest single so they still appear
+    + ["б", "г", "ж", "з", "й", "ф", "х", "ц", "ч", "ш", "щ"]
+)
+
+SOFT_HARD: list[str] = ["ь"] * 5 + ["ъ"] * 1
 
 ALL_LETTERS: list[str] = ALL_VOWELS + ALL_CONSONANTS
 
 
-# ---------- harmonious (euphonic) ----------
-HARMONIOUS_VOWELS: list[str] = ["а", "о", "е", "ё", "и", "я", "ю"]
+# -------------------------
+# Harmonious (euphonic pool)
+# -------------------------
 
-SONORANT_CONSONANTS: list[str] = ["л", "м", "н", "р", "й"]
-SOFT_FRICATIVES: list[str] = ["в", "з", "ж"]
+HARMONIOUS_VOWELS: list[str] = (
+    ["а"] * 3
+    + ["о"] * 3
+    + ["е"] * 2
+    + ["и"] * 2
+    + ["я"] * 1
+    + ["ю"] * 1
+    + ["ё"] * 1  # keep single
+)
+
+SONORANT_CONSONANTS: list[str] = (
+    ["л"] * 3 + ["н"] * 3 + ["р"] * 3 + ["м"] * 2 + ["й"] * 2
+)
+
+SOFT_FRICATIVES: list[str] = ["в"] * 2 + ["з"] * 1 + ["ж"] * 1
 
 HARMONIOUS_CONSONANTS: list[str] = SONORANT_CONSONANTS + SOFT_FRICATIVES
-
 ALL_HARM_LETTERS: list[str] = HARMONIOUS_VOWELS + HARMONIOUS_CONSONANTS
 
 
-# ---------- disharmonious (cacophonic) ----------
-DISHARMONIOUS_VOWELS: list[str] = ["ы", "э", "у"]
+# -------------------------
+# Disharmonious (cacophonic pool)
+# -------------------------
 
-SIBILANTS: list[str] = ["ш", "щ", "ч", "ц", "с"]  # noisy
-PLOSIVES: list[str] = ["п", "б", "т", "д", "к", "г"]  # plosives
-HARSH_FRICATIVES: list[str] = ["ф", "х"]  # harsh fricatives
+DISHARMONIOUS_VOWELS: list[str] = ["ы"] * 4 + ["э"] * 3 + ["у"] * 2
 
-# NOTE: "ж" is already in HARMONIOUS (as a softer fricative),
-# so we intentionally do NOT include it here to keep sets disjoint.
+SIBILANTS: list[str] = ["ш"] * 3 + ["щ"] * 3 + ["ц"] * 2 + ["ч"] * 2 + ["с"] * 2
+
+PLOSIVES: list[str] = (
+    ["к"] * 3 + ["т"] * 3 + ["п"] * 2 + ["б"] * 2 + ["д"] * 2 + ["г"] * 2
+)
+
+HARSH_FRICATIVES: list[str] = ["х"] * 3 + ["ф"] * 2
+
+# keep "ж" out (as you decided it's harmonious)
 DISHARMONIOUS_CONSONANTS: list[str] = SIBILANTS + PLOSIVES + HARSH_FRICATIVES
-
 ALL_DISHARM_LETTERS: list[str] = DISHARMONIOUS_VOWELS + DISHARMONIOUS_CONSONANTS
 
 
@@ -64,12 +91,178 @@ class Pattern(Enum):
     DIS_V = "dis_v"
     DIS_C = "dis_c"
     ANY_L = "any_letter"
-    STRESS = "'"
+    STRESS = "\u0301"
+    S_H = "soft_hard"
 
 
+class Harmony(Enum):
+    SPONTANEITY = "spontaneity"
+    HARMONY = "harmonious"
+    DISHARMONY = "disharmonious"
+
+
+class RegularPatterns(ABC):
+    @abstractmethod
+    def pick_up(self) -> list[Pattern]:
+        pass
+
+
+class SpontaneousPattern(RegularPatterns):
+    """
+    Spontaneous = mostly ANY_L, sometimes inserts ь/ъ (S_H), and always places
+    stress correctly by putting STRESS immediately after ANY_V.
+    """
+
+    # 7 tokens (includes S_H + stressed vowel)
+    pattern_1: list[Pattern] = [
+        Pattern.ANY_L,
+        Pattern.ANY_C,
+        Pattern.S_H,
+        Pattern.ANY_L,
+        Pattern.ANY_V,
+        Pattern.STRESS,
+        Pattern.ANY_L,
+    ]
+
+    # 6 tokens (simple)
+    pattern_2: list[Pattern] = [
+        Pattern.ANY_L,
+        Pattern.ANY_V,
+        Pattern.STRESS,
+        Pattern.ANY_L,
+        Pattern.ANY_L,
+        Pattern.ANY_L,
+    ]
+
+    # 6 tokens (simple, stress later)
+    pattern_3: list[Pattern] = [
+        Pattern.ANY_L,
+        Pattern.ANY_L,
+        Pattern.ANY_L,
+        Pattern.ANY_V,
+        Pattern.STRESS,
+        Pattern.ANY_L,
+    ]
+
+    # NEW: 5 tokens (short), includes S_H but keeps stress on vowel
+    pattern_4: list[Pattern] = [
+        Pattern.ANY_L,
+        Pattern.ANY_V,
+        Pattern.STRESS,
+        Pattern.ANY_L,
+    ]
+
+    def pick_up(self):
+        return random.choice(
+            [self.pattern_1, self.pattern_2, self.pattern_3, self.pattern_4]
+        )
+
+
+class HarmoniousPattern(RegularPatterns):
+    """
+    Harmonious = only HARM_C / HARM_V, and stress is always correct because
+    STRESS comes immediately after HARM_V.
+    """
+
+    pattern_1: list[Pattern] = [
+        Pattern.HARM_C,
+        Pattern.HARM_V,
+        Pattern.HARM_C,
+        Pattern.HARM_V,
+        Pattern.STRESS,
+        Pattern.HARM_C,
+        Pattern.HARM_V,
+    ]
+    pattern_2: list[Pattern] = [
+        Pattern.HARM_V,
+        Pattern.HARM_C,
+        Pattern.HARM_V,
+        Pattern.STRESS,
+        Pattern.HARM_C,
+        Pattern.HARM_C,
+        Pattern.HARM_V,
+    ]
+    pattern_3: list[Pattern] = [
+        Pattern.HARM_C,
+        Pattern.HARM_V,
+        Pattern.HARM_V,
+        Pattern.STRESS,
+        Pattern.HARM_C,
+        Pattern.HARM_V,
+    ]
+
+    # NEW: shorter (5 tokens), still “smooth” and stress lands on the vowel
+    pattern_4: list[Pattern] = [
+        Pattern.HARM_C,
+        Pattern.HARM_V,
+        Pattern.STRESS,
+        Pattern.HARM_C,
+        Pattern.HARM_V,
+    ]
+
+    def pick_up(self):
+        return random.choice(
+            [self.pattern_1, self.pattern_2, self.pattern_3, self.pattern_4]
+        )
+
+
+class DisharmoniousPattern(RegularPatterns):
+    """
+    Disharmonious = only DIS_C / DIS_V (plus optional ь/ъ via S_H),
+    and stress is correct because STRESS always comes immediately after DIS_V.
+    """
+
+    pattern_1: list[Pattern] = [
+        Pattern.DIS_C,
+        Pattern.DIS_V,
+        Pattern.DIS_C,
+        Pattern.S_H,
+        Pattern.DIS_V,
+        Pattern.STRESS,
+        Pattern.DIS_C,
+        Pattern.DIS_V,
+    ]
+    pattern_2: list[Pattern] = [
+        Pattern.DIS_C,
+        Pattern.DIS_V,
+        Pattern.STRESS,
+        Pattern.DIS_C,
+        Pattern.DIS_C,
+        Pattern.DIS_V,
+    ]
+    pattern_3: list[Pattern] = [
+        Pattern.DIS_V,
+        Pattern.DIS_C,
+        Pattern.DIS_C,
+        Pattern.DIS_V,
+        Pattern.STRESS,
+        Pattern.DIS_C,
+    ]
+
+    # NEW: shorter (5 tokens), keeps the “harsh” palette and correct vowel stress
+    pattern_4: list[Pattern] = [
+        Pattern.DIS_C,
+        Pattern.DIS_V,
+        Pattern.STRESS,
+        Pattern.DIS_C,
+        Pattern.DIS_V,
+    ]
+
+    def pick_up(self):
+        return random.choice(
+            [self.pattern_1, self.pattern_2, self.pattern_3, self.pattern_4]
+        )
 
 
 class CreateNeologism:
+
+    def __init__(self):
+        self.regular_patterns: dict[Harmony, RegularPatterns] = {
+            Harmony.SPONTANEITY: SpontaneousPattern(),
+            Harmony.HARMONY: HarmoniousPattern(),
+            Harmony.DISHARMONY: DisharmoniousPattern(),
+        }
+
     def generate_letter(self, letter: Pattern) -> str:
         rand_letters: dict[Pattern, str] = {
             Pattern.ANY_C: random.choice(ALL_CONSONANTS),
@@ -80,7 +273,7 @@ class CreateNeologism:
             Pattern.DIS_V: random.choice(DISHARMONIOUS_VOWELS),
             Pattern.ANY_L: random.choice(ALL_LETTERS),
             Pattern.STRESS: Pattern.STRESS.value,
-
+            Pattern.S_H: random.choice(SOFT_HARD),
         }
         return rand_letters[letter]
 
@@ -91,22 +284,8 @@ class CreateNeologism:
         new_word: str = "".join(new_letters)
         return new_word
 
-    def choose_harmony_degree(self):
-        spontaneouse: list[Pattern] = [Pattern.HARM_C. Pattern.HARM_V, Pattern.HARM_C, Pattern.HARM_V, Pattern.HARM_C]
-        harmonious: list[pattern] = [Pattern.HARM_C. Pattern.HARM_V, Pattern.HARM_C, Pattern.HARM_V, Pattern.HARM_C]
-
-    def put_stress_on_word(self, word: str, number_vowel_to_stress: int):
-        count_vowels = 0
-        stressed_word: list[str] | str = []
-        for letter in word:
-            if letter in ALL_VOWELS:
-                count_vowels += 1
-                if count_vowels == number_vowel_to_stress:
-                    letter = letter + "'"
-            stressed_word.append(letter)
-        stressed_word = "".join(stressed_word)
-        return stressed_word
-
-
-    def create_neologizm(self, word_length: int):
-        pass
+    def create_neologizm(self, pattern_by_harmony: Harmony) -> str:
+        PatternClass: RegularPatterns = self.regular_patterns[pattern_by_harmony]
+        pattern: list[Pattern] = PatternClass.pick_up()
+        new_word: str = self.generate_word(pattern)
+        return new_word
