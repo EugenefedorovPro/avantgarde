@@ -5,12 +5,14 @@ from rest_framework.views import APIView
 from django.db.models import Count
 from avantgarde.models import (
     Audio,
+    HistoryTime,
     RawVerse,
     Hermeneutics,
     HermRandVerse,
     Reclamation,
-    AnswerToReclamation,
     ContentOrder,
+    HistoryTime,
+    HermToHistory,
 )
 from avantgarde.serializers import (
     VerseSerializer,
@@ -19,11 +21,14 @@ from avantgarde.serializers import (
     ReclamationSerializer,
     AnserToReclamationSerializer,
     ContentOrderSerializer,
+    HistoryTimeSerializer,
+    HermToHistorySerializer,
 )
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
 from django.shortcuts import get_object_or_404
 from avantgarde.utils import get_new_order_verse
+from avantgarde.utils.create_neologism import CreateNeologism, Harmony
 from avantgarde.utils.rand_verse import RandVerse
 from avantgarde.utils.calc_combinations import CalcCombinations
 from avantgarde.utils.get_new_order_verse import get_new_order_verse
@@ -40,6 +45,31 @@ class New(Enum):
 
 
 NO_CONTENT_MESSAGE = "no content available"
+
+
+class NeologizmView(APIView):
+    def get(self, request):
+        years_objs = HistoryTime.objects.all()
+        years_ser = HistoryTimeSerializer(years_objs, many=True)
+
+        CreateN = CreateNeologism()
+        n_words = years_objs.count()
+        harmony_words = CreateN.create_neologizm(Harmony.HARMONY, n_words)
+        disharmony_words = CreateN.create_neologizm(Harmony.DISHARMONY, n_words)
+        spontaneity_words = CreateN.create_neologizm(Harmony.SPONTANEITY, n_words)
+
+        herm_obj = HermToHistory.objects.first()
+        herm_ser = HermToHistorySerializer(herm_obj)
+
+        data = {
+            "harmony_words": harmony_words,
+            "disharmony_words": disharmony_words,
+            "spontaneity_words": spontaneity_words,
+            "years": years_ser.data,
+            "herm": herm_ser.data,
+        }
+        print(f"NeologizmView = {data}")
+        return Response(data=data, status=HTTP_200_OK)
 
 
 class ContentOrderView(APIView):

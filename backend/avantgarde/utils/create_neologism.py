@@ -8,10 +8,10 @@ from enum import Enum
 # -------------------------
 
 ALL_VOWELS: list[str] = (
-    ["а"] * 4
-    + ["о"] * 3
-    + ["е"] * 3
-    + ["и"] * 2
+    ["а"] * 8
+    + ["о"] * 6
+    + ["е"] * 6
+    + ["и"] * 3
     + ["у"] * 1
     + ["я"] * 1
     + ["ю"] * 1
@@ -45,20 +45,20 @@ ALL_LETTERS: list[str] = ALL_VOWELS + ALL_CONSONANTS
 # -------------------------
 
 HARMONIOUS_VOWELS: list[str] = (
-    ["а"] * 3
-    + ["о"] * 3
-    + ["е"] * 2
-    + ["и"] * 2
+    ["а"] * 6
+    + ["о"] * 6
+    + ["е"] * 3
+    + ["и"] * 3
     + ["я"] * 1
     + ["ю"] * 1
     + ["ё"] * 1  # keep single
 )
 
 SONORANT_CONSONANTS: list[str] = (
-    ["л"] * 3 + ["н"] * 3 + ["р"] * 3 + ["м"] * 2 + ["й"] * 2
+    ["л"] * 6 + ["н"] * 6 + ["р"] * 6 + ["м"] * 3 + ["й"] * 1
 )
 
-SOFT_FRICATIVES: list[str] = ["в"] * 2 + ["з"] * 1 + ["ж"] * 1
+SOFT_FRICATIVES: list[str] = ["в"] * 4 + ["з"] * 2 + ["ж"] * 1
 
 HARMONIOUS_CONSONANTS: list[str] = SONORANT_CONSONANTS + SOFT_FRICATIVES
 ALL_HARM_LETTERS: list[str] = HARMONIOUS_VOWELS + HARMONIOUS_CONSONANTS
@@ -68,9 +68,9 @@ ALL_HARM_LETTERS: list[str] = HARMONIOUS_VOWELS + HARMONIOUS_CONSONANTS
 # Disharmonious (cacophonic pool)
 # -------------------------
 
-DISHARMONIOUS_VOWELS: list[str] = ["ы"] * 4 + ["э"] * 3 + ["у"] * 2
+DISHARMONIOUS_VOWELS: list[str] = ["ы"] * 1 + ["э"] * 2 + ["у"] * 3
 
-SIBILANTS: list[str] = ["ш"] * 3 + ["щ"] * 3 + ["ц"] * 2 + ["ч"] * 2 + ["с"] * 2
+SIBILANTS: list[str] = ["ш"] * 1 + ["щ"] * 1 + ["ц"] * 1 + ["ч"] * 2 + ["с"] * 2
 
 PLOSIVES: list[str] = (
     ["к"] * 3 + ["т"] * 3 + ["п"] * 2 + ["б"] * 2 + ["д"] * 2 + ["г"] * 2
@@ -284,8 +284,10 @@ class CreateNeologism:
         new_word: str = "".join(new_letters)
         return new_word
 
-    def create_neologizm(self, pattern_by_harmony: Harmony) -> str:
+    def create_neologizm(self, pattern_by_harmony: Harmony, n_words: int = 1) -> list[str]:
         PatternClass: RegularPatterns = self.regular_patterns[pattern_by_harmony]
         pattern: list[Pattern] = PatternClass.pick_up()
-        new_word: str = self.generate_word(pattern)
-        return new_word
+        new_words: list[str] = []
+        for i in range(n_words):
+            new_words.append(self.generate_word(pattern))
+        return new_words

@@ -6,7 +6,7 @@ export const herm = async () => {
     const { data } = await axios(urlHerm);
     return data;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw e;
   }
 };

@@ -7,13 +7,35 @@ from avantgarde.models import (
     Reclamation,
     AnswerToReclamation,
     ContentOrder,
+    HistoryTime,
+    EuPro,
+    HermToHistory,
 )
+
+
+class HermToHistorySerializer(ModelSerializer):
+    class Meta:
+        model = HermToHistory
+        fields = ["pk", "title", "text"]
+
+
+class EuProSerializer(ModelSerializer):
+    class Meta:
+        model = EuPro
+        fields = ["pk", "title", "text"]
+
+
+class HistoryTimeSerializer(ModelSerializer):
+    class Meta:
+        model = HistoryTime
+        fields = ["pk", "year", "word_of_year"]
 
 
 class ContentOrderSerializer(ModelSerializer):
     class Meta:
         model = ContentOrder
         fields = ["pk", "order", "content", "html_name"]
+
 
 class ReclamationSerializer(ModelSerializer):
     class Meta:

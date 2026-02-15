@@ -5,6 +5,7 @@ from avantgarde.views import (
     ReclamationView,
     ReclamationByNameView,
     ContentOrderView,
+    NeologizmView,
 )
 
 urlpatterns = [
@@ -21,4 +22,5 @@ urlpatterns = [
         ReclamationByNameView.as_view(),
         name="reclamation_by_name",
     ),
+    path("neologizm/", NeologizmView.as_view(), name="neologizm"),
 ]

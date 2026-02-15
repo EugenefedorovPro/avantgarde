@@ -1,0 +1,63 @@
+.neoPretty {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* one row */
+.neoRow {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  gap: 14px;
+}
+
+/* ✅ fixed left column width, measured in pixels */
+.neoLeft {
+  width: var(--neoLeftW, auto);
+  flex: 0 0 var(--neoLeftW, auto);
+
+  font-size: 1.7em;          /* a bit smaller than 2em */
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* ✅ real vertical line (controllable length) */
+.neoBar {
+  width: 1ch;
+  flex: 0 0 1ch;
+  position: relative;
+
+  /* make the line longer than the text block */
+  height: 64px;              /* <-- increase/decrease line length here */
+  margin-top: 2px;           /* small optical alignment tweak */
+}
+
+.neoBar::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 100%;
+  width: 3px;                /* thickness of the line */
+  transform: translateX(-50%);
+  background: currentColor;
+}
+
+.neoRight {
+  font-size: 0.85em;
+  line-height: 1.15;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.neoWord {
+  overflow-wrap: anywhere;
+}
+
+.neoYear {
+  opacity: 0.8;
+  margin-top: 4px;
+}

@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 
 type VerseBoxProps = {
   titleMd?: string;
-  textMd?: string | ReactNode;   // 👈 changed
+  textMd?: string | ReactNode;
   className?: string;
   childrenTop?: ReactNode;
   childrenBottom?: ReactNode;
@@ -16,24 +16,25 @@ export const VerseBox = ({
   childrenTop,
   childrenBottom,
 }: VerseBoxProps) => {
-  const hasTitle = Boolean(titleMd && titleMd.trim());
+  const title = titleMd?.trim() ?? "";
+  const hasTitle = title.length > 0;
 
-  // text exists if:
-  // - string with non-whitespace
-  // - OR any ReactNode
   const hasText =
-    typeof textMd === "string"
-      ? Boolean(textMd.trim())
-      : textMd != null;
+    typeof textMd === "string" ? textMd.trim().length > 0 : textMd != null;
 
   return (
     <section className={className}>
+      {/* Top slot (signature, etc.) */}
+      {childrenTop && <div className="verseTop">{childrenTop}</div>}
+
+      {/* Optional title */}
       {hasTitle && (
         <h5 className="verseTitle">
-          <ReactMarkdown>{titleMd!}</ReactMarkdown>
+          <ReactMarkdown>{title}</ReactMarkdown>
         </h5>
       )}
 
+      {/* Main body: markdown string OR custom ReactNode */}
       {hasText && (
         <div className="verseText">
           {typeof textMd === "string" ? (
@@ -44,7 +45,7 @@ export const VerseBox = ({
         </div>
       )}
 
-      {childrenTop && <div className="verseTop">{childrenTop}</div>}
+      {/* Bottom slot (controls, etc.) */}
       {childrenBottom && <div className="verseBottom">{childrenBottom}</div>}
     </section>
   );

@@ -31,13 +31,9 @@ class TestCreateNeologizm(CreateTestVerses):
         number_words = 30
         CreateN = CreateNeologism()
 
-        spontaneity = []
-        harmony = []
-        disharmony = []
-        for i in range(number_words):
-            spontaneity.append(CreateN.create_neologizm(Harmony.SPONTANEITY))
-            harmony.append(CreateN.create_neologizm(Harmony.HARMONY))
-            disharmony.append(CreateN.create_neologizm(Harmony.DISHARMONY))
+        spontaneity = CreateN.create_neologizm(Harmony.SPONTANEITY, number_words)
+        harmony = CreateN.create_neologizm(Harmony.HARMONY, number_words)
+        disharmony = CreateN.create_neologizm(Harmony.DISHARMONY, number_words)
 
         print(f"spantaneous_words = {spontaneity}")
         print(f"harmonious_words = {harmony}")

@@ -11,12 +11,16 @@ from .models import (
     HermRandVerse,
     ContentOrder,
     HistoryTime,
-
+    HermToHistory,
 )
+
+@admin.register(HermToHistory)
+class HermToHistoryAdmin(admin.ModelAdmin):
+    list_display = ["title", "text"]
 
 @admin.register(HistoryTime)
 class HistoryTime(admin.ModelAdmin):
-    list_display = ["order", "year", "word_of_year", "html_name"]
+    list_display = ["order", "year", "word_of_year"]
 
 
 @admin.register(ContentOrder)

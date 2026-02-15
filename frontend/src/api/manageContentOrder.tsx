@@ -25,6 +25,8 @@ export const ManageContentOrder = () => {
           });
         } else if (content.content === "reclamation") {
           navigate("/reclamation", { replace: true });
+        } else if (content.content === "neologizm") {
+          navigate("/neologizm", { replace: true });
         } else {
           navigate("/rand_verse", { replace: true });
         }

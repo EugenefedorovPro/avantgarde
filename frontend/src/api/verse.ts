@@ -34,7 +34,6 @@ export const verse = async (
   htmlName: string = "noHtmlName"
 ): Promise<VerseInterface | null> => {
   const url = urlVerse + `${htmlName}/`;
-  console.log(url);
 
   try {
     const { data } = await axios(url);

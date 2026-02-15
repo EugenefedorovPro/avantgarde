@@ -5,7 +5,19 @@ class HistoryTime(models.Model):
     order = models.PositiveIntegerField(unique=True, blank=True, null=True)
     year = models.CharField(max_length=50, null=True, blank=True, unique=True)
     word_of_year = models.CharField(max_length=50, null=True, blank=True, unique=True)
-    html_name = models.SlugField(unique=True, null=True, blank=True)
+
+
+class HermToHistory(models.Model):
+    title = models.CharField(max_length=50, default="")
+    text = models.TextField()
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def load(cls):
+        return cls.objects.get_or_create(pk=1, defaults={"title": "", "text": ""})[0]
 
 
 class ContentOrder(models.Model):
@@ -92,8 +104,8 @@ class Audio(models.Model):
 
 class EuPro(models.Model):
     html_name = models.SlugField(null=True, blank=True, unique=True)
-    title = models.CharField(max_length=255, null=True, blank=True)
-    text = models.TextField(max_length=65535)
+    title = models.CharField(max_length=50, null=True, blank=True, unique=True)
+    text = models.TextField(default="")
     date_of_writing = models.DateField(blank=True, null=True)
 
     def __str__(self):

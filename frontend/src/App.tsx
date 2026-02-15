@@ -4,6 +4,7 @@ import { RandVersePage } from "./pages/RandVerse";
 import { ReclamationPage } from "./pages/Reclamation";
 import { ManageContentOrder } from "./api/manageContentOrder";
 import { defaultVerseUrl } from "./api/urls";
+import { Neologizm } from "./pages/Neologizm";
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
         <Route path="/rand_verse" element={<RandVersePage />} />
         <Route path="/reclamation" element={<ReclamationPage />} />
         <Route path="/reclamation/:html_name" element={<ReclamationPage />} />
+
+        <Route path="/neologizm" element={<Neologizm/>} />
 
         <Route path="*" element={<div>404</div>} />
       </Routes>
