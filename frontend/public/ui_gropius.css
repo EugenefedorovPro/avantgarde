@@ -14,28 +14,29 @@
    TOKENS / BASE
    ========================= */
 
-:root{
+:root {
   /* Neutral sans (Bauhaus signage; use your system stack) */
-  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    sans-serif;
 
   /* Bauhaus workshop palette */
-  --wall: #f6f3ea;          /* warm paper / studio wall */
-  --ink:  #111111;          /* black rule */
+  --wall: #f6f3ea; /* warm paper / studio wall */
+  --ink: #111111; /* black rule */
   --black: #111111;
 
   /* Primaries (sparingly, as structure) */
-  --red:    #d81f1f;
-  --blue:   #1f3ea3;
+  --red: #d81f1f;
+  --blue: #1f3ea3;
   --yellow: #f2c200;
 
   /* Neutrals */
-  --grey-1: #efefe9;        /* card fill */
-  --grey-2: #d8d6cf;        /* hover */
-  --steel:  #b7bcc5;        /* tool metal */
+  --grey-1: #efefe9; /* card fill */
+  --grey-2: #d8d6cf; /* hover */
+  --steel: #b7bcc5; /* tool metal */
 
   /* Modularity */
-  --u: 8px;                 /* Bauhaus unit */
-  --ui-border: 2px;         /* black rule thickness */
+  --u: 8px; /* Bauhaus unit */
+  --ui-border: 2px; /* black rule thickness */
   --ui-gap: 12px;
 
   --ui-h: 52px;
@@ -65,11 +66,17 @@
 
 *,
 *::before,
-*::after{ box-sizing: border-box; }
+*::after {
+  box-sizing: border-box;
+}
 
-html, body{ min-height: 100%; overflow-x: hidden; }
+html,
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+}
 
-body{
+body {
   margin: 0;
   background: var(--wall);
   color: var(--ink);
@@ -82,8 +89,8 @@ body{
    - construction grid (thin)
    - a few primary geometry marks in margins
    ========================================================= */
-body::before{
-  content:"";
+body::before {
+  content: "";
   position: fixed;
   inset: 0;
   z-index: 0;
@@ -91,27 +98,48 @@ body::before{
 
   /* grid + faint drafting marks */
   background:
-    /* thin modular grid */
-    linear-gradient(0deg, rgba(17,17,17,0.06) 1px, transparent 1px) 0 0 / calc(var(--u)*3) calc(var(--u)*3),
-    linear-gradient(90deg, rgba(17,17,17,0.06) 1px, transparent 1px) 0 0 / calc(var(--u)*3) calc(var(--u)*3),
-
+    /* thin modular grid */ linear-gradient(
+        0deg,
+        rgba(17, 17, 17, 0.06) 1px,
+        transparent 1px
+      )
+      0 0 / calc(var(--u) * 3) calc(var(--u) * 3),
+    linear-gradient(90deg, rgba(17, 17, 17, 0.06) 1px, transparent 1px) 0 0 /
+      calc(var(--u) * 3) calc(var(--u) * 3),
     /* heavier "mullion" lines every 6 units */
-    linear-gradient(0deg, rgba(17,17,17,0.08) 2px, transparent 2px) 0 0 / calc(var(--u)*6) calc(var(--u)*6),
-    linear-gradient(90deg, rgba(17,17,17,0.08) 2px, transparent 2px) 0 0 / calc(var(--u)*6) calc(var(--u)*6),
-
+      linear-gradient(0deg, rgba(17, 17, 17, 0.08) 2px, transparent 2px) 0 0 /
+      calc(var(--u) * 6) calc(var(--u) * 6),
+    linear-gradient(90deg, rgba(17, 17, 17, 0.08) 2px, transparent 2px) 0 0 /
+      calc(var(--u) * 6) calc(var(--u) * 6),
     /* margin primaries (kept away from the text panel visually) */
-    radial-gradient(circle at 12% 18%, rgba(216,31,31,0.18) 0 14px, transparent 15px),
-    radial-gradient(circle at 88% 22%, rgba(242,194,0,0.16) 0 18px, transparent 19px),
-    radial-gradient(circle at 86% 84%, rgba(31,62,163,0.16) 0 16px, transparent 17px),
-
+      radial-gradient(
+        circle at 12% 18%,
+        rgba(216, 31, 31, 0.18) 0 14px,
+        transparent 15px
+      ),
+    radial-gradient(
+      circle at 88% 22%,
+      rgba(242, 194, 0, 0.16) 0 18px,
+      transparent 19px
+    ),
+    radial-gradient(
+      circle at 86% 84%,
+      rgba(31, 62, 163, 0.16) 0 16px,
+      transparent 17px
+    ),
     /* diagonal construction hint (very subtle) */
-    linear-gradient(135deg, transparent 0 49.7%, rgba(17,17,17,0.045) 49.7% 50.3%, transparent 50.3% 100%);
+      linear-gradient(
+        135deg,
+        transparent 0 49.7%,
+        rgba(17, 17, 17, 0.045) 49.7% 50.3%,
+        transparent 50.3% 100%
+      );
 
   opacity: 0.9;
 }
 
 /* Content layer sits above backdrop */
-#root{
+#root {
   position: relative;
   z-index: 1;
 
@@ -126,9 +154,11 @@ body::before{
    ========================= */
 
 .custom-tabs .nav-tabs,
-.custom-tabs.nav-tabs{
+.custom-tabs.nav-tabs {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
 
   margin: 0 !important;
@@ -154,12 +184,14 @@ body::before{
   contain: layout paint;
 }
 .custom-tabs .nav-tabs::-webkit-scrollbar,
-.custom-tabs.nav-tabs::-webkit-scrollbar{ display: none; }
+.custom-tabs.nav-tabs::-webkit-scrollbar {
+  display: none;
+}
 
 .custom-tabs .nav-tabs::after,
-.custom-tabs.nav-tabs::after{
-  content:"";
-  display:block;
+.custom-tabs.nav-tabs::after {
+  content: "";
+  display: block;
   width: 100%;
   height: var(--ui-border);
   margin-top: var(--tabs-rule-gap);
@@ -168,17 +200,19 @@ body::before{
 }
 
 .custom-tabs .nav-tabs > .nav-item,
-.custom-tabs.nav-tabs > .nav-item{ flex: 0 0 auto; }
+.custom-tabs.nav-tabs > .nav-item {
+  flex: 0 0 auto;
+}
 
 /* Tab modules: white card, black rule, micro “registration mark” */
 .custom-tabs .nav-link,
-.custom-tabs .nav-link:visited{
+.custom-tabs .nav-link:visited {
   height: var(--tabs-h);
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  padding: 0 calc(var(--u)*2);
+  padding: 0 calc(var(--u) * 2);
   white-space: nowrap;
 
   background: #ffffff;
@@ -193,13 +227,13 @@ body::before{
   text-transform: uppercase;
 
   /* Bauhaus “registration” corner */
-  box-shadow:
-    inset 0 0 0 2px rgba(0,0,0,0.10),
-    inset calc(var(--ui-border)*-1) calc(var(--ui-border)*-1) 0 0 rgba(0,0,0,0.12);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.1),
+    inset calc(var(--ui-border) * -1) calc(var(--ui-border) * -1) 0 0
+      rgba(0, 0, 0, 0.12);
 }
 
 .custom-tabs .nav-link:not(.active):hover,
-.custom-tabs .nav-link:not(.active):focus{
+.custom-tabs .nav-link:not(.active):focus {
   background: var(--grey-2);
   color: var(--black) !important;
   text-decoration: none;
@@ -208,21 +242,23 @@ body::before{
 /* Active = blue block (Bauhaus primary emphasis) */
 .custom-tabs .nav-link.active,
 .custom-tabs .nav-link.active:hover,
-.custom-tabs .nav-link.active:focus{
+.custom-tabs .nav-link.active:focus {
   background: var(--blue) !important;
   color: #ffffff !important;
   text-decoration: none;
-  box-shadow:
-    inset 0 0 0 2px rgba(255,255,255,0.20),
-    inset calc(var(--ui-border)*-1) calc(var(--ui-border)*-1) 0 0 rgba(0,0,0,0.10);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.2),
+    inset calc(var(--ui-border) * -1) calc(var(--ui-border) * -1) 0 0
+      rgba(0, 0, 0, 0.1);
 }
 
 /* Mobile: tabs visually sit INSIDE the box borders */
-@media (max-width: 576px){
-  :root{ --tabs-h: var(--ui-h-mobile); }
+@media (max-width: 576px) {
+  :root {
+    --tabs-h: var(--ui-h-mobile);
+  }
 
   .custom-tabs .nav-tabs,
-  .custom-tabs.nav-tabs{
+  .custom-tabs.nav-tabs {
     left: 50%;
     right: auto;
     transform: translateX(-50%);
@@ -239,8 +275,8 @@ body::before{
   }
 
   .custom-tabs .nav-link,
-  .custom-tabs .nav-link:visited{
-    padding: 0 calc(var(--u)*1.25);
+  .custom-tabs .nav-link:visited {
+    padding: 0 calc(var(--u) * 1.25);
     font-size: 0.86rem;
     letter-spacing: 0.06em;
   }
@@ -253,7 +289,7 @@ body::before{
    - small primary marks in the margin
    ========================= */
 
-.verseBox{
+.verseBox {
   background: var(--grey-1);
   color: var(--ink);
 
@@ -265,16 +301,16 @@ body::before{
   position: relative;
 
   /* stacked, constructed object */
-  box-shadow:
-    0 0 0 10px rgba(242,194,0,0.16),
-    14px 14px 0 rgba(0,0,0,0.06);
+  box-shadow: 0 0 0 10px rgba(242, 194, 0, 0.16),
+    14px 14px 0 rgba(0, 0, 0, 0.06);
 }
 
 /* black mullion cap (structure, not decoration over text) */
-.verseBox::before{
-  content:"";
+.verseBox::before {
+  content: "";
   position: absolute;
-  left: 0; top: 0;
+  left: 0;
+  top: 0;
   width: 100%;
   height: var(--ui-border);
   background: var(--black);
@@ -282,38 +318,48 @@ body::before{
 }
 
 /* tiny Bauhaus marks (top-right margin area inside panel) */
-.verseBox::after{
-  content:"";
+.verseBox::after {
+  content: "";
   position: absolute;
-  right: 12px; top: 12px;
-  width: 10px; height: 10px;
+  right: 12px;
+  top: 12px;
+  width: 10px;
+  height: 10px;
   background: var(--yellow);
-  box-shadow:
-    -16px 0 0 var(--red),
-    0 16px 0 var(--blue);
+  box-shadow: -16px 0 0 var(--red), 0 16px 0 var(--blue);
   pointer-events: none;
 }
 
 /* Keep actual text on plain background (no overlays under text) */
-.verseTitle{
+.verseTitle {
   margin: 0 0 10px;
   font-weight: 900;
   letter-spacing: 0.09em;
   text-transform: uppercase;
 }
-.verseText{ line-height: 1.78; word-wrap: break-word; }
-.verseTop{ margin-top: 8px; }
-.verseBottom{ margin-top: 12px; }
+.verseText {
+  line-height: 1.78;
+  white-space: nowrap;   /* never wrap */
+  overflow-x: auto;      /* scroll appears only if needed */
+}
+.verseTop {
+  margin-top: 8px;
+}
+.verseBottom {
+  margin-top: 12px;
+}
 
-@media (max-width: 576px){
-  .verseBox{ padding: var(--ui-pad-mobile); }
+@media (max-width: 576px) {
+  .verseBox {
+    padding: var(--ui-pad-mobile);
+  }
 }
 
 /* =========================
    BUTTONS — “WORKSHOP MODULES”
    ========================= */
 
-.u-btn{
+.u-btn {
   border-radius: 0 !important;
   box-shadow: none !important;
 
@@ -334,19 +380,35 @@ body::before{
   text-transform: uppercase;
   padding: 0 14px;
 }
-.u-btn:hover{ background: var(--grey-2) !important; }
-.u-btn:active{ background: var(--red) !important; color: #ffffff !important; }
+.u-btn:hover {
+  background: var(--grey-2) !important;
+}
+.u-btn:active {
+  background: var(--red) !important;
+  color: #ffffff !important;
+}
 
-.u-btn--wide{ max-width: min(92vw, 1120px); }
-.u-btn--square{ width: var(--ui-h); max-width: var(--ui-h); padding: 0; }
+.u-btn--wide {
+  max-width: min(92vw, 1120px);
+}
+.u-btn--square {
+  width: var(--ui-h);
+  max-width: var(--ui-h);
+  padding: 0;
+}
 
-@media (max-width: 576px){
-  .u-btn{ height: var(--ui-h-mobile); }
-  .u-btn--square{ width: var(--ui-h-mobile); max-width: var(--ui-h-mobile); }
+@media (max-width: 576px) {
+  .u-btn {
+    height: var(--ui-h-mobile);
+  }
+  .u-btn--square {
+    width: var(--ui-h-mobile);
+    max-width: var(--ui-h-mobile);
+  }
 }
 
 /* Triangle arrows (strict signage) */
-.tri-btn{
+.tri-btn {
   --box: var(--ui-h);
   width: var(--box);
   height: var(--box);
@@ -361,31 +423,46 @@ body::before{
   justify-content: center;
   padding: 0;
 }
-.tri-btn::before{
-  content:"";
-  width: 0; height: 0;
+.tri-btn::before {
+  content: "";
+  width: 0;
+  height: 0;
   border-top: calc(var(--box) * 0.26) solid transparent;
   border-bottom: calc(var(--box) * 0.26) solid transparent;
 }
-.tri-btn--left::before{ border-right: calc(var(--box) * 0.36) solid var(--black); }
-.tri-btn--right::before{ border-left: calc(var(--box) * 0.36) solid var(--black); }
+.tri-btn--left::before {
+  border-right: calc(var(--box) * 0.36) solid var(--black);
+}
+.tri-btn--right::before {
+  border-left: calc(var(--box) * 0.36) solid var(--black);
+}
 
-.tri-btn:hover{ background: var(--grey-2); }
-.tri-btn:active{ background: var(--yellow); }
+.tri-btn:hover {
+  background: var(--grey-2);
+}
+.tri-btn:active {
+  background: var(--yellow);
+}
 .tri-btn:active.tri-btn--left::before,
-.tri-btn:active.tri-btn--right::before{ border-color: var(--black); }
+.tri-btn:active.tri-btn--right::before {
+  border-color: var(--black);
+}
 
-@media (max-width: 576px){
-  .tri-btn{ --box: var(--ui-h-mobile); }
+@media (max-width: 576px) {
+  .tri-btn {
+    --box: var(--ui-h-mobile);
+  }
 }
 
 /* =========================
    AUDIO — “MACHINE PLATE”
    ========================= */
 
-.audio-box{ width: 100%; }
+.audio-box {
+  width: 100%;
+}
 
-.audio-frame{
+.audio-frame {
   width: 100%;
   border: var(--ui-border) solid var(--black);
   border-radius: 0;
@@ -395,22 +472,28 @@ body::before{
   outline: calc(var(--ui-border) * 6) solid var(--steel);
   outline-offset: calc(var(--ui-border) * -6);
 }
-.audio-frame:hover{ border-color: var(--blue); }
-.audio-frame:focus-within{ border-color: var(--red); }
+.audio-frame:hover {
+  border-color: var(--blue);
+}
+.audio-frame:focus-within {
+  border-color: var(--red);
+}
 
-.square-audio{
+.square-audio {
   width: 100%;
   display: block;
   border-radius: 0 !important;
 }
 .square-audio::-webkit-media-controls-enclosure,
-.square-audio::-webkit-media-controls-panel{ border-radius: 0 !important; }
+.square-audio::-webkit-media-controls-panel {
+  border-radius: 0 !important;
+}
 
 /* =========================
    CONTROLS BAR — BOTTOM RAIL
    ========================= */
 
-.controlsBar{
+.controlsBar {
   display: grid;
   grid-template-columns: var(--ui-h) minmax(0, 1fr) var(--ui-h);
   gap: var(--ui-gap);
@@ -420,11 +503,16 @@ body::before{
   border-top: var(--ui-border) solid var(--black);
   background: var(--controls-bg);
 }
-.controlsBar > *{ min-width: 0; }
-.controlsBar .u-btn{ max-width: none; width: 100%; }
+.controlsBar > * {
+  min-width: 0;
+}
+.controlsBar .u-btn {
+  max-width: none;
+  width: 100%;
+}
 
-@media (max-width: 576px){
-  .controlsBar{
+@media (max-width: 576px) {
+  .controlsBar {
     grid-template-columns: var(--ui-h-mobile) minmax(0, 1fr) var(--ui-h-mobile);
     padding: 10px 0 12px;
   }
@@ -434,14 +522,14 @@ body::before{
    TABS + TOOLS (Theme switcher)
    ========================= */
 
-.tabsWithTools{
+.tabsWithTools {
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
   width: 100%;
 }
 
-.tabsWithTools .tabsTool{
+.tabsWithTools .tabsTool {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
@@ -460,11 +548,10 @@ body::before{
 
 /* Give the sticky tool space so it doesn't cover the last tab */
 .custom-tabs .nav-tabs.tabsWithTools,
-.custom-tabs.nav-tabs.tabsWithTools{
+.custom-tabs.nav-tabs.tabsWithTools {
   padding-right: calc(
-    var(--tabs-pad-x)
-    + min(var(--tabs-tool-w), var(--tabs-tool-max))
-    + var(--tabs-tool-gap)
+    var(--tabs-pad-x) + min(var(--tabs-tool-w), var(--tabs-tool-max)) +
+      var(--tabs-tool-gap)
   ) !important;
 }
 
@@ -472,7 +559,7 @@ body::before{
 .themeSwitch,
 .theme-switcher,
 .tabsTool .theme-switcher,
-.tabsTool button{
+.tabsTool button {
   width: min(var(--tabs-tool-w), var(--tabs-tool-max));
   max-width: 100%;
   height: var(--tabs-h);
@@ -503,12 +590,12 @@ body::before{
   -webkit-tap-highlight-color: transparent;
 
   /* tool feels like a plate */
-  box-shadow: inset 0 0 0 2px rgba(0,0,0,0.10);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.1);
 }
 
 .themeSwitch::before,
-.theme-switcher::before{
-  content:"";
+.theme-switcher::before {
+  content: "";
   width: 10px;
   height: 10px;
   background: var(--red);
@@ -519,28 +606,28 @@ body::before{
 .themeSwitch:hover,
 .theme-switcher:hover,
 .tabsTool .theme-switcher:hover,
-.tabsTool button:hover{
+.tabsTool button:hover {
   background: var(--grey-2);
 }
 
 .themeSwitch:active,
 .theme-switcher:active,
 .tabsTool .theme-switcher:active,
-.tabsTool button:active{
+.tabsTool button:active {
   background: var(--blue);
   color: #ffffff;
   transform: translate(2px, 2px);
 }
 
-.themeSwitch__label{
+.themeSwitch__label {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-@media (max-width: 576px){
-  :root{
+@media (max-width: 576px) {
+  :root {
     --tabs-tool-w: 118px;
     --tabs-tool-gap: 6px;
   }
@@ -548,7 +635,7 @@ body::before{
   .themeSwitch,
   .theme-switcher,
   .tabsTool .theme-switcher,
-  .tabsTool button{
+  .tabsTool button {
     height: var(--ui-h-mobile);
     font-size: 0.76rem;
     padding: 0 10px;
@@ -565,7 +652,7 @@ body::before{
    - Mobile: no offset, tabs inside borders, tighter gaps
    ========================================================= */
 
-:root{
+:root {
   --page-pad-x: 32px;
   --page-pad-x-mobile: 14px;
 
@@ -576,45 +663,63 @@ body::before{
   --safe-bottom: max(env(safe-area-inset-bottom), 0px);
 
   /* rails */
-  --tabs-rail-h: calc(var(--ui-h, 52px) + (var(--tabs-pad-y, 8px) * 2) + var(--ui-border, 2px));
-  --tabs-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + (var(--tabs-pad-y, 8px) * 2) + var(--ui-border, 2px));
+  --tabs-rail-h: calc(
+    var(--ui-h, 52px) + (var(--tabs-pad-y, 8px) * 2) + var(--ui-border, 2px)
+  );
+  --tabs-rail-h-mobile: calc(
+    var(--ui-h-mobile, 44px) + (var(--tabs-pad-y, 8px) * 2) +
+      var(--ui-border, 2px)
+  );
 
   --controls-rail-h: calc(var(--ui-h, 52px) + 16px + var(--ui-border, 2px));
-  --controls-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + 14px + var(--ui-border, 2px));
+  --controls-rail-h-mobile: calc(
+    var(--ui-h-mobile, 44px) + 14px + var(--ui-border, 2px)
+  );
 
   --frame-left: clamp(var(--page-pad-x), var(--versebox-edge), 240px);
   --frame-top: calc(var(--tabs-rail-h) + 8px + var(--safe-top));
   --frame-bottom-pad: calc(var(--controls-rail-h) + var(--safe-bottom));
 }
 
-@media (max-width: 576px){
-  :root{
+@media (max-width: 576px) {
+  :root {
     --page-pad-x: var(--page-pad-x-mobile);
     --frame-left: var(--page-pad-x);
     --frame-top: calc(var(--tabs-rail-h-mobile) + 6px + var(--safe-top));
-    --frame-bottom-pad: calc(var(--controls-rail-h-mobile) + var(--safe-bottom));
+    --frame-bottom-pad: calc(
+      var(--controls-rail-h-mobile) + var(--safe-bottom)
+    );
   }
 }
 
 /* lock the page; scrolling happens inside VerseBox */
-html, body, #root{ height: 100%; }
-body{ overflow: hidden; }
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  overflow: hidden;
+}
 
 /* normalize root side padding (top/bottom handled by fixed frame) */
-#root{
+#root {
   padding-left: var(--page-pad-x);
   padding-right: var(--page-pad-x);
 }
 
 /* VerseBox becomes fixed reading frame (scroll container) */
-.verseBox{
+.verseBox {
   position: fixed !important;
 
   top: var(--frame-top) !important;
   bottom: var(--safe-bottom) !important;
 
   left: var(--frame-left) !important;
-  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
+  width: min(
+    calc(100vw - var(--frame-left) - var(--page-pad-x)),
+    var(--content-max)
+  ) !important;
 
   margin: 0 !important;
 
@@ -623,16 +728,21 @@ body{ overflow: hidden; }
   -webkit-overflow-scrolling: touch;
 
   /* keep last lines visible above fixed bottom controls */
-  padding-bottom: calc(var(--ui-pad, 20px) + var(--frame-bottom-pad)) !important;
+  padding-bottom: calc(
+    var(--ui-pad, 20px) + var(--frame-bottom-pad)
+  ) !important;
 }
 
 /* Controls pinned to viewport bottom aligned with VerseBox */
-.controlsBar{
+.controlsBar {
   position: fixed !important;
   bottom: var(--safe-bottom) !important;
 
   left: var(--frame-left) !important;
-  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
+  width: min(
+    calc(100vw - var(--frame-left) - var(--page-pad-x)),
+    var(--content-max)
+  ) !important;
 
   margin: 0 !important;
   z-index: 1050;
@@ -644,11 +754,13 @@ body{ overflow: hidden; }
 }
 
 /* Mobile tightening: narrower gaps between tabs + tool area */
-@media (max-width: 576px){
+@media (max-width: 576px) {
   .custom-tabs .nav-tabs,
-  .custom-tabs.nav-tabs{ gap: 6px !important; }
+  .custom-tabs.nav-tabs {
+    gap: 6px !important;
+  }
 
-  .tabsWithTools .tabsTool{
+  .tabsWithTools .tabsTool {
     margin-left: 0 !important;
     padding-left: 6px !important;
   }

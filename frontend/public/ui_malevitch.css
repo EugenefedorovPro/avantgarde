@@ -228,6 +228,9 @@ body::after {
 
 .verseText {
   line-height: 1.6;
+  white-space: nowrap;   /* never wrap */
+  overflow-x: auto;      /* scroll appears only if needed */
+
 }
 
 .verseTop {

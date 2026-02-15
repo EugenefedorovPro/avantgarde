@@ -247,9 +247,9 @@ body::after {
   /* emulate a dictionary headword */
 }
 
-.verseText {
-  line-height: 1.75;
-  word-wrap: break-word;
+.verseText{
+  white-space: nowrap;   /* never wrap */
+  overflow-x: auto;      /* scroll appears only if needed */
 }
 
 .verseTop {

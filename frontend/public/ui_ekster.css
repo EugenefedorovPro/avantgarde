@@ -459,6 +459,9 @@ body::after {
 .verseText {
   line-height: 1.8;
   letter-spacing: 0.01em;
+  white-space: nowrap;   /* never wrap */
+  overflow-x: auto;      /* scroll appears only if needed */
+
 }
 
 .verseTop {
