@@ -100,7 +100,7 @@ class ContentOrderView(APIView):
             if i > len(orders):
                 break
 
-        if not hit_order:
+        if hit_order == None:
             return None
 
         match passed_new:
@@ -135,6 +135,7 @@ class ContentOrderView(APIView):
             return Response(
                 ContentOrderSerializer(content_obj).data, status=HTTP_200_OK
             )
+
 
         new_order: int | None = self.cycle_order(current_obj.order, New(new))
         if new_order is None:

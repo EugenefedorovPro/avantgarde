@@ -20,6 +20,17 @@ class PopulateContentOrder:
             relevant_html_names.append(verse.html_name)
         return new_orders, relevant_html_names
 
+    def move_non_verse_content(self, max_current_order: int):
+        """
+        moves non verse content order to last positions
+
+        """
+        non_verse_content = ContentOrder.objects.exclude(content = "verse")
+        for i, item in enumerate(non_verse_content, start = 1):
+            item.order = max_current_order + STEP_IN_NUMERATION * i
+            item.save()
+
+
     def populate_content_order(self) -> None:
         """
         One atomic operation:
@@ -46,6 +57,12 @@ class PopulateContentOrder:
             # Phase 2: final desired numbering 10, 20, 30, ...
             final_orders, relevant_html_names = self._change_order_value(verses, STEP_IN_NUMERATION)
             RawVerse.objects.bulk_update(verses, ["order"])
+
+            # add non_verse_content to the end
+            max_current_order = 10
+            if  final_orders:
+                max_current_order = max(final_orders)
+            self.move_non_verse_content(max_current_order)
 
             # Rebuild ContentOrder for verses
             ContentOrder.objects.filter(content="verse").delete()

@@ -286,8 +286,8 @@ class CreateNeologism:
 
     def create_neologizm(self, pattern_by_harmony: Harmony, n_words: int = 1) -> list[str]:
         PatternClass: RegularPatterns = self.regular_patterns[pattern_by_harmony]
-        pattern: list[Pattern] = PatternClass.pick_up()
         new_words: list[str] = []
         for i in range(n_words):
+            pattern: list[Pattern] = PatternClass.pick_up()
             new_words.append(self.generate_word(pattern))
         return new_words

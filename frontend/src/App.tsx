@@ -13,7 +13,7 @@ function App() {
         <Route path="/manage" element={<ManageContentOrder />} />
 
         {/* / -> random verse */}
-        <Route path="/" element={<Navigate to="/rand_verse" replace />} />
+        <Route path="/" element={<Navigate to="/Neologizm" replace />} />
 
         {/* optional: keep /verse redirect to default */}
         <Route

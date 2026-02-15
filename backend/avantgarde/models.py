@@ -25,6 +25,9 @@ class ContentOrder(models.Model):
     order = models.PositiveIntegerField(unique=True, blank=True, null=True)
     html_name = models.SlugField(unique=True)
 
+    def __str__(self):
+        return f"{self.order} - {self.content}"
+
 
 class HermRandVerse(models.Model):
     text = models.TextField(default="")

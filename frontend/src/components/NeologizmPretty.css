@@ -1,4 +1,7 @@
 .neoPretty {
+  /* ✅ prefer theme ink variables; otherwise just inherit */
+  color: var(--stage-ink, var(--ink, inherit));
+
   display: flex;
   flex-direction: column;
   gap: 15px;
