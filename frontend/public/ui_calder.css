@@ -510,7 +510,7 @@ body {
   --safe-top: max(env(safe-area-inset-top), 0px);
   --safe-bottom: max(env(safe-area-inset-bottom), 0px);
 
-  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge, 15vw), 240px);
+  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge, 20vw), 360px);
 
   --tabs-rail-h: calc(var(--ui-h, 52px) + (var(--tabs-pad-y, 8px) * 2));
   --tabs-rail-h-mobile: calc(

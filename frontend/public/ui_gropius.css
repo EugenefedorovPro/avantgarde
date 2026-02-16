@@ -680,7 +680,7 @@ body::before {
     var(--ui-h-mobile, 44px) + 14px + var(--ui-border, 2px)
   );
 
-  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge), 240px);
+  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge), 360px);
   --frame-top: calc(var(--tabs-rail-h) + 8px + var(--safe-top));
   --frame-bottom-pad: calc(var(--controls-rail-h) + var(--safe-bottom));
 }

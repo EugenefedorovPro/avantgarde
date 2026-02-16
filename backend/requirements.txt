@@ -10,6 +10,8 @@ ipython==9.9.0
 black==26.1.0
 pydantic==2.12.5
 
+segno==1.6.6
+pillow==12.1.1
 gunicorn==24.1.1
 
 
