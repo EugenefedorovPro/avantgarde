@@ -235,9 +235,14 @@ body {
 
 .verseText {
   line-height: 1.78;
-  white-space: nowrap;   /* never wrap */
-  overflow-x: auto;      /* scroll appears only if needed */
+  word-wrap: break-word;
 }
+/* Verse tab: no-wrap + horizontal scroll only when needed */
+.verseBox--nowrap .verseText{
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
 .verseTop {
   margin-top: 8px;
 }

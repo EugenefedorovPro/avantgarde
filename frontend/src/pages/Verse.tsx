@@ -173,6 +173,7 @@ export const Verse = () => {
       <Tab.Content>
         <Tab.Pane eventKey="verse">
           <VerseBox
+            className="verseBox verseBox--nowrap"
             titleMd={vrs.title}
             textMd={vrs.text}
             childrenTop={headerTop}

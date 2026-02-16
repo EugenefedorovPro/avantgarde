@@ -228,9 +228,11 @@ body::after {
 
 .verseText {
   line-height: 1.6;
-  white-space: nowrap;   /* never wrap */
-  overflow-x: auto;      /* scroll appears only if needed */
-
+}
+/* Verse tab: no-wrap + horizontal scroll only when needed */
+.verseBox--nowrap .verseText{
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 .verseTop {

@@ -456,8 +456,12 @@ body::before {
 .verseText {
   line-height: 1.9;
   color: var(--ink-soft);
-  white-space: nowrap;   /* never wrap */
-  overflow-x: auto;      /* scroll appears only if needed */
+  word-break: break-word;
+}
+/* Verse tab: no-wrap + horizontal scroll only when needed */
+.verseBox--nowrap .verseText{
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 .verseTop { margin-top: 8px; }
