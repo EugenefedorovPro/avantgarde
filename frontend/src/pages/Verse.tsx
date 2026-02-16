@@ -13,12 +13,7 @@ import { Tab, Nav } from "react-bootstrap";
 import { verse } from "../api/verse";
 import { reclamationRandomApi } from "../api/reclamation";
 import type { ReclamationInterface } from "../api/reclamation";
-import type {
-  VerseInterface,
-  VerseType,
-  AudioType,
-  HermType,
-} from "../api/verse";
+import type { VerseType, AudioType, HermType } from "../api/verse";
 
 import { AudioBox } from "../components/AudioBox";
 import { VerseBox } from "../components/VerseBox";
@@ -49,9 +44,18 @@ export const Verse = () => {
     navigate(name ? `/reclamation/${name}` : "/reclamation");
   }, [navigate, recl]);
 
-  const headerTop: ReactNode = useMemo(
+  // Signature (now meant to be at the bottom)
+  const signature: ReactNode = useMemo(
     () => (
-      <div className="verseMetaRow">
+      <div
+        className="verseMetaRow"
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          textAlign: "right",
+          width: "100%",
+        }}
+      >
         <div className="fst-italic mb-0">Евгений Проскуликов</div>
       </div>
     ),
@@ -70,6 +74,17 @@ export const Verse = () => {
       />
     ),
     [recl, onTop]
+  );
+
+  // Bottom area: controls + signature (signature moved down here)
+  const bottomBlock: ReactNode = useMemo(
+    () => (
+      <>
+        {controls}
+        {signature}
+      </>
+    ),
+    [controls, signature]
   );
 
   useEffect(() => {
@@ -127,7 +142,7 @@ export const Verse = () => {
     return () => {
       cancelled = true;
     };
-  }, [html_name]);
+  }, [html_name, navigate]);
 
   if (loading) return <div>Loading…</div>;
 
@@ -176,8 +191,7 @@ export const Verse = () => {
             className="verseBox verseBox--nowrap"
             titleMd={vrs.title}
             textMd={vrs.text}
-            childrenTop={headerTop}
-            childrenBottom={controls}
+            childrenBottom={bottomBlock}
           />
         </Tab.Pane>
 
@@ -186,8 +200,7 @@ export const Verse = () => {
             <VerseBox
               titleMd={herm.title}
               textMd={herm.text}
-              childrenTop={headerTop}
-              childrenBottom={controls}
+              childrenBottom={bottomBlock}
             />
           </Tab.Pane>
         )}
@@ -195,7 +208,7 @@ export const Verse = () => {
         {audio && (
           <Tab.Pane eventKey="audio">
             <VerseBox
-              childrenTop={<AudioBox audio={audio}>{headerTop}</AudioBox>}
+              childrenTop={<AudioBox audio={audio}>{signature}</AudioBox>}
               childrenBottom={controls}
             />
           </Tab.Pane>
