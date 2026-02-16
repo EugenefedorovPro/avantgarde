@@ -34,4 +34,4 @@ class CalcCombinations:
 
         times = combinations // seconds_in_universe_lifetime
 
-        return f"{times:,}"
+        return f"{times}"
