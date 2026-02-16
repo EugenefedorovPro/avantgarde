@@ -1,84 +1,61 @@
+from __future__ import annotations
+
 from itertools import cycle
 from pathlib import Path
+from typing import Iterable, Iterator, Optional, Sequence
+
 import segno
 from PIL import Image, ImageDraw, ImageFont
 from importlib.resources import files
 
 DEFAULT_FONT = files("qr_code_generator").joinpath("fonts", "NotoSans-Black.ttf")
 
+# Segno matrix behaves like: rows -> columns -> bool (True=dark module)
+Matrix = Sequence[Sequence[bool]]
+
 
 class DrawQR:
-
     def __init__(
         self,
-        url,
-        text,
-        out_file,
         font_path=DEFAULT_FONT,
-        scale=20,
-        font_scale=1.35,
-        border=4,
-        corner_border=9,
-        error_level="h",
-    ):
-        self.url = url
-        self.text = text
-        self.out_file = out_file
+        scale: int = 20,
+        font_scale: float = 1.35,
+        border: int = 4,
+        corner_border: int = 9,  # kept (unused in your current code)
+        error_level: str = "h",
+    ) -> None:
         self.font_path = font_path
         self.scale = scale
         self.font_scale = font_scale
         self.border = border
+        self.corner_border = corner_border
         self.error_level = error_level
 
-        self.size = 0
-        self.img = None
+        # per-render state (initialized in draw_qr)
+        self.size: int = 0
+        self.img: Optional[Image.Image] = None
+        self._text_gen: Optional[Iterator[str]] = None
 
-        self.text_gen = self.make_text_generator()
-
-    def make_text_generator(self):
-        prepared_text = "".join(ch for ch in self.text if ch.isalpha())
+    def _make_text_generator(self, text: str) -> Iterator[str]:
+        prepared_text = "".join(ch for ch in text if ch.isalpha())
+        if not prepared_text:
+            # fail fast: your renderer requires letters
+            raise ValueError("`text` must contain at least one alphabetic character.")
         return cycle(prepared_text)
 
-    def generate_matrix(self):
+    def generate_matrix(self, url: str) -> Matrix:
+        qr = segno.make(url, error=self.error_level)
+        return qr.matrix  # sequence of rows; each row sequence of booleans
 
-        # create qr code object
-        # error="h" = high error correction (allows visual distortion)
-        qr = segno.make(self.url, error=self.error_level)
-
-        # extract the qr matrix:
-        # a 2d list of booleans (true = black module, false = white)
-        matrix = qr.matrix
-        return matrix
-
-    def prepare_image(self, matrix: tuple[bytearray]):
-
-        # number of modules per side (qr version dependent)
+    def prepare_image(self, matrix: Matrix) -> ImageDraw.ImageDraw:
         self.size = len(matrix)
 
-        # calculate image size in pixels:
-        # (qr modules + quiet zone) * pixels per module
         image_size = (self.size + 2 * self.border) * self.scale
-
-        # create grayscale image:
-        # "l" = 8-bit grayscale
-        # 255 = white background
         self.img = Image.new("L", (image_size, image_size), 255)
 
-        # create drawing context
-        draw = ImageDraw.Draw(self.img)
-        return draw
+        return ImageDraw.Draw(self.img)
 
-    def is_finder(self, x, y, size) -> bool:
-        """
-        returns true if the current module belongs to a qr finder pattern.
-
-        finder patterns are the three big squares in:
-        - top-left
-        - top-right
-        - bottom-left
-
-        we avoid stylizing them so scanners can detect the qr reliably.
-        """
+    def is_finder(self, x: int, y: int, size: int) -> bool:
         # Finder + separator
         if (x < 8 and y < 8) or (x >= size - 8 and y < 8) or (x < 8 and y >= size - 8):
             return True
@@ -93,60 +70,67 @@ class DrawQR:
 
         return False
 
-    def draw_letter(self, px, py, font, draw):
-        # center of the module
+    def draw_letter(
+        self, px: int, py: int, font: ImageFont.FreeTypeFont, draw: ImageDraw.ImageDraw
+    ) -> None:
+        if self._text_gen is None:
+            raise RuntimeError(
+                "Text generator is not initialized. Call draw_qr() first."
+            )
+
         cx = px + self.scale // 2
         cy = py + self.scale // 2
 
-        # draw the letter instead of a square
         draw.text(
-            (cx, cy),  # position
-            next(self.text_gen),
-            fill=0,  # black
-            font=font,  # bold font
-            anchor="mm",  # center alignment
+            (cx, cy),
+            next(self._text_gen),
+            fill=0,
+            font=font,
+            anchor="mm",
         )
 
-    def render_qr(self, matrix: tuple[bytearray], draw):
+    def render_qr(self, matrix: Matrix, draw: ImageDraw.ImageDraw) -> None:
+        font = ImageFont.truetype(
+            str(self.font_path), int(self.scale * self.font_scale)
+        )
 
-        # load font for letter rendering
-        # font size slightly larger than cell to fill it visually
-        font = ImageFont.truetype(self.font_path, int(self.scale * self.font_scale))
-
-        # iterate through qr matrix rows
         for y, row in enumerate(matrix):
-
-            # iterate through each module in the row
             for x, cell in enumerate(row):
-
-                # if this module is white → do nothing
                 if not cell:
                     continue
 
-                # convert qr grid coordinates → pixel coordinates
                 px = (x + self.border) * self.scale
                 py = (y + self.border) * self.scale
 
-                # if this is a finder-pattern cell
                 if self.is_finder(x, y, self.size):
-
-                    # draw solid black square
                     draw.rectangle(
                         [px, py, px + self.scale - 1, py + self.scale - 1], fill=0
                     )
-
                 else:
                     self.draw_letter(px, py, font, draw)
 
-    def draw_qr(self):
-        matrix: tuple[bytearray] = self.generate_matrix()
+    def draw_qr(self, url: str, text: str, out_file: str | Path | None = None) -> bytes:
+        """
+        Render QR into PNG bytes.
+        If out_file is provided, also write the PNG there.
+        """
+        self._text_gen = self._make_text_generator(text)
+
+        matrix = self.generate_matrix(url)
         draw = self.prepare_image(matrix)
         self.render_qr(matrix, draw)
 
-    def save_qr(self):
-        # prepare qr image
-        self.draw_qr()
-        # save final image to disk
-        self.img.save(self.out_file)
-        # print confirmation
-        print(f"saved: {self.out_file}")
+        if self.img is None:
+            raise RuntimeError("Image was not created.")
+
+        # export to PNG bytes
+        from io import BytesIO
+
+        buf = BytesIO()
+        self.img.save(buf, format="PNG")
+        png_bytes = buf.getvalue()
+
+        if out_file is not None:
+            Path(out_file).write_bytes(png_bytes)
+
+        return png_bytes

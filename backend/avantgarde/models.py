@@ -24,6 +24,7 @@ class ContentOrder(models.Model):
     content = models.CharField(max_length=50, null=True, blank=True)
     order = models.PositiveIntegerField(unique=True, blank=True, null=True)
     html_name = models.SlugField(unique=True)
+    qr_text = models.CharField(max_length=50, null=True, blank=True, unique=True)
 
     def __str__(self):
         return f"{self.order} - {self.content}"

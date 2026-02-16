@@ -19,12 +19,12 @@ import { TypewriterRepeat } from "../components/TypewriterRepeat";
 
 export const ReclamationPage = () => {
   const navigate = useNavigate();
-  const { html_name } = useParams<{ html_name?: string }>(); // ✅ /reclamation/:html_name?
+  const { html_name } = useParams<{ html_name?: string }>(); // /reclamation/:html_name?
 
   const [data, setData] = useState<ReclamationInterface | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ reload logic:
+  // reload logic:
   // - if url has html_name -> fetch deterministic
   // - else -> fetch random and then rewrite url to /reclamation/<html_name>
   const load = useCallback(async () => {
@@ -36,7 +36,7 @@ export const ReclamationPage = () => {
 
       setData(d);
 
-      // ✅ if we came to /reclamation (no param), canonize the URL
+      // if we came to /reclamation (no param), canonize the URL
       const got = d?.reclamation?.html_name;
       if (!html_name && got) {
         navigate(`/reclamation/${got}`, { replace: true });
@@ -50,6 +50,7 @@ export const ReclamationPage = () => {
     void load();
   }, [load]);
 
+  // signature (kept intact)
   const Signature: ReactNode = useMemo(
     () => <div className="fst-italic text-end">Евгений Проскуликов</div>,
     []
@@ -61,12 +62,23 @@ export const ReclamationPage = () => {
         tagText={data?.reclamation?.text ?? "…"}
         prevText="сюда"
         nextText="туда"
-        onTop={load} // ✅ "top" button reloads (random if no param; deterministic if param)
+        onTop={load} // "top" button reloads (random if no param; deterministic if param)
         onPrev={() => navigate("/verse?initialStatus=prev")}
         onNext={() => navigate("/verse?initialStatus=next")}
       />
     ),
     [data, load, navigate]
+  );
+
+  // signature moved to bottom (after controls)
+  const bottomBlock: ReactNode = useMemo(
+    () => (
+      <>
+        {controls}
+        {Signature}
+      </>
+    ),
+    [controls, Signature]
   );
 
   if (loading) return <div>loading...</div>;
@@ -96,8 +108,7 @@ export const ReclamationPage = () => {
                 msPerChar={65}
               />
             }
-            childrenTop={Signature}
-            childrenBottom={controls}
+            childrenBottom={bottomBlock}
           />
         </Tab.Pane>
       </Tab.Content>

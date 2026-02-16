@@ -18,6 +18,8 @@ services:
     build: 
       context: ./frontend
     restart: unless-stopped
+    env_file:
+      - .env
     ports:
       - 3015:5173
     volumes:

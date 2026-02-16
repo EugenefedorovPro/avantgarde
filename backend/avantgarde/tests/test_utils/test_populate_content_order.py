@@ -82,3 +82,16 @@ class TestPopulateContentOrder(CreateTestVerses):
         PopulateContentOrder().populate_content_order()
         self.assert_orders_ok()
 
+    def test_qr_code_text_all_titles(self):
+        PopulateContentOrder().populate_content_order()
+        expected = ContentOrder.objects.values_list("qr_text", flat=True)
+        self.assertTrue(all(expected))
+
+    def test_qr_code_one_title_missed(self):
+        verse = RawVerse.objects.first()
+        verse.title = None
+        verse.save()
+
+        PopulateContentOrder().populate_content_order()
+        expected = ContentOrder.objects.values_list("qr_text")
+        self.assertEqual(expected[0], (None,))

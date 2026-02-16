@@ -1,4 +1,5 @@
-export const baseUrl = "http://localhost:8015";
+export const baseUrl = import.meta.env.VITE_BASE_URL as string;
+
 export const urlVerse = `${baseUrl}/verse/`;
 export const urlRandVerse = `${baseUrl}/rand_verse/`;
 export const urlHerm = `${baseUrl}/herm/`;

@@ -25,7 +25,7 @@ class HistoryTime(admin.ModelAdmin):
 
 @admin.register(ContentOrder)
 class ContentOrderAdmin(admin.ModelAdmin):
-    list_display = ["order", "html_name", "content"]
+    list_display = ["order", "html_name", "content", "qr_text"]
 
 
 @admin.register(HermRandVerse)
