@@ -6,6 +6,8 @@ from avantgarde.views import (
     ReclamationByNameView,
     ContentOrderView,
     NeologizmView,
+    PrintQrPdfView,
+    PrintQrTextView,
 )
 
 urlpatterns = [
@@ -23,4 +25,6 @@ urlpatterns = [
         name="reclamation_by_name",
     ),
     path("neologizm/", NeologizmView.as_view(), name="neologizm"),
+    path("print/pdf/", PrintQrPdfView.as_view(), name="print_pdf_file"),
+    path("print/text/", PrintQrTextView.as_view(), name="print_text"),
 ]

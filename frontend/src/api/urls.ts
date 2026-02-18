@@ -7,5 +7,8 @@ export const urlReclamation = `${baseUrl}/reclamation/`;
 export const urlContentOrder = `${baseUrl}/content_order/`;
 export const urlNeologizm = `${baseUrl}/neologizm/`;
 
+export const urlPdfFile = `${baseUrl}/print/pdf/`;
+export const urlPdfText = `${baseUrl}/print/text/`;
+
 // default verse
 export const defaultVerseUrl = "/verse/avantgarde_at_war/";

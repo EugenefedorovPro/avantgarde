@@ -7,6 +7,19 @@ class HistoryTime(models.Model):
     word_of_year = models.CharField(max_length=50, null=True, blank=True, unique=True)
 
 
+class HermToMakeCopy(models.Model):
+    title = models.CharField(max_length=50, default="")
+    text = models.TextField()
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def load(cls):
+        return cls.objects.get_or_create(pk=1, defaults={"title": "", "text": ""})[0]
+
+
 class HermToHistory(models.Model):
     title = models.CharField(max_length=50, default="")
     text = models.TextField()

@@ -10,7 +10,14 @@ from avantgarde.models import (
     HistoryTime,
     EuPro,
     HermToHistory,
+    HermToMakeCopy,
 )
+
+
+class HermToMakeCopySerializer(ModelSerializer):
+    class Meta:
+        model = HermToMakeCopy
+        fields = ["pk", "title", "text"]
 
 
 class HermToHistorySerializer(ModelSerializer):

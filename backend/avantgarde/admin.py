@@ -12,7 +12,12 @@ from .models import (
     ContentOrder,
     HistoryTime,
     HermToHistory,
+    HermToMakeCopy,
 )
+
+@admin.register(HermToMakeCopy)
+class HermToMakeCopyAdmin(admin.ModelAdmin):
+    list_display = ["title", "text"]
 
 @admin.register(HermToHistory)
 class HermToHistoryAdmin(admin.ModelAdmin):

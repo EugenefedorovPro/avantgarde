@@ -13,6 +13,7 @@ from avantgarde.models import (
     ContentOrder,
     HistoryTime,
     HermToHistory,
+    HermToMakeCopy,
 )
 from avantgarde.serializers import (
     VerseSerializer,
@@ -23,6 +24,8 @@ from avantgarde.serializers import (
     ContentOrderSerializer,
     HistoryTimeSerializer,
     HermToHistorySerializer,
+    HermToMakeCopySerializer,
+
 )
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
@@ -34,6 +37,17 @@ from avantgarde.utils.calc_combinations import CalcCombinations
 from avantgarde.utils.get_new_order_verse import get_new_order_verse
 from avantgarde.utils.populate_content_order import PopulateContentOrder
 from enum import Enum
+import os
+import tempfile
+from pathlib import Path
+
+from django.http import FileResponse
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.status import HTTP_500_INTERNAL_SERVER_ERROR
+from rest_framework.views import APIView
+
+from avantgarde.utils.create_file_to_print import CreateFileToPrint
 
 logger = logging.getLogger(__file__)
 
@@ -45,6 +59,58 @@ class New(Enum):
 
 
 NO_CONTENT_MESSAGE = "no content available"
+
+
+class PrintQrTextView(APIView):
+    def get(self, response):
+        herm_obj = HermToMakeCopy.objects.first()
+        herm_ser = HermToHistorySerializer(herm_obj)
+        data = {
+            "herm": herm_ser.data,
+        }
+        return Response(data=data, status=HTTP_200_OK)
+
+class PrintQrPdfView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        creator = CreateFileToPrint()
+
+        tmp_dir = tempfile.mkdtemp()
+        docx_path = str(Path(tmp_dir) / "qr_print.docx")
+
+        try:
+            _, pdf_path = creator.create_file_to_print(
+                out_path=docx_path, also_pdf=True
+            )
+            if not pdf_path:
+                return Response(
+                    {"detail": "PDF was not generated"},
+                    status=HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
+            return FileResponse(
+                open(pdf_path, "rb"),
+                as_attachment=True,
+                filename="qr_print.pdf",
+                content_type="application/pdf",
+            )
+        except Exception as e:
+            return Response({"detail": str(e)}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+        finally:
+            # best-effort cleanup (docx/pdf + temp dir)
+            try:
+                for p in Path(tmp_dir).glob("*"):
+                    try:
+                        p.unlink()
+                    except Exception:
+                        pass
+                try:
+                    Path(tmp_dir).rmdir()
+                except Exception:
+                    pass
+            except Exception:
+                pass
 
 
 class NeologizmView(APIView):
@@ -135,7 +201,6 @@ class ContentOrderView(APIView):
             return Response(
                 ContentOrderSerializer(content_obj).data, status=HTTP_200_OK
             )
-
 
         new_order: int | None = self.cycle_order(current_obj.order, New(new))
         if new_order is None:
