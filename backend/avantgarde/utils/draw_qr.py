@@ -1,4 +1,4 @@
-from __future__ import annotations
+import ipdb
 
 from itertools import cycle
 from pathlib import Path
@@ -8,7 +8,8 @@ import segno
 from PIL import Image, ImageDraw, ImageFont
 from importlib.resources import files
 
-DEFAULT_FONT = files("qr_code_generator").joinpath("fonts", "NotoSans-Black.ttf")
+# DEFAULT_FONT = files("qr_code_generator").joinpath("fonts", "NotoSans-Black.ttf")
+DEFAULT_FONT = Path(__file__).parent / "fonts" / "NotoSans-Black.ttf"
 
 # Segno matrix behaves like: rows -> columns -> bool (True=dark module)
 Matrix = Sequence[Sequence[bool]]

@@ -49,4 +49,5 @@ export const VerseBox = ({
       {childrenBottom && <div className="verseBottom">{childrenBottom}</div>}
     </section>
   );
+
 };
