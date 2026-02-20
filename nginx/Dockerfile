@@ -9,7 +9,7 @@ COPY ./frontend/ ./
 
 # build-time injected value
 ARG VITE_BASE_URL
-ENV VITE_BASE_URL=$VITE_BASE_URL
+ENV VITE_BASE_URL=${VITE_BASE_URL}
 
 RUN npm run build
 
@@ -17,5 +17,4 @@ RUN npm run build
 FROM nginx:1.23.4
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY ./nginx/avant.local.conf /etc/nginx/conf.d/avant.local.conf
-COPY ./backend/staticfiles /app/staticfiles
 CMD ["nginx", "-g", "daemon off;"]
