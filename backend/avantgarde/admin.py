@@ -15,13 +15,16 @@ from .models import (
     HermToMakeCopy,
 )
 
+
 @admin.register(HermToMakeCopy)
 class HermToMakeCopyAdmin(admin.ModelAdmin):
     list_display = ["title", "text"]
 
+
 @admin.register(HermToHistory)
 class HermToHistoryAdmin(admin.ModelAdmin):
     list_display = ["title", "text"]
+
 
 @admin.register(HistoryTime)
 class HistoryTime(admin.ModelAdmin):
@@ -30,7 +33,7 @@ class HistoryTime(admin.ModelAdmin):
 
 @admin.register(ContentOrder)
 class ContentOrderAdmin(admin.ModelAdmin):
-    list_display = ["order", "html_name", "content", "qr_text"]
+    list_display = ["order", "html_name", "content", "qr_text", "html_for_qr"]
 
 
 @admin.register(HermRandVerse)

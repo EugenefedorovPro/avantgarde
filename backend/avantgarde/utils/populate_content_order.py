@@ -4,49 +4,57 @@ from django.db import transaction
 from avantgarde.models import ContentOrder, RawVerse
 
 STEP_IN_NUMERATION = 10
-BASE_URL = os.getenv("BASE_URL", "")
+BASE_URL = os.getenv("BASE_URL", "").rstrip("/")  # avoid double slashes
 
 
 class PopulateContentOrder:
     def _change_order_value(
         self, verses: list[RawVerse], step: int
-    ) -> tuple[list[int], list[str], list[str | None]]:
+    ) -> tuple[list[int], list[str], list[str], list[str | None]]:
         """
         renumerates verses by changing order field but keeping their sequence intact:
         e. g. 1,2,5 -> 10, 20, 30.
         """
         new_orders: list[int] = []
-        relevant_html_names: list[str] = []
+        html_names: list[str] = []        # slug, no BASE_URL
+        html_for_qr: list[str] = []       # full url with BASE_URL
         titles: list[str] = []
+
         for i, verse in enumerate(verses, start=1):
             new_order = i * step
             verse.order = new_order
             new_orders.append(new_order)
-            html_n = f"{BASE_URL}/verse/{verse.html_name}/"
-            relevant_html_names.append(html_n)
+
+            slug = verse.html_name
+            html_names.append(slug)
+            html_for_qr.append(f"{BASE_URL}/verse/{slug}/")
+
             titles.append(verse.title)
-        return new_orders, relevant_html_names, titles
+
+        return new_orders, html_names, html_for_qr, titles
 
     def add_base_url_to_non_verse(self, non_verse_content: list[ContentOrder]) -> None:
         for item in non_verse_content:
-            item.html_name = f"{BASE_URL}/{item.html_name}"
+            # If your non-verse html_name is a slug like "rand_verse" and your route is "/<slug>/"
+            # adjust the path here if needed (e.g. "/api/..." or "/print/pdf/").
+            item.html_for_qr = f"{BASE_URL}/{item.html_name}/"
 
     def move_non_verse_content(self, max_current_order: int) -> None:
         """
         moves non verse content order to last positions (safe for UNIQUE order)
-        and prefixes BASE_URL to their html_name
+        and fills html_for_qr with BASE_URL
         """
         non_verse_content = list(
             ContentOrder.objects.exclude(content="verse")
-            .only("pk", "order", "html_name")  # ✅ need html_name to update it
+            .only("pk", "order", "html_name", "html_for_qr")
             .order_by("pk")
         )
         if not non_verse_content:
             return
 
-        # ✅ prefix BASE_URL and persist it
+        # set html_for_qr (leave html_name unchanged)
         self.add_base_url_to_non_verse(non_verse_content)
-        ContentOrder.objects.bulk_update(non_verse_content, ["html_name"])
+        ContentOrder.objects.bulk_update(non_verse_content, ["html_for_qr"])
 
         # Phase 1: move non-verse to a temporary safe range to avoid UNIQUE collisions
         current_max = (
@@ -87,26 +95,32 @@ class PopulateContentOrder:
         temp_step = max_order + 10
 
         with transaction.atomic():
+            # Phase 1: move away from current values to avoid UNIQUE collisions
             self._change_order_value(verses, temp_step)
             RawVerse.objects.bulk_update(verses, ["order"])
 
-            final_orders, relevant_html_names, titles = self._change_order_value(
+            # Phase 2: final desired numbering 10, 20, 30, ...
+            final_orders, html_names, html_for_qr, titles = self._change_order_value(
                 verses, STEP_IN_NUMERATION
             )
             RawVerse.objects.bulk_update(verses, ["order"])
 
-            max_current_order = 10
-            if final_orders:
-                max_current_order = max(final_orders)
+            # add non_verse_content to the end
+            max_current_order = max(final_orders) if final_orders else 10
             self.move_non_verse_content(max_current_order)
 
+            # Rebuild ContentOrder for verses
             ContentOrder.objects.filter(content="verse").delete()
             ContentOrder.objects.bulk_create(
                 [
                     ContentOrder(
-                        order=o, content="verse", html_name=html, qr_text=title
+                        order=o,
+                        content="verse",
+                        html_name=slug,          # ✅ keep slug
+                        html_for_qr=url,         # ✅ full url for QR
+                        qr_text=title,
                     )
-                    for o, html, title in zip(final_orders, relevant_html_names, titles)
+                    for o, slug, url, title in zip(final_orders, html_names, html_for_qr, titles)
                 ]
             )
 
