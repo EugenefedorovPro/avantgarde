@@ -1,8 +1,10 @@
+import os
 import logging
 from django.db import transaction
 from avantgarde.models import ContentOrder, RawVerse
 
 STEP_IN_NUMERATION = 10
+BASE_URL = os.getenv("BASE_URL", "")
 
 
 class PopulateContentOrder:
@@ -20,19 +22,50 @@ class PopulateContentOrder:
             new_order = i * step
             verse.order = new_order
             new_orders.append(new_order)
-            relevant_html_names.append(verse.html_name)
+            html_n = f"{BASE_URL}/verse/{verse.html_name}/"
+            relevant_html_names.append(html_n)
             titles.append(verse.title)
         return new_orders, relevant_html_names, titles
 
-    def move_non_verse_content(self, max_current_order: int):
-        """
-        moves non verse content order to last positions
+    def add_base_url_to_non_verse(self, non_verse_content: list[ContentOrder]) -> None:
+        for item in non_verse_content:
+            item.html_name = f"{BASE_URL}/{item.html_name}"
 
+    def move_non_verse_content(self, max_current_order: int) -> None:
         """
-        non_verse_content = ContentOrder.objects.exclude(content="verse")
+        moves non verse content order to last positions (safe for UNIQUE order)
+        and prefixes BASE_URL to their html_name
+        """
+        non_verse_content = list(
+            ContentOrder.objects.exclude(content="verse")
+            .only("pk", "order", "html_name")  # ✅ need html_name to update it
+            .order_by("pk")
+        )
+        if not non_verse_content:
+            return
+
+        # ✅ prefix BASE_URL and persist it
+        self.add_base_url_to_non_verse(non_verse_content)
+        ContentOrder.objects.bulk_update(non_verse_content, ["html_name"])
+
+        # Phase 1: move non-verse to a temporary safe range to avoid UNIQUE collisions
+        current_max = (
+            ContentOrder.objects.order_by("-order")
+            .values_list("order", flat=True)
+            .first()
+        )
+        current_max = current_max if current_max is not None else 0
+        intended_max = max_current_order + STEP_IN_NUMERATION * len(non_verse_content)
+        temp_base = max(current_max, intended_max) + 1000
+
+        for i, item in enumerate(non_verse_content, start=1):
+            item.order = temp_base + i
+        ContentOrder.objects.bulk_update(non_verse_content, ["order"])
+
+        # Phase 2: move non-verse to the end (final values)
         for i, item in enumerate(non_verse_content, start=1):
             item.order = max_current_order + STEP_IN_NUMERATION * i
-            item.save()
+        ContentOrder.objects.bulk_update(non_verse_content, ["order"])
 
     def populate_content_order(self) -> None:
         """
@@ -50,30 +83,23 @@ class PopulateContentOrder:
             logging.warning("No verses in db")
             return None
 
-        # max existing order, NULL-safe (does NOT treat real 0 as NULL)
         max_order = max((v.order for v in verses if v.order is not None), default=0)
-
-        # temp step must be > max_order so that i*temp_step is always > any existing order
         temp_step = max_order + 10
 
         with transaction.atomic():
-            # Phase 1: move away from current values to avoid UNIQUE collisions
             self._change_order_value(verses, temp_step)
             RawVerse.objects.bulk_update(verses, ["order"])
 
-            # Phase 2: final desired numbering 10, 20, 30, ...
             final_orders, relevant_html_names, titles = self._change_order_value(
                 verses, STEP_IN_NUMERATION
             )
             RawVerse.objects.bulk_update(verses, ["order"])
 
-            # add non_verse_content to the end
             max_current_order = 10
             if final_orders:
                 max_current_order = max(final_orders)
             self.move_non_verse_content(max_current_order)
 
-            # Rebuild ContentOrder for verses
             ContentOrder.objects.filter(content="verse").delete()
             ContentOrder.objects.bulk_create(
                 [
