@@ -14,6 +14,6 @@ segno==1.6.6
 pillow==12.1.1
 docxtpl==0.20.2
 
+requests==2.32.5
 gunicorn==24.1.1
-
 
