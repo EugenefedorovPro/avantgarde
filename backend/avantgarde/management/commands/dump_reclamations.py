@@ -10,7 +10,7 @@ from avantgarde.models import Reclamation, AnswerToReclamation
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        out_path = Path(settings.BASE_DIR).parent / "reclamations.txt"
+        out_path = Path(settings.BASE_DIR) / "reclamations.txt"
 
         with out_path.open("w", encoding="utf-8") as f:
             f.write("=== Reclamation ===\n")

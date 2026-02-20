@@ -38,7 +38,7 @@ export function TypewriterRepeat({
 
   return (
     <div className={className} style={{ whiteSpace: "normal" }}>
-      <ReactMarkdown rehypePlugins={[rehypeRaw]} breaks>
+      <ReactMarkdown rehypePlugins={[rehypeRaw]}>
         {fullText.slice(0, i)}
       </ReactMarkdown>
     </div>

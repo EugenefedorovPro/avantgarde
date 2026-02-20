@@ -63,8 +63,8 @@ export const ReclamationPage = () => {
         prevText="сюда"
         nextText="туда"
         onTop={load} // "top" button reloads (random if no param; deterministic if param)
-        onPrev={() => navigate("/verse?initialStatus=prev")}
-        onNext={() => navigate("/verse?initialStatus=next")}
+        onPrev={() => navigate(`/manage?dir=prev`)}
+        onNext={() => navigate(`/manage?dir=next`)}
       />
     ),
     [data, load, navigate]

@@ -8,8 +8,9 @@ type AudioBoxProps = {
   children?: ReactNode;
 };
 
-export const AudioBox = ({ audio, children }: AudioBoxProps): JSX.Element => {
+export const AudioBox = ({ audio, children }: AudioBoxProps): ReactNode => {
   const audioUrl = `${baseUrl}${audio.audio}`;
+  console.log(`audioUrl=${audioUrl}`);
 
   return (
     <section className="audio-box">

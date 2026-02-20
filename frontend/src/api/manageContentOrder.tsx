@@ -20,15 +20,15 @@ export const ManageContentOrder = () => {
 
         // decision logic lives here
         if (content.content === "verse") {
-          navigate(`/verse/${content.html_name}/`, {
-            replace: true,
-          });
+          navigate(`/verse/${content.html_name}/`, { replace: true });
         } else if (content.content === "reclamation") {
           navigate("/reclamation", { replace: true });
         } else if (content.content === "neologizm") {
           navigate("/neologizm", { replace: true });
-        } else {
+        } else if (content.content === "rand_verse") {
           navigate("/rand_verse", { replace: true });
+        } else if (content.content === "print_copy") {
+          navigate("/print_copy", { replace: true });
         }
       } catch (e) {
         console.error(e);

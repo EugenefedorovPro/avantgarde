@@ -10,9 +10,8 @@ python manage.py collectstatic --noinput
 
 
 ## for development only
-exec python manage.py runserver 0.0.0.0:8000 --nothreading
+# exec python manage.py runserver 0.0.0.0:8000 --nothreading
 
 ## alternative for development
-# gunicorn avantgarde.wsgi:application --bind 0.0.0.0:8000 --workers=1 --timeout=300 --reload
-
+gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers=2 --timeout=300
 
