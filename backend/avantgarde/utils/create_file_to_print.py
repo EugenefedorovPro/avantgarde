@@ -78,7 +78,7 @@ class CreateFileToPrint:
         dq = DrawQR(scale=24, border=4)
 
         items = list(
-            ContentOrder.objects.order_by("order").values_list("html_name", "qr_text")
+            ContentOrder.objects.order_by("order").values_list("html_for_qr", "qr_text")
         )
 
         images: list[InlineImage] = []

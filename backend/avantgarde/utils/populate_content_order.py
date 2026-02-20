@@ -1,4 +1,5 @@
 import os
+import re
 import logging
 from django.db import transaction
 from avantgarde.models import ContentOrder, RawVerse
@@ -16,8 +17,8 @@ class PopulateContentOrder:
         e. g. 1,2,5 -> 10, 20, 30.
         """
         new_orders: list[int] = []
-        html_names: list[str] = []        # slug, no BASE_URL
-        html_for_qr: list[str] = []       # full url with BASE_URL
+        html_names: list[str] = []  # slug, no BASE_URL
+        html_for_qr: list[str] = []  # full url with BASE_URL
         titles: list[str] = []
 
         for i, verse in enumerate(verses, start=1):
@@ -29,7 +30,12 @@ class PopulateContentOrder:
             html_names.append(slug)
             html_for_qr.append(f"{BASE_URL}/verse/{slug}/")
 
-            titles.append(verse.title)
+            if verse.title:
+                titles.append(verse.title)
+            else:
+                first_line= verse.text.splitlines()[0]
+                first_line = re.sub(r"[^\w\s]", "", first_line)
+                titles.append(first_line)
 
         return new_orders, html_names, html_for_qr, titles
 
@@ -84,7 +90,11 @@ class PopulateContentOrder:
         """
         verses = list(
             RawVerse.objects.order_by("order", "pk").only(
-                "pk", "order", "html_name", "title"
+                "pk",
+                "order",
+                "html_name",
+                "title",
+                "text",
             )
         )
         if not verses:
@@ -116,11 +126,13 @@ class PopulateContentOrder:
                     ContentOrder(
                         order=o,
                         content="verse",
-                        html_name=slug,          # ✅ keep slug
-                        html_for_qr=url,         # ✅ full url for QR
+                        html_name=slug,  # ✅ keep slug
+                        html_for_qr=url,  # ✅ full url for QR
                         qr_text=title,
                     )
-                    for o, slug, url, title in zip(final_orders, html_names, html_for_qr, titles)
+                    for o, slug, url, title in zip(
+                        final_orders, html_names, html_for_qr, titles
+                    )
                 ]
             )
 

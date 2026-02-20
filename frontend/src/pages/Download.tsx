@@ -6,7 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { baseUrl } from "../api/urls";
+import { urlPdfFile} from "../api/urls";
 import { Tab, Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
@@ -32,7 +32,8 @@ export const Download = () => {
 
   // Replace reclamation button with PDF download
   const onTop = useCallback(() => {
-    window.location.href = baseUrl + "/print/pdf/";
+    window.location.href = urlPdfFile;
+    console.log(urlPdfFile);
   }, []);
 
   const signature: ReactNode = useMemo(
