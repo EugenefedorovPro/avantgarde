@@ -1,0 +1,12 @@
+**/node_modules
+**/.venv
+**/venv
+backend/avantgarde.venv
+**/__pycache__
+**/*.pyc
+.git
+.gitignore
+frontend/dist
+backend/staticfiles
+data
+*.sqlite3
