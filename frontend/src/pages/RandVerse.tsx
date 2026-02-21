@@ -26,13 +26,15 @@ export const RandVersePage = () => {
     let cancelled = false;
 
     const load = async () => {
+      // IMPORTANT: do NOT clear UI, just start loading
       setLoading(true);
       try {
         const randData = await randVerse();
         if (!cancelled) setData(randData);
       } catch (e) {
         console.error(e);
-        if (!cancelled) setData(null);
+        // IMPORTANT: keep previous data on transient errors
+        // if (!cancelled) setData(null);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -45,8 +47,9 @@ export const RandVersePage = () => {
     };
   }, [reload]);
 
-  const signature: ReactNode = (
-    <div className="fst-italic text-end mt-2">Евгений Проскуликов</div>
+  const signature: ReactNode = useMemo(
+    () => <div className="fst-italic text-end mt-2">Евгений Проскуликов</div>,
+    []
   );
 
   const controls = useMemo(
@@ -75,7 +78,7 @@ export const RandVersePage = () => {
         {signature}
       </>
     ),
-    [newVerse]
+    [newVerse, signature]
   );
 
   const hermWithSignature: ReactNode = useMemo(
@@ -85,11 +88,30 @@ export const RandVersePage = () => {
         {signature}
       </>
     ),
-    [data?.herm]
+    [data?.herm, signature]
   );
 
-  if (loading) return <div>loading...</div>;
-  if (!data) return <div>no data</div>;
+  // IMPORTANT: no more "if (loading) return ...".
+  // Keep the shell rendered always.
+  const showNoData = !loading && !data;
+
+  const loadingOverlay = (
+    <div
+      className="verseLoadingOverlay"
+      style={{
+        position: "absolute",
+        inset: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "rgba(255,255,255,0.0)", // set >0 if you want dimming
+        pointerEvents: "none",
+      }}
+    >
+      {/* leave empty if you want ZERO visible loading indicator */}
+      {/* <div>Loading…</div> */}
+    </div>
+  );
 
   return (
     <Tab.Container
@@ -116,11 +138,20 @@ export const RandVersePage = () => {
 
       <Tab.Content>
         <Tab.Pane eventKey="verse">
-          <VerseBox textMd={verseWithSignature} childrenBottom={controls} />
+          <div style={{ position: "relative" }}>
+            <VerseBox textMd={verseWithSignature} childrenBottom={controls} />
+            {/* keep old verse visible while fetching new */}
+            {loading && loadingOverlay}
+            {showNoData && <div>no data</div>}
+          </div>
         </Tab.Pane>
 
         <Tab.Pane eventKey="hermeneutics">
-          <VerseBox textMd={hermWithSignature} childrenBottom={controls} />
+          <div style={{ position: "relative" }}>
+            <VerseBox textMd={hermWithSignature} childrenBottom={controls} />
+            {loading && loadingOverlay}
+            {showNoData && <div>no data</div>}
+          </div>
         </Tab.Pane>
       </Tab.Content>
     </Tab.Container>

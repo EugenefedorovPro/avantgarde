@@ -6,10 +6,10 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { defaultVerseUrl } from "../api/urls";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tab, Nav } from "react-bootstrap";
 
+import { defaultVerseUrl } from "../api/urls";
 import { verse } from "../api/verse";
 import { reclamationRandomApi } from "../api/reclamation";
 import type { ReclamationInterface } from "../api/reclamation";
@@ -44,7 +44,7 @@ export const Verse = () => {
     navigate(name ? `/reclamation/${name}` : "/reclamation");
   }, [navigate, recl]);
 
-  // Signature (now meant to be at the bottom)
+  // Signature (meant to be at the bottom)
   const signature: ReactNode = useMemo(
     () => (
       <div
@@ -76,7 +76,7 @@ export const Verse = () => {
     [recl, onTop]
   );
 
-  // Bottom area: controls + signature (signature moved down here)
+  // Bottom area: controls + signature
   const bottomBlock: ReactNode = useMemo(
     () => (
       <>
@@ -90,19 +90,22 @@ export const Verse = () => {
   useEffect(() => {
     let cancelled = false;
 
-    // if you allow /verse without param, decide what to do:
     if (!html_name) {
+      // keep shell stable; just redirect
       setLoading(false);
       setVrs(null);
+      setHerm(null);
+      setAudio(null);
       navigate(defaultVerseUrl, { replace: true });
       return;
     }
 
     const load = async () => {
       setLoading(true);
+
       try {
         const [data, reclData] = await Promise.all([
-          verse(html_name), // now guaranteed string
+          verse(html_name),
           reclamationRandomApi(),
         ]);
 
@@ -122,12 +125,14 @@ export const Verse = () => {
             return prev;
           });
         } else {
+          // true not-found from API
           setVrs(null);
           setHerm(null);
           setAudio(null);
         }
       } catch (e) {
         if (!cancelled) {
+          // If you want to KEEP previous content on transient errors, comment these out:
           setVrs(null);
           setHerm(null);
           setAudio(null);
@@ -144,15 +149,25 @@ export const Verse = () => {
     };
   }, [html_name, navigate]);
 
-  if (loading) return <div>Loading…</div>;
+  // IMPORTANT: do NOT return early on loading/not-found
+  const showNotFound = !loading && !!html_name && !vrs;
 
-  if (!html_name) {
-    return <div>No html_name in URL. Use /verse/&lt;html_name&gt;/</div>;
-  }
-
-  if (!vrs) {
-    return <div>Verse not found: {html_name}</div>;
-  }
+  const loadingOverlay = (
+    <div
+      className="verseLoadingOverlay"
+      style={{
+        position: "absolute",
+        inset: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "rgba(255,255,255,0.55)",
+        pointerEvents: "none",
+      }}
+    >
+      <div>Loading…</div>
+    </div>
+  );
 
   return (
     <Tab.Container
@@ -187,30 +202,41 @@ export const Verse = () => {
 
       <Tab.Content>
         <Tab.Pane eventKey="verse">
-          <VerseBox
-            className="verseBox verseBox--nowrap"
-            titleMd={vrs.title}
-            textMd={vrs.text}
-            childrenBottom={bottomBlock}
-          />
+          <div style={{ position: "relative" }}>
+            <VerseBox
+              className="verseBox verseBox--nowrap"
+              // allow empty on initial mount; after first load you keep old content visible while loading
+              titleMd={vrs?.title ?? ""}
+              textMd={vrs?.text ?? ""}
+              childrenBottom={bottomBlock}
+            />
+            {loading && loadingOverlay}
+            {showNotFound && <div>Verse not found: {html_name}</div>}
+          </div>
         </Tab.Pane>
 
         {herm && (
           <Tab.Pane eventKey="hermeneutics">
-            <VerseBox
-              titleMd={herm.title}
-              textMd={herm.text}
-              childrenBottom={bottomBlock}
-            />
+            <div style={{ position: "relative" }}>
+              <VerseBox
+                titleMd={herm.title}
+                textMd={herm.text}
+                childrenBottom={bottomBlock}
+              />
+              {loading && loadingOverlay}
+            </div>
           </Tab.Pane>
         )}
 
         {audio && (
           <Tab.Pane eventKey="audio">
-            <VerseBox
-              childrenTop={<AudioBox audio={audio}>{signature}</AudioBox>}
-              childrenBottom={controls}
-            />
+            <div style={{ position: "relative" }}>
+              <VerseBox
+                childrenTop={<AudioBox audio={audio}>{signature}</AudioBox>}
+                childrenBottom={controls}
+              />
+              {loading && loadingOverlay}
+            </div>
           </Tab.Pane>
         )}
       </Tab.Content>

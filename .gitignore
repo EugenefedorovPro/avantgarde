@@ -8,3 +8,5 @@ __pycache__/
 
 # Django
 staticfiles/
+backend/qr_print.pdf
+backend/qr_print.docx

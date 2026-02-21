@@ -1,6 +1,6 @@
 import { Tab, Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect, type ReactNode } from "react";
+import { useMemo, useState, useEffect, type ReactNode } from "react";
 
 import { neologizm } from "../api/neologizm";
 import type { NeologizmInterface } from "../api/neologizm";
@@ -21,20 +21,22 @@ export const Neologizm = () => {
   const [data, setData] = useState<NeologizmInterface | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false);
-
   const [activeTab, setActiveTab] = useState<TabKey>("verse");
 
   useEffect(() => {
     let cancelled = false;
 
     const load = async () => {
+      // IMPORTANT: start loading but do NOT blank the UI
       setLoading(true);
+
       try {
         const randData = await neologizm();
         if (!cancelled) setData(randData);
       } catch (e) {
         console.error(e);
-        if (!cancelled) setData(null);
+        // IMPORTANT: keep previous data on transient errors
+        // if (!cancelled) setData(null);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -46,34 +48,55 @@ export const Neologizm = () => {
     };
   }, [reload]);
 
-  const Signature: ReactNode = (
-    <div className="fst-italic text-end">Евгений Проскуликов</div>
+  const Signature: ReactNode = useMemo(
+    () => <div className="fst-italic text-end">Евгений Проскуликов</div>,
+    []
   );
 
-  const controls = (
-    <VerseControls
-      tagText="Переозначить время"
-      prevText="сюда"
-      nextText="туда"
-      onTop={() => {
-        setActiveTab("verse"); // ✅ go back to "слово"
-        setReload((prev) => !prev); // ✅ refetch data
+  const controls = useMemo(
+    () => (
+      <VerseControls
+        tagText="Переозначить время"
+        prevText="сюда"
+        nextText="туда"
+        onTop={() => {
+          setActiveTab("verse");
+          setReload((prev) => !prev);
+        }}
+        onPrev={() => navigate("/manage?dir=prev")}
+        onNext={() => navigate("/manage?dir=next")}
+      />
+    ),
+    [navigate]
+  );
+
+  // signature at the bottom (after controls)
+  const bottom: ReactNode = useMemo(
+    () => (
+      <>
+        {controls}
+        {Signature}
+      </>
+    ),
+    [controls, Signature]
+  );
+
+  // IMPORTANT: no early returns for loading (keeps tabs + frame visible)
+  const showNoData = !loading && (!data || !data.years?.length);
+
+  // Overlay exists but shows nothing (so user sees zero loading indicator).
+  // Keep it if you want to optionally add a spinner later.
+  const loadingOverlay = (
+    <div
+      className="verseLoadingOverlay"
+      style={{
+        position: "absolute",
+        inset: 0,
+        pointerEvents: "none",
+        background: "rgba(255,255,255,0.0)", // set >0 if you want dimming
       }}
-      onPrev={() => navigate("/manage?dir=prev")}
-      onNext={() => navigate("/manage?dir=next")}
     />
   );
-
-  // ✅ signature at the bottom (after controls)
-  const bottom: ReactNode = (
-    <>
-      {controls}
-      {Signature}
-    </>
-  );
-
-  if (loading) return <div>loading...</div>;
-  if (!data || !data.years?.length) return <div>no data</div>;
 
   return (
     <Tab.Container
@@ -100,18 +123,26 @@ export const Neologizm = () => {
 
       <Tab.Content>
         <Tab.Pane eventKey="verse">
-          <VerseBox
-            textMd={<NeologizmPretty data={data} />}
-            childrenBottom={bottom}
-          />
+          <div style={{ position: "relative" }}>
+            <VerseBox
+              textMd={data ? <NeologizmPretty data={data} /> : ""}
+              childrenBottom={bottom}
+            />
+            {loading && loadingOverlay}
+            {showNoData && <div>no data</div>}
+          </div>
         </Tab.Pane>
 
         <Tab.Pane eventKey="hermeneutics">
-          <VerseBox
-            titleMd={data.herm?.title ?? "—"}
-            textMd={data.herm?.text ?? "no hermeneutics"}
-            childrenBottom={bottom}
-          />
+          <div style={{ position: "relative" }}>
+            <VerseBox
+              titleMd={data?.herm?.title ?? "—"}
+              textMd={data?.herm?.text ?? ""}
+              childrenBottom={bottom}
+            />
+            {loading && loadingOverlay}
+            {showNoData && <div>no data</div>}
+          </div>
         </Tab.Pane>
       </Tab.Content>
     </Tab.Container>
