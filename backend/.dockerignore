@@ -4,3 +4,5 @@ staticfiles/
 __pycache__/
 *.pyc
 *.sqlite3
+qr_print.docx
+qr_print.pdf

@@ -1,5 +1,16 @@
 from django.db import models
 
+class HermToQrCode(models.Model):
+    title = models.CharField(max_length=50, default="")
+    text = models.TextField()
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def load(cls):
+        return cls.objects.get_or_create(pk=1, defaults={"title": "", "text": ""})[0]
 
 class HistoryTime(models.Model):
     order = models.PositiveIntegerField(unique=True, blank=True, null=True)
@@ -38,7 +49,7 @@ class ContentOrder(models.Model):
     order = models.PositiveIntegerField(unique=True, blank=True, null=True)
     html_name = models.SlugField(unique=True)
     qr_text = models.CharField(max_length=50, null=True, blank=True, unique=True)
-    html_for_qr= models.SlugField(unique=True, null=True, blank=True)
+    html_for_qr= models.CharField(max_length=255, unique=True, null=True, blank=True)
 
     def __str__(self):
         return f"{self.order} - {self.content}"

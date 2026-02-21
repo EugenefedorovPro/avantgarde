@@ -2,25 +2,22 @@ import os
 import subprocess
 from io import BytesIO
 from pathlib import Path
+from typing import Optional, Tuple
 
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Mm
 
-from avantgarde.models import ContentOrder
+from avantgarde.models import ContentOrder, HermToQrCode
 from avantgarde.utils.draw_qr import DrawQR
 
 BASE_URL: str = os.getenv("VITE_BASE_URL", "").rstrip("/")
-TEMPLATE_PATH: str = str(Path(__file__).resolve().parent / "template.docx")
+TEMPLATE_PATH: Path = Path(__file__).resolve().parent / "template.docx"
 
 
-def docx_to_pdf(docx_path: str, out_dir: str | None = None) -> str:
+def docx_to_pdf(docx_path: str, out_dir: Optional[str] = None) -> str:
     """
     Convert DOCX -> PDF using LibreOffice (soffice) in headless mode.
     Returns the resulting PDF file path.
-
-    Requirements:
-      - libreoffice-writer (soffice in PATH)
-      - fonts (e.g., DejaVu/Liberation/Noto)
     """
     docx = Path(docx_path).resolve()
     if not docx.exists():
@@ -53,7 +50,9 @@ def docx_to_pdf(docx_path: str, out_dir: str | None = None) -> str:
 
     pdf_path = output_dir / f"{docx.stem}.pdf"
     if not pdf_path.exists():
-        raise RuntimeError(f"LibreOffice reported success, but PDF not found: {pdf_path}")
+        raise RuntimeError(
+            f"LibreOffice reported success, but PDF not found: {pdf_path}"
+        )
 
     return str(pdf_path)
 
@@ -63,41 +62,65 @@ class CreateFileToPrint:
         self,
         out_path: str = "qr_print.docx",
         also_pdf: bool = True,
-    ) -> tuple[str, str | None]:
+    ) -> Tuple[str, Optional[str]]:
         """
         Create a DOCX using a docxtpl template.
         If also_pdf=True, convert it to PDF via LibreOffice.
 
-        Returns: (docx_path, pdf_path_or_none)
+        Template variables expected:
+          - {{ text }}   (from HermToQrCode singleton)
+          - rows loop with {{ row.img1 }} (or whatever you use in template)
         """
-        if not TEMPLATE_PATH or not Path(TEMPLATE_PATH).exists():
+        if not TEMPLATE_PATH.exists():
             raise FileNotFoundError(f"Template DOCX not found: {TEMPLATE_PATH}")
 
-        tpl = DocxTemplate(TEMPLATE_PATH)
+        tpl = DocxTemplate(str(TEMPLATE_PATH))
+
+        # Load singleton text (pk=1 ensured by .load()).
+        herm = HermToQrCode.load()
+        herm_text = herm.text or ""
 
         dq = DrawQR(scale=24, border=4)
 
+        # NOTE: Your queryset returns (html_for_qr, qr_text) but you named the
+        # first variable html_name earlier. Keep naming consistent:
         items = list(
             ContentOrder.objects.order_by("order").values_list("html_for_qr", "qr_text")
         )
 
         images: list[InlineImage] = []
-        for html_name, qr_text in items:
-            url = f"{BASE_URL}/{html_name}/" if BASE_URL else f"/{html_name}/"
+        for html_for_qr, qr_text in items:
+            # html_for_qr can be a full URL or a path; normalize safely.
+            if isinstance(html_for_qr, str) and html_for_qr.startswith(
+                ("http://", "https://")
+            ):
+                url = html_for_qr.rstrip("/")
+            else:
+                path = (html_for_qr or "").strip("/")
+                if BASE_URL:
+                    url = f"{BASE_URL}/{path}"
+                else:
+                    url = f"/{path}" if path else "/"
+
             png_bytes = dq.draw_qr(url=url, text=qr_text)
 
             images.append(
                 InlineImage(
                     tpl,
                     BytesIO(png_bytes),
-                    width=Mm(110),  # physical print size
+                    width=Mm(110),
                 )
             )
 
-        tpl.render({"rows": [{"img1": img} for img in images]})
+        context = {
+            "text": herm_text,  # matches {{ text }} in template.docx
+            "rows": [{"img1": img} for img in images],
+        }
+
+        tpl.render(context)
         tpl.save(out_path)
 
-        pdf_path: str | None = None
+        pdf_path: Optional[str] = None
         if also_pdf:
             pdf_path = docx_to_pdf(out_path)
 

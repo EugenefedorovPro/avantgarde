@@ -13,8 +13,12 @@ from .models import (
     HistoryTime,
     HermToHistory,
     HermToMakeCopy,
+    HermToQrCode,
 )
 
+@admin.register(HermToQrCode)
+class HermToQrCodeAdmin(admin.ModelAdmin):
+    list_display = ["title", "text"]
 
 @admin.register(HermToMakeCopy)
 class HermToMakeCopyAdmin(admin.ModelAdmin):

@@ -7,7 +7,7 @@ from django.urls import reverse
 
 
 class TestCreateFileToPrint(TestCase):
-    fixtures = ["content_order.json"]
+    fixtures = ["content_order.json", "herm_to_qr_code.json"]
 
     def test_one_file(self):
         CreateF = CreateFileToPrint()
