@@ -1,11 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tab } from "react-bootstrap";
 
@@ -49,8 +42,6 @@ export const Verse = () => {
     navigate(name ? `/reclamation/${name}` : "/reclamation");
   }, [navigate, recl]);
 
-  const signature: ReactNode = useMemo(() => <Signature />, []);
-
   const controls = useMemo(
     () => (
       <VerseControls
@@ -65,14 +56,48 @@ export const Verse = () => {
     [recl, onTop, onPrev, onNext]
   );
 
-  const bottomBlock: ReactNode = useMemo(
+  const sigVerse = useMemo(
+    () => (
+      <div className="text-end fst-italic">
+        {vrs?.date_of_writing && (
+          <span className="me-2">{vrs.date_of_writing}</span>
+        )}
+        <Signature />
+      </div>
+    ),
+    [vrs?.date_of_writing]
+  );
+
+  const sigHerm = useMemo(
+    () => (
+      <div className="text-end fst-italic">
+        {herm?.date_of_writing && (
+          <span className="me-2">{herm.date_of_writing}</span>
+        )}
+        <Signature />
+      </div>
+    ),
+    [herm?.date_of_writing]
+  );
+
+  const bottomVerse = useMemo(
     () => (
       <>
         {controls}
-        {signature}
+        {sigVerse}
       </>
     ),
-    [controls, signature]
+    [controls, sigVerse]
+  );
+
+  const bottomHerm = useMemo(
+    () => (
+      <>
+        {controls}
+        {sigHerm}
+      </>
+    ),
+    [controls, sigHerm]
   );
 
   useEffect(() => {
@@ -86,7 +111,6 @@ export const Verse = () => {
 
     const load = async () => {
       setLoading(true);
-
       try {
         const [data, reclData] = await Promise.all([
           verse(html_name),
@@ -121,7 +145,6 @@ export const Verse = () => {
     };
 
     void load();
-
     return () => {
       cancelled = true;
     };
@@ -129,7 +152,6 @@ export const Verse = () => {
 
   const showNotFound = !loading && !!html_name && !vrs;
 
-  // Build tabs list dynamically (same behavior as conditional <Nav.Item>)
   const tabs: Array<TabDef<TabKey>> = useMemo(() => {
     const t: Array<TabDef<TabKey>> = [{ key: "verse", title: "знак" }];
     if (herm) t.push({ key: "hermeneutics", title: "тень" });
@@ -147,7 +169,7 @@ export const Verse = () => {
     >
       <Tab.Pane eventKey="verse">
         <PaneFrame
-          loading={loading && !hasLoadedOnceRef.current} // keep overlay only if you want; can simplify to loading
+          loading={loading && !hasLoadedOnceRef.current}
           empty={showNotFound}
           emptyNode={<div>Verse not found: {html_name}</div>}
         >
@@ -155,7 +177,7 @@ export const Verse = () => {
             className="verseBox verseBox--nowrap"
             titleMd={vrs?.title ?? ""}
             textMd={vrs?.text ?? ""}
-            childrenBottom={bottomBlock}
+            childrenBottom={bottomVerse}
           />
         </PaneFrame>
       </Tab.Pane>
@@ -166,7 +188,7 @@ export const Verse = () => {
             <VerseBox
               titleMd={herm.title}
               textMd={herm.text}
-              childrenBottom={bottomBlock}
+              childrenBottom={bottomHerm}
             />
           </PaneFrame>
         </Tab.Pane>
@@ -176,7 +198,7 @@ export const Verse = () => {
         <Tab.Pane eventKey="audio">
           <PaneFrame loading={false}>
             <VerseBox
-              childrenTop={<AudioBox audio={audio}>{signature}</AudioBox>}
+              childrenTop={<AudioBox audio={audio}>{sigVerse}</AudioBox>}
               childrenBottom={controls}
             />
           </PaneFrame>
