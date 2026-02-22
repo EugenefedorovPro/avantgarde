@@ -8,6 +8,8 @@ export const THEME_FILES = {
   calder: "ui_calder.css",
   gropius: "ui_gropius.css",
   newman: "ui_newman.css",
+  brutal: "ui_brutal.css",
+  soviet: "ui_soviet.css",
 } as const;
 
 export type ThemeName = keyof typeof THEME_FILES;
@@ -22,6 +24,8 @@ export const THEME_LABELS: Record<ThemeName, string> = {
   calder: "Calder",
   gropius: "Gropius",
   newman: "Newman",
+  brutal: "brutal",
+  soviet: "soviet",
 
 };
 

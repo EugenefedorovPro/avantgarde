@@ -1,8 +1,8 @@
 /* =========================================================
-   ui_boychuk.css — BOYCHUKISM VARIANT (MONUMENTAL ICON PANEL)
-   Ukrainian neo-Byzantine fresco: matte plaster, icon gold,
-   deep blue and ruby accents, strict rectangles, no rounded corners.
-   Tabs + theme switcher are fixed and mobile-safe (single row via scroll).
+   ui_newman.css — BARNETT NEWMAN VARIANT (FIELDS & ZIPS)
+   Large chromatic fields, vertical “zip” accents.
+   Layout contract preserved: fixed tabs rail + fixed bottom controls,
+   VerseBox as scroll frame, theme switch next to tabs.
    ========================================================= */
 
 
@@ -11,46 +11,49 @@
    ========================= */
 
 :root {
-  /* Typography: calm, readable, slightly “bookish” */
-  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
-    sans-serif;
+  --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 
-  /* Fresco wall + pigment ink */
-  --plaster: #f4ecdd;     /* light warm plaster */
-  --ink: #1a130d;         /* dark brown / ink */
+  /* Newman-like color fields (no greyscale) */
+  --field-main:      #101c3a;  /* deep midnight blue */
+  --field-secondary: #1b3b6c;  /* dense blue field */
+  --field-tertiary:  #5b0f20;  /* wine-red side field */
 
-  /* Boychukist pigments (tempera-like, muted) */
-  --icon-gold: #c99a3b;
-  --deep-blue: #1f3c69;
-  --ruby: #8b2730;
-  --olive: #8a7c4c;
-  --shadow: #1a130d;
+  --zip-gold:   #ffcc33;       /* luminous vertical “zip” */
+  --zip-crimson:#e21c2d;       /* sharp red “zip” */
+  --ink:        #07101f;       /* very dark blue for text */
+  --ink-soft:   #182641;       /* secondary text */
+  --light-field:#fff4e6;       /* pale warm reading surface */
 
-  /* UI scale */
-  --ui-border: 2px;
-  --ui-gap: 10px;
+  /* Edge lines instead of neutral grey rules */
+  --rule: 3px;
+  --hair: 1px;
 
-  --ui-h: 52px;
-  --ui-h-mobile: 44px;
+  --gap:  10px;
 
-  --ui-pad: 20px;
-  --ui-pad-mobile: 14px;
+  --ui-h: 50px;
+  --ui-h-mobile: 40px;
 
-  --content-max: 820px;
+  --pad: 20px;
+  --pad-m: 14px;
 
-  /* Tabs bar (fixed) */
+  --content-max: 860px;
+
+  /* Tabs bar geometry */
   --tabs-pad-y: 8px;
-  --tabs-pad-x: 12px;
+  --tabs-pad-x: 10px;
   --tabs-h: var(--ui-h);
-  --tabs-rule-gap: 8px;
+  --tabs-rule-gap: 6px;
   --tabs-bar-h: calc(
-    (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) +
-      var(--ui-border)
+    (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) + var(--rule)
   );
 
-  /* Theme switcher sizing + mobile safety */
-  --tabs-tool-w: 130px;
+  /* Theme switcher sizing */
+  --tabs-tool-w: 120px;   /* desktop */
   --tabs-tool-gap: 10px;
+  --theme-h: 34px;
+  --theme-pad-x: 12px;
+
+  /* Safety so the tool never paints outside viewport */
   --tabs-safe-pad: 6px;
   --tabs-tool-max: calc(100vw - (var(--tabs-safe-pad) * 2));
 }
@@ -71,11 +74,20 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--ink);
-  background: var(--plaster);
-  font: 400 16px/1.7 var(--font-body);
+  font: 400 16px/1.76 var(--font);
+  letter-spacing: 0.01em;
+
+  /* Three big vertical color fields */
+  background:
+    linear-gradient(
+      90deg,
+      var(--field-main) 0 40%,
+      var(--field-secondary) 40% 78%,
+      var(--field-tertiary) 78% 100%
+    );
 }
 
-/* Fresco wall with vertical “icon strips” on sides (never under box) */
+/* Vertical “zip” overlay, slightly off-center */
 body::before {
   content: "";
   position: fixed;
@@ -84,46 +96,29 @@ body::before {
   pointer-events: none;
 
   background:
-    linear-gradient(90deg,
-      rgba(31,60,105,0.20) 0 7%,
-      transparent 7% 93%,
-      rgba(31,60,105,0.20) 93% 100%
-    ),
-    radial-gradient(circle at 0 0, rgba(0,0,0,0.09), transparent 55%),
-    radial-gradient(circle at 100% 100%, rgba(0,0,0,0.07), transparent 55%);
-  mix-blend-mode: multiply;
-  opacity: 0.8;
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-
-  /* faint ornamental band above, like painted frieze */
-  background:
-    linear-gradient(180deg,
-      rgba(201,154,59,0.35) 0 4%,
-      transparent 4% 100%
+    linear-gradient(
+      90deg,
+      transparent 0 46%,
+      var(--zip-gold) 46% 47.2%,
+      transparent 47.2% 100%
     );
-  mix-blend-mode: soft-light;
+  mix-blend-mode: normal;
+  opacity: 0.85;
 }
 
-/* Content layer sits above fresco */
 #root {
   position: relative;
   z-index: 1;
   min-height: 100vh;
-  padding: calc(var(--tabs-bar-h) + 8px) 12px 32px;
+  padding: calc(var(--tabs-bar-h) + 8px) 10px 32px;
 }
 
 
 /* =========================
-   TABS (FIXED “ICON PANEL LABELS”)
+   TABS BAR (nav-tabs is the fixed bar)
    ========================= */
 
+/* Fixed strip for tabs + tool */
 .custom-tabs .nav-tabs,
 .custom-tabs.nav-tabs {
   position: fixed;
@@ -137,99 +132,54 @@ body::after {
 
   display: flex;
   align-items: center;
-  gap: var(--ui-gap);
+  gap: var(--gap);
 
   flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
 
-  background:
-    linear-gradient(180deg, #f7efe0 0 60%, #e5dac4 60% 100%);
+  background: linear-gradient(
+    90deg,
+    #0a1327 0 55%,
+    #15274c 55% 100%
+  );
   border-bottom: 0 !important;
-
-  /* bottom icon-frame rule */
-  box-shadow: 0 var(--ui-border) 0 0 var(--ink);
-  scrollbar-width: none;
+  box-shadow: 0 var(--rule) 0 0 var(--zip-crimson);
 
   max-width: 100vw;
   box-sizing: border-box;
-  contain: layout paint; /* keep sticky tools clipped inside */
+  scrollbar-width: none;
 }
 .custom-tabs .nav-tabs::-webkit-scrollbar,
 .custom-tabs.nav-tabs::-webkit-scrollbar {
   display: none;
 }
 
-/* extra rule under the row */
+/* Bottom rule under tabs row – gold “zip” */
 .custom-tabs .nav-tabs::after,
 .custom-tabs.nav-tabs::after {
   content: "";
   display: block;
   width: 100%;
-  height: var(--ui-border);
+  height: var(--rule);
   margin-top: var(--tabs-rule-gap);
-  background: var(--ink);
+  background: var(--zip-gold);
   flex: 0 0 100%;
 }
 
+/* nav-items must not stretch */
 .custom-tabs .nav-tabs > .nav-item,
 .custom-tabs.nav-tabs > .nav-item {
   flex: 0 0 auto;
 }
 
-/* tabs as rectangular icon labels */
-.custom-tabs .nav-link,
-.custom-tabs .nav-link:visited {
-  background: #fdf6e7;
-  color: var(--ink);
-  border: var(--ui-border) solid var(--ink) !important;
-  border-radius: 0 !important;
-
-  height: var(--tabs-h);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 0 1.2rem;
-  font-weight: 800;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  white-space: nowrap;
-
-  box-shadow:
-    0 0 0 3px rgba(201,154,59,0.35),
-    0 4px 0 rgba(26,19,13,0.45);
-
-  text-decoration: none;
-}
-
-/* non-active hover: warm gold wash */
-.custom-tabs .nav-link:not(.active):hover,
-.custom-tabs .nav-link:not(.active):focus {
-  background: #f1e0bf;
-  color: var(--ink);
-  text-decoration: none;
-}
-
-/* active tab: deep-blue ground with icon gold border */
-.custom-tabs .nav-link.active,
-.custom-tabs .nav-link.active:hover,
-.custom-tabs .nav-link.active:focus {
-  background: var(--deep-blue) !important;
-  color: #f7e7c0 !important;
-  border-color: var(--ruby) !important;
-  box-shadow:
-    0 0 0 3px rgba(139,39,48,0.55),
-    0 4px 0 rgba(26,19,13,0.55);
-  text-decoration: none;
-}
-
 
 /* =========================
-   TABS + TOOLS (Theme switcher)
+   TABS + TOOLS (Theme switcher wiring)
    ========================= */
 
+/* React-Bootstrap Tabs gets navClassName="tabsWithTools" → ul.nav-tabs.tabsWithTools */
 .tabsWithTools {
   display: flex;
   align-items: center;
@@ -237,7 +187,7 @@ body::after {
   width: 100%;
 }
 
-/* sticky-right container for ThemeSwitcher */
+/* The tool container inside the nav (not a tab) */
 .tabsWithTools .tabsTool {
   flex: 0 0 auto;
   display: flex;
@@ -248,8 +198,11 @@ body::after {
   position: sticky;
   right: 0;
 
-  background:
-    linear-gradient(180deg, #f7efe0 0 60%, #e5dac4 60% 100%);
+  background: linear-gradient(
+    90deg,
+    #0a1327 0 50%,
+    #15274c 50% 100%
+  );
   padding-left: var(--tabs-tool-gap);
   padding-right: var(--tabs-safe-pad);
 
@@ -257,34 +210,165 @@ body::after {
   overflow: hidden;
 }
 
-/* ensure last tab is not under the tool */
+/* Give the sticky tool space so it doesn't cover last tab */
 .custom-tabs .nav-tabs.tabsWithTools,
 .custom-tabs.nav-tabs.tabsWithTools {
   padding-right: calc(
-    var(--tabs-pad-x) + min(var(--tabs-tool-w), var(--tabs-tool-max)) +
-      var(--tabs-tool-gap)
+    var(--tabs-pad-x) + min(var(--tabs-tool-w), var(--tabs-tool-max)) + var(--tabs-tool-gap)
   ) !important;
 }
 
 
 /* =========================
-   MOBILE TABS
+   TAB BUTTONS
+   ========================= */
+
+.custom-tabs .nav-link,
+.custom-tabs .nav-link:visited {
+  background: var(--light-field);
+  color: var(--ink);
+  border: var(--rule) solid var(--zip-crimson) !important;
+  border-radius: 0 !important;
+
+  height: var(--tabs-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 110px;           /* desktop width */
+  padding: 0 16px;
+
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-decoration: none;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(226, 28, 45, 0.45),
+    0 4px 0 #050813;
+}
+
+/* hover/focus on inactive tabs: golden field */
+.custom-tabs .nav-link:not(.active):hover,
+.custom-tabs .nav-link:not(.active):focus {
+  background: #ffe4bf;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* active tab: thin crimson band at bottom, slightly warmer field */
+.custom-tabs .nav-link.active,
+.custom-tabs .nav-link.active:hover,
+.custom-tabs .nav-link.active:focus {
+  background: #ffe9cb !important;
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow:
+    inset 0 0 0 1px var(--zip-crimson),
+    inset 0 -6px 0 0 var(--zip-gold),
+    0 4px 0 #050813;
+}
+
+
+/* =========================
+   THEME SWITCHER BUTTON (Newman “zip”)
+   ========================= */
+
+/* ThemeSwitcher should render className="themeSwitch".
+   .theme-switcher accepted for backward compatibility. */
+.themeSwitch,
+.theme-switcher,
+.tabsTool .themeSwitch,
+.tabsTool .theme-switcher,
+.tabsTool button {
+  width: min(var(--tabs-tool-w), var(--tabs-tool-max));
+  max-width: 100%;
+  height: var(--theme-h);
+  padding: 0 var(--theme-pad-x);
+
+  border-radius: 0;
+  border: var(--rule) solid var(--zip-gold);
+  background: #ffe2b8;
+  color: var(--ink);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font: 800 12px/1 var(--font);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.2),
+    0 4px 0 #050813;
+
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Vertical zip strip */
+.themeSwitch::before,
+.theme-switcher::before,
+.tabsTool .themeSwitch::before,
+.tabsTool .theme-switcher::before,
+.tabsTool button::before {
+  content: "";
+  width: 7px;
+  height: 80%;
+  margin-right: 10px;
+  background: linear-gradient(
+    180deg,
+    var(--zip-crimson) 0 45%,
+    var(--zip-gold) 45% 55%,
+    var(--zip-crimson) 55% 100%
+  );
+  box-shadow: 0 0 0 var(--hair) #050813;
+  flex: 0 0 auto;
+}
+
+.themeSwitch:hover,
+.theme-switcher:hover,
+.tabsTool .themeSwitch:hover,
+.tabsTool .theme-switcher:hover,
+.tabsTool button:hover {
+  background: #ffd89b;
+}
+
+.themeSwitch:active,
+.theme-switcher:active,
+.tabsTool .themeSwitch:active,
+.tabsTool .theme-switcher:active,
+.tabsTool button:active {
+  transform: translate(1px, 1px);
+  box-shadow:
+    inset 0 0 0 1px var(--zip-crimson),
+    0 3px 0 #050813;
+}
+
+
+/* =========================
+   MOBILE (<= 576px)
    ========================= */
 
 @media (max-width: 576px) {
   :root {
     --tabs-h: var(--ui-h-mobile);
     --tabs-bar-h: calc(
-      (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) +
-        var(--ui-border)
+      (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) + var(--rule)
     );
-    --tabs-tool-w: 104px;
+
+    --tabs-tool-w: 96px;   /* mobile width */
+    --theme-h: 34px;
   }
 
   #root {
     padding-top: calc(var(--tabs-bar-h) + 6px);
-    padding-left: 8px;
-    padding-right: 8px;
   }
 
   .custom-tabs .nav-tabs,
@@ -297,8 +381,9 @@ body::after {
   .custom-tabs .nav-link,
   .custom-tabs .nav-link:visited {
     height: var(--tabs-h);
-    padding: 0 10px;
-    font-size: 0.84rem;
+    padding: 0 8px;
+    min-width: 70px;          /* narrower tabs for 360px */
+    font-size: 0.86rem;
     letter-spacing: 0.07em;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -308,6 +393,25 @@ body::after {
   .tabsWithTools .tabsTool {
     padding-left: 8px;
     padding-right: 8px;
+  }
+
+  .themeSwitch,
+  .theme-switcher,
+  .tabsTool .themeSwitch,
+  .tabsTool .theme-switcher,
+  .tabsTool button {
+    height: var(--tabs-h);
+    padding: 0 9px;
+    font-size: 0.78rem;
+  }
+
+  .themeSwitch::before,
+  .theme-switcher::before,
+  .tabsTool .themeSwitch::before,
+  .tabsTool .theme-switcher::before,
+  .tabsTool button::before {
+    width: 6px;
+    margin-right: 6px;
   }
 
   .custom-tabs .nav-tabs.tabsWithTools,
@@ -320,89 +424,39 @@ body::after {
 
 
 /* =========================
-   VERSE BOX (ICON PANEL)
+   VERSE BOX
    ========================= */
 
 .verseBox {
   width: min(100%, var(--content-max));
   margin: clamp(6px, 2vh, 20px) auto 0;
-  padding: var(--ui-pad);
+  padding: var(--pad);
 
-  background: #fdf6e7;
-  border: var(--ui-border) solid var(--ink);
+  background: var(--light-field);
+  border: var(--rule) solid var(--zip-crimson);
   border-radius: 0;
 
   position: relative;
-  overflow: hidden;
-
-  box-shadow:
-    0 0 0 8px rgba(201,154,59,0.35),
-    16px 16px 0 rgba(26,19,13,0.22);
-}
-
-/* top and left “icon” rules */
-.verseBox::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: var(--ui-border);
-  background: var(--ruby);
-}
-.verseBox::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: var(--ui-border);
-  height: 100%;
-  background: var(--deep-blue);
 }
 
 @media (max-width: 576px) {
   .verseBox {
-    /* full-width on phone, no side margins */
-    width: 100vw;
-    margin: 0;
-    padding: var(--ui-pad-mobile);
-    border-left-width: var(--ui-border);
-    border-right-width: var(--ui-border);
-    box-shadow:
-      0 0 0 6px rgba(201,154,59,0.3),
-      10px 10px 0 rgba(26,19,13,0.18);
+    padding: var(--pad-m);
   }
-}
-
-/* markdown text inside should inherit color */
-.verseBox p,
-.verseBox li,
-.verseBox ul,
-.verseBox ol,
-.verseBox blockquote,
-.verseBox pre,
-.verseBox code,
-.verseBox h1,
-.verseBox h2,
-.verseBox h3,
-.verseBox h4,
-.verseBox h5,
-.verseBox h6 {
-  color: var(--ink);
 }
 
 .verseTitle {
   margin: 0 0 10px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
+  font-weight: 800;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
-  color: var(--deep-blue);
+  color: var(--ink);
 }
 
 .verseText {
-  line-height: 1.8;
-  letter-spacing: 0.01em;
-  color: var(--ink);
+  line-height: 1.9;
+  color: var(--ink-soft);
+  word-break: break-word;
 }
 /* Verse tab: no-wrap + horizontal scroll only when needed */
 .verseBox--nowrap .verseText{
@@ -410,115 +464,8 @@ body::after {
   overflow-x: auto;
 }
 
-.verseTop {
-  margin-top: 8px;
-}
-.verseBottom {
-  margin-top: 12px;
-}
-
-
-/* =========================
-   THEME SWITCHER (Boychukist plaque)
-   ========================= */
-
-.themeSwitch {
-  width: min(var(--tabs-tool-w), var(--tabs-tool-max));
-  max-width: 100%;
-  height: var(--tabs-h);
-
-  border-radius: 0;
-  border: var(--ui-border) solid var(--ink);
-  background: #fdf2df;
-  color: var(--ink);
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  line-height: 1;
-
-  cursor: pointer;
-  user-select: none;
-
-  padding: 0 10px;
-
-  box-shadow:
-    0 0 0 3px rgba(201,154,59,0.4),
-    0 4px 0 rgba(26,19,13,0.5);
-
-  min-width: 0;
-  overflow: hidden;
-
-  transition: background-color 140ms linear, border-color 140ms linear,
-    box-shadow 140ms linear, transform 90ms linear;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* pigment “tile” at left */
-.themeSwitch::before {
-  content: "";
-  width: 11px;
-  height: 11px;
-  background: var(--ruby);
-  flex: 0 0 auto;
-  box-shadow:
-    13px 0 0 0 var(--icon-gold),
-    0 13px 0 0 var(--deep-blue);
-}
-
-/* label text */
-.themeSwitch__label {
-  display: inline-block;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Hover: warmer, more gold */
-.themeSwitch:hover {
-  background: #f0e0c1;
-  border-color: var(--icon-gold);
-  box-shadow:
-    0 0 0 3px rgba(201,154,59,0.55),
-    0 4px 0 rgba(26,19,13,0.5);
-}
-
-/* Active: deep-blue ground, light text */
-.themeSwitch:active {
-  background: var(--deep-blue);
-  color: #f7e4be;
-  border-color: var(--ruby);
-  transform: translate(2px, 2px);
-}
-
-.themeSwitch:focus-visible {
-  outline: var(--ui-border) solid var(--deep-blue);
-  outline-offset: 3px;
-}
-
-/* Mobile: slightly tighter */
-@media (max-width: 576px) {
-  .themeSwitch {
-    height: var(--tabs-h);
-    padding: 0 8px;
-  }
-
-  .themeSwitch__label {
-    font-size: 0.8rem;
-    letter-spacing: 0.07em;
-  }
-
-  .themeSwitch::before {
-    width: 10px;
-    height: 10px;
-  }
-}
+.verseTop { margin-top: 8px; }
+.verseBottom { margin-top: 12px; }
 
 
 /* =========================
@@ -527,11 +474,9 @@ body::after {
 
 .u-btn {
   border-radius: 0 !important;
-  box-shadow: none !important;
-
-  background: #fdf6e7 !important;
+  background: #ffe0b3 !important;
   color: var(--ink) !important;
-  border: var(--ui-border) solid var(--ink) !important;
+  border: var(--rule) solid var(--zip-crimson) !important;
 
   display: inline-flex !important;
   align-items: center !important;
@@ -542,27 +487,22 @@ body::after {
   text-transform: uppercase;
 
   width: 100%;
-  max-width: min(92vw, 880px);
+  max-width: min(92vw, 980px);
   height: var(--ui-h);
   padding: 0 18px;
 
   box-shadow:
-    0 0 0 4px rgba(201,154,59,0.35),
-    0 6px 0 rgba(26,19,13,0.45);
+    inset 0 0 0 1px rgba(226, 28, 45, 0.45),
+    0 6px 0 #050813;
 }
 
-.u-btn:hover {
-  background: #f1dfbf !important;
-}
+.u-btn:hover { background: #ffd293 !important; }
 
 .u-btn:active {
-  background: var(--deep-blue) !important;
-  color: #f7e4be !important;
-  transform: translate(2px, 2px);
-}
-
-.u-btn--wide {
-  max-width: min(92vw, 980px);
+  transform: translate(1px, 1px);
+  box-shadow:
+    inset 0 0 0 1px var(--zip-crimson),
+    0 4px 0 #050813;
 }
 
 .u-btn--square {
@@ -575,7 +515,6 @@ body::after {
   .u-btn {
     height: var(--ui-h-mobile);
   }
-
   .u-btn--square {
     width: var(--ui-h-mobile);
     max-width: var(--ui-h-mobile);
@@ -584,18 +523,17 @@ body::after {
 
 
 /* =========================
-   TRIANGLE BUTTONS (direction tiles)
+   TRIANGLE BUTTONS
    ========================= */
 
 .tri-btn {
   --box: var(--ui-h);
-
   width: var(--box);
   height: var(--box);
 
-  border: var(--ui-border) solid var(--ink);
+  border: var(--rule) solid var(--zip-crimson);
   border-radius: 0;
-  background: #fdf2df;
+  background: #ffddb0;
   cursor: pointer;
 
   display: inline-flex;
@@ -604,8 +542,8 @@ body::after {
   padding: 0;
 
   box-shadow:
-    0 0 0 3px rgba(201,154,59,0.35),
-    0 6px 0 rgba(26,19,13,0.45);
+    inset 0 0 0 1px rgba(226, 28, 45, 0.45),
+    0 6px 0 #050813;
 }
 
 .tri-btn::before {
@@ -616,64 +554,44 @@ body::after {
   border-bottom: calc(var(--box) * 0.26) solid transparent;
 }
 
-.tri-btn--left::before {
-  border-right: calc(var(--box) * 0.36) solid var(--ink);
-}
-.tri-btn--right::before {
-  border-left: calc(var(--box) * 0.36) solid var(--ink);
-}
+.tri-btn--left::before  { border-right: calc(var(--box) * 0.36) solid var(--ink); }
+.tri-btn--right::before { border-left:  calc(var(--box) * 0.36) solid var(--ink); }
 
-.tri-btn:hover {
-  background: #f0e0c1;
-}
-
+.tri-btn:hover  { background: #ffd08f; }
 .tri-btn:active {
-  background: var(--ruby);
+  transform: translate(1px, 1px);
   box-shadow:
-    0 0 0 3px rgba(139,39,48,0.6),
-    0 4px 0 rgba(26,19,13,0.5);
-}
-.tri-btn:active.tri-btn--left::before,
-.tri-btn:active.tri-btn--right::before {
-  border-color: #fdf6e7;
+    inset 0 0 0 1px var(--zip-crimson),
+    0 4px 0 #050813;
 }
 
 @media (max-width: 576px) {
-  .tri-btn {
-    --box: var(--ui-h-mobile);
-  }
+  .tri-btn { --box: var(--ui-h-mobile); }
 }
 
 
 /* =========================
-   AUDIO (icon “reliquary”)
+   AUDIO
    ========================= */
 
-.audio-box {
-  width: 100%;
-}
+.audio-box { width: 100%; }
 
 .audio-frame {
   width: 100%;
-  border: var(--ui-border) solid var(--ink);
+  border: var(--rule) solid var(--zip-crimson);
   border-radius: 0;
   overflow: hidden;
+  background: #ffe9c7;
 
-  background:
-    linear-gradient(180deg,
-      #f7ecd7 0 50%,
-      #ead5b3 50% 100%
-    );
   box-shadow:
-    0 0 0 4px rgba(201,154,59,0.35),
-    12px 12px 0 rgba(26,19,13,0.22);
+    inset 0 0 0 1px rgba(226, 28, 45, 0.4),
+    0 6px 0 #050813;
 }
 
-.audio-frame:hover {
-  border-color: var(--deep-blue);
-}
+.audio-frame:hover,
 .audio-frame:focus-within {
-  border-color: var(--ruby);
+  outline: var(--rule) solid var(--zip-gold);
+  outline-offset: -2px;
 }
 
 .square-audio {
@@ -681,6 +599,7 @@ body::after {
   display: block;
   border-radius: 0 !important;
 }
+
 .square-audio::-webkit-media-controls-enclosure,
 .square-audio::-webkit-media-controls-panel {
   border-radius: 0 !important;
@@ -694,36 +613,17 @@ body::after {
 .controlsBar {
   display: grid;
   grid-template-columns: var(--ui-h) minmax(0, 1fr) var(--ui-h);
-  gap: var(--ui-gap);
+  gap: var(--gap);
   align-items: center;
   width: 100%;
 
   margin-top: 14px;
   padding-top: 12px;
 
-  border-top: var(--ui-border) solid rgba(26,19,13,0.7);
-  position: relative;
+  border-top: var(--hair) solid rgba(7, 16, 31, 0.4);
 }
 
-/* small ornamental squares on the rule */
-.controlsBar::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: -3px;
-  width: 11px;
-  height: 11px;
-  background: var(--icon-gold);
-  box-shadow:
-    18px 0 0 0 var(--deep-blue),
-    36px 0 0 0 var(--ruby);
-  pointer-events: none;
-}
-
-.controlsBar > * {
-  min-width: 0;
-}
-
+.controlsBar > * { min-width: 0; }
 .controlsBar .u-btn {
   max-width: none;
   width: 100%;
@@ -738,14 +638,15 @@ body::after {
   }
 }
 
+
 /* =========================================================
    UNIFIED LAYOUT CONTRACT
    Keeps each theme’s visuals intact; standardizes page padding
    and VerseBox placement across themes.
-   Requested: VerseBox left edge ~15vw (not 25vw).
+   VerseBox left edge ~15vw.
    ========================================================= */
 
-:root{
+:root {
   /* Unified reading width (used by VerseBox) */
   --content-max: 820px;
 
@@ -759,33 +660,33 @@ body::after {
   --versebox-top: clamp(0px, 6vh, 56px);
 }
 
-@media (max-width: 576px){
-  :root{ --page-pad-x: var(--page-pad-x-mobile); }
+@media (max-width: 576px) {
+  :root { --page-pad-x: var(--page-pad-x-mobile); }
 }
 
 /* Normalize root side padding without touching top/bottom reserves */
-#root{
+#root {
   padding-left: var(--page-pad-x);
   padding-right: var(--page-pad-x);
 }
 
 /* VerseBox: unified width + consistent top spacing */
-.verseBox{
+.verseBox {
   width: min(100%, var(--content-max));
   margin-top: var(--versebox-top);
 }
 
 /* Desktop: anchor from the left (edge starts ~15vw) */
-@media (min-width: 992px){
-  .verseBox{
+@media (min-width: 992px) {
+  .verseBox {
     margin-left: var(--versebox-left);
     margin-right: auto;
   }
 }
 
 /* Phones: no horizontal offset */
-@media (max-width: 576px){
-  .verseBox{
+@media (max-width: 576px) {
+  .verseBox {
     margin-left: 0;
     margin-right: 0;
     margin-top: 0;
@@ -800,26 +701,26 @@ body::after {
    ========================================================= */
 
 @media (max-width: 576px) {
-  :root{
+  :root {
     /* unify the “tool reserve” math while keeping theme visuals intact */
     --tabs-tool-gap: 6px;
   }
 
   /* Narrower gaps between tab buttons */
   .custom-tabs .nav-tabs,
-  .custom-tabs.nav-tabs{
+  .custom-tabs.nav-tabs {
     gap: 6px !important;
   }
 
   /* Narrower gap between tabs row and the tool area (theme switch) */
-  .tabsWithTools .tabsTool{
+  .tabsWithTools .tabsTool {
     margin-left: 0 !important;  /* avoid double-spacing on mobile */
     padding-left: 6px !important;
   }
 
   /* Keep end-of-row reserve consistent with the new tool gap */
   .custom-tabs .nav-tabs.tabsWithTools,
-  .custom-tabs.nav-tabs.tabsWithTools{
+  .custom-tabs.nav-tabs.tabsWithTools {
     padding-right: calc(
       var(--tabs-pad-x, 12px)
       + min(var(--tabs-tool-w, 116px), var(--tabs-tool-max, 100vw))
@@ -828,18 +729,15 @@ body::after {
   }
 }
 
+
 /* =========================================================
    FIXED READER FRAME — TABS + BOTTOM CONTROLS (UNIFIED)
-   Goal:
    - Tabs already fixed at top.
-   - Fix bottom navigation + “This is not poetry” to viewport bottom
-     (wide → smartphone).
-   - Make the VerseBox the scroll container so the frame/background stays fixed.
-   Notes:
-   - Visual style (colors/textures) is NOT changed here — only layout behavior.
+   - Fix bottom navigation + “This is not poetry” to viewport bottom.
+   - VerseBox is the scroll container; background fields stay fixed.
    ========================================================= */
 
-:root{
+:root {
   /* iOS/Android safe areas */
   --safe-top: max(env(safe-area-inset-top), 0px);
   --safe-bottom: max(env(safe-area-inset-bottom), 0px);
@@ -852,16 +750,16 @@ body::after {
   --tabs-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + (var(--tabs-pad-y, 8px) * 2));
 
   /* Bottom controls bar occupies roughly a control height + rule/padding */
-  --controls-rail-h: calc(var(--ui-h, 52px) + 16px + var(--ui-border, 2px));
-  --controls-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + 14px + var(--ui-border, 2px));
+  --controls-rail-h: calc(var(--ui-h, 52px) + 16px + var(--rule, 3px));
+  --controls-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + 14px + var(--rule, 3px));
 
   /* Frame top offset: tabs rail + small breathing room */
   --frame-top: calc(var(--tabs-rail-h) + 8px + var(--safe-top));
   --frame-bottom-pad: calc(var(--controls-rail-h) + env(safe-area-inset-bottom));
 }
 
-@media (max-width: 576px){
-  :root{
+@media (max-width: 576px) {
+  :root {
     --frame-left: var(--page-pad-x);
     --frame-top: calc(var(--tabs-rail-h-mobile) + 6px);
     --frame-bottom-pad: calc(var(--controls-rail-h-mobile) + env(safe-area-inset-bottom));
@@ -869,23 +767,28 @@ body::after {
 }
 
 /* Lock the page: scrolling happens inside the VerseBox */
-html, body, #root{
+html,
+body,
+#root {
   height: 100%;
 }
 
-body{
+body {
   overflow: hidden;
 }
 
 /* VerseBox becomes the fixed reading frame (scroll container) */
-.verseBox{
+.verseBox {
   position: fixed !important;
 
   top: var(--frame-top) !important;
   bottom: var(--safe-bottom) !important;
 
   left: var(--frame-left) !important;
-  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
+  width: min(
+    calc(100vw - var(--frame-left) - var(--page-pad-x)),
+    var(--content-max)
+  ) !important;
 
   margin: 0 !important;
 
@@ -894,19 +797,22 @@ body{
   overscroll-behavior: contain;
 
   /* keep last lines visible above the fixed bottom controls */
-  padding-bottom: calc(var(--ui-pad, 20px) + var(--frame-bottom-pad)) !important;
+  padding-bottom: calc(var(--pad, 20px) + var(--frame-bottom-pad)) !important;
 
   /* smooth iOS scroll */
   -webkit-overflow-scrolling: touch;
 }
 
 /* Bottom controls: pinned to viewport bottom and aligned with the VerseBox */
-.controlsBar{
+.controlsBar {
   position: fixed !important;
   bottom: var(--safe-bottom) !important;
 
   left: var(--frame-left) !important;
-  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
+  width: min(
+    calc(100vw - var(--frame-left) - var(--page-pad-x)),
+    var(--content-max)
+  ) !important;
 
   margin: 0 !important;
 
@@ -914,9 +820,9 @@ body{
 
   padding: 12px 0 14px;
   /* OPAQUE PLATE (prevents text showing through) */
-  background: var(--plaster) !important;
+  background: var(--light-field) !important;
   isolation: isolate;
-  border-top: var(--ui-border) solid rgba(26,19,13,0.7);
+  border-top: var(--hair) solid rgba(7, 16, 31, 0.4);
 
   opacity: 1;
   backdrop-filter: none;
@@ -925,6 +831,8 @@ body{
   box-sizing: border-box;
   max-width: 100vw;
 }
+
+
 /* =========================================================
    WIDE-SCREEN CONTROLS LAYOUT — VARIANT 3
    Sticky bottom rail: controls stay reachable while reading.
@@ -939,11 +847,11 @@ body{
     margin-top: 18px;
     padding: 12px 0 14px;
 
-    background: rgba(253,246,231,0.96);
+    background: rgba(255, 244, 230, 0.97);
     border-top: 0;
 
     /* Subtle separation from content while keeping themes intact */
-    box-shadow: 0 -10px 0 rgba(0,0,0,0.04);
+    box-shadow: 0 -10px 0 rgba(0, 0, 0, 0.05);
   }
 
   .controlsBar::before {

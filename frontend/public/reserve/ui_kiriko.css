@@ -434,7 +434,12 @@ body::before {
 .verseText {
   line-height: 1.9;
   color: var(--ink-2);
-  word-break: break-word;
+
+}
+/* Verse tab: no-wrap + horizontal scroll only when needed */
+.verseBox--nowrap .verseText{
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 .verseTop { margin-top: 8px; }
@@ -718,7 +723,7 @@ body::before {
   --safe-bottom: max(env(safe-area-inset-bottom), 0px);
 
   /* Left anchor for fixed-position elements (true viewport coordinates) */
-  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge, 15vw), 240px);
+  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge, 20vw), 360px);
 
   /* Estimated rails height for the fixed tabs bar (safe, theme-agnostic) */
   --tabs-rail-h: calc(var(--ui-h, 52px) + (var(--tabs-pad-y, 8px) * 2));

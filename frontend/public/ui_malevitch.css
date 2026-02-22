@@ -1,18 +1,17 @@
 /* =========================================================
-   ui_white.css — MALEVICH VARIANT C (SQUARE PLANE)
+   ui_malevich_c.css — MALEVICH VARIANT C (SQUARE PLANE)
    Hard planes, strong outlines, minimal geometry.
    Hover = yellow, Active/Pressed = red
    Uses square.png as inner “painting” + white.png as big plane.
-   Mobile: tabs + theme switcher never overflow screen.
+   Layout disposition follows the Klee “never overflow” contract.
    ========================================================= */
 
 /* =========================
    GLOBAL / TOKENS
    ========================= */
 
-:root {
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
-    sans-serif;
+:root{
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   text-rendering: optimizeLegibility;
@@ -29,38 +28,61 @@
   --sup-yellow: #f2c300;
   --sup-blue: #1e5aa8;
 
-  /* UI sizing tokens */
+  /* UI sizing */
   --ui-border: 3px;
+  --ui-gap: 10px;
+
   --ui-h: 56px;
   --ui-h-mobile: 48px;
-  --ui-w: 560px;
-  --ui-gap: 10px;
 
   --ui-pad: 20px;
   --ui-pad-mobile: 16px;
 
-  /* Tabs tool sizing (theme switcher) */
+  /* Unified reading width */
+  --content-max: 820px;
+
+  /* Unified page side padding */
+  --page-pad-x: 32px;
+  --page-pad-x-mobile: 14px;
+
+  /* VerseBox anchor */
+  --versebox-edge: 15vw;
+  --versebox-left: clamp(0px, calc(var(--versebox-edge) - var(--page-pad-x)), 240px);
+  --versebox-top: clamp(0px, 6vh, 56px);
+
+  /* Tabs + tools */
+  --tabs-pad-y: 8px;
+  --tabs-pad-x: 12px;
+  --tabs-h: var(--ui-h);
+  --tabs-rule-gap: 8px;
+
   --tabs-tool-w: 140px; /* desktop width */
   --tabs-tool-gap: 10px;
 
-  /* safe bounds so the switch can never exceed viewport */
   --tabs-safe-pad: 6px;
   --tabs-tool-max: calc(100vw - (var(--tabs-safe-pad) * 2));
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+@media (max-width: 576px){
+  :root{
+    --page-pad-x: var(--page-pad-x-mobile);
+    --tabs-h: var(--ui-h-mobile);
+    --tabs-tool-w: 150px;
+    --tabs-tool-gap: 6px;
+  }
 }
 
+*,
+*::before,
+*::after{ box-sizing: border-box; }
+
 html,
-body {
+body{
   min-height: 100%;
   overflow-x: hidden;
 }
 
-body {
+body{
   margin: 0;
   min-height: 100vh;
   color: var(--color-text-main);
@@ -69,7 +91,7 @@ body {
 }
 
 /* Optional faint texture layer (square.png) */
-body::before {
+body::before{
   content: "";
   position: fixed;
   inset: 0;
@@ -88,7 +110,7 @@ body::before {
 }
 
 /* BIG white plane (the painting) */
-body::after {
+body::after{
   content: "";
   position: fixed;
 
@@ -114,133 +136,13 @@ body::after {
 }
 
 /* App content above planes */
-#root {
+#root{
   position: relative;
   z-index: 1;
   min-height: 100vh;
-}
 
-/* =========================
-   VERSE BOX
-   ========================= */
-
-.verseBox {
-  width: min(100%, clamp(320px, 60vw, 640px));
-  margin: clamp(0px, 6vh, 56px) auto 0;
-  padding: var(--ui-pad);
-
-  background: rgba(14, 14, 14, 0.86);
-  border: var(--ui-border) solid var(--color-text-main);
-  border-radius: 0;
-
-  position: relative;
-  overflow: hidden;
-
-  color: var(--color-text-main);
-}
-
-/* Suprematist square inside the box, using square.png */
-.verseBox::before {
-  content: "";
-  position: absolute;
-  inset: -12%;
-
-  background-image: url("./assets/square.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-
-  opacity: 0.18;
-  mix-blend-mode: screen;
-
-  transform: rotate(-10deg);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Small event square in the corner */
-.verseBox::after {
-  content: "";
-  position: absolute;
-  right: 14px;
-  top: 14px;
-  width: 16px;
-  height: 16px;
-  background: var(--sup-red);
-  pointer-events: none;
-  z-index: 2;
-}
-
-.verseBox:hover::after {
-  background: var(--sup-yellow);
-}
-
-.verseBox:active::after {
-  background: var(--sup-red);
-}
-
-.verseBox > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* ReactMarkdown output must inherit readable color */
-.verseBox p,
-.verseBox li,
-.verseBox ul,
-.verseBox ol,
-.verseBox blockquote,
-.verseBox pre,
-.verseBox code,
-.verseBox h1,
-.verseBox h2,
-.verseBox h3,
-.verseBox h4,
-.verseBox h5,
-.verseBox h6 {
-  color: inherit;
-}
-
-@media (min-width: 992px) {
-  .verseBox {
-    margin-left: clamp(0px, 18vw, 260px);
-    margin-right: 0;
-  }
-}
-
-@media (max-width: 576px) {
-  .verseBox {
-    /* FULL-WIDTH ON PHONE, NO SIDE MARGINS */
-    width: 100vw;
-    margin: 0;
-    padding: var(--ui-pad-mobile);
-    border-left-width: var(--ui-border);
-    border-right-width: var(--ui-border);
-  }
-}
-
-.verseTitle {
-  margin: 0 0 10px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.verseText {
-  line-height: 1.6;
-}
-/* Verse tab: no-wrap + horizontal scroll only when needed */
-.verseBox--nowrap .verseText{
-  white-space: nowrap;
-  overflow-x: auto;
-}
-
-.verseTop {
-  margin-top: 8px;
-}
-
-.verseBottom {
-  margin-top: 10px;
+  padding-left: var(--page-pad-x);
+  padding-right: var(--page-pad-x);
 }
 
 /* =========================
@@ -248,35 +150,24 @@ body::after {
    ========================= */
 
 .custom-tabs,
-.custom-tabs + .tab-content {
-  --tabs-pad-y: 8px;
-  --tabs-pad-x: 12px;
-  --tabs-gap: var(--ui-gap);
-  --tabs-h: var(--ui-h);
-  --tabs-rule-gap: 8px;
-
+.custom-tabs + .tab-content{
   --tabs-bar-h: calc(
-    (var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--tabs-rule-gap) +
-      var(--ui-border)
+    (var(--tabs-pad-y) * 2)
+    + var(--tabs-h)
+    + var(--tabs-rule-gap)
+    + var(--ui-border)
   );
-}
-
-@media (max-width: 576px) {
-  .custom-tabs,
-  .custom-tabs + .tab-content {
-    --tabs-h: var(--ui-h-mobile);
-  }
 }
 
 /* Reserve space so content doesn't go under fixed bar */
 .custom-tabs .tab-content,
-.custom-tabs + .tab-content {
+.custom-tabs + .tab-content{
   padding-top: var(--tabs-bar-h);
 }
 
 /* Fixed bar */
 .custom-tabs .nav-tabs,
-.custom-tabs.nav-tabs {
+.custom-tabs.nav-tabs{
   position: fixed;
   top: 0;
   left: 0;
@@ -285,14 +176,14 @@ body::after {
   z-index: 1000;
 
   border-bottom: 0 !important;
-  background: rgba(14, 14, 14, 0.92);
+  background: rgba(14,14,14,0.92);
 
   margin: 0 !important;
   padding: var(--tabs-pad-y) var(--tabs-pad-x) 0 !important;
 
   display: flex;
   align-items: center;
-  gap: var(--tabs-gap);
+  gap: var(--ui-gap);
 
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -312,13 +203,11 @@ body::after {
 }
 
 .custom-tabs .nav-tabs::-webkit-scrollbar,
-.custom-tabs.nav-tabs::-webkit-scrollbar {
-  display: none;
-}
+.custom-tabs.nav-tabs::-webkit-scrollbar{ display: none; }
 
 /* strict horizontal rule under tabs */
 .custom-tabs .nav-tabs::after,
-.custom-tabs.nav-tabs::after {
+.custom-tabs.nav-tabs::after{
   content: "";
   display: block;
   width: 100%;
@@ -331,7 +220,7 @@ body::after {
 
 /* Tab buttons */
 .custom-tabs .nav-link,
-.custom-tabs .nav-link:visited {
+.custom-tabs .nav-link:visited{
   background: transparent;
   color: var(--color-text-main);
   border: 0 !important;
@@ -356,7 +245,7 @@ body::after {
 }
 
 .custom-tabs .nav-link:not(.active):hover,
-.custom-tabs .nav-link:not(.active):focus {
+.custom-tabs .nav-link:not(.active):focus{
   background: var(--sup-yellow);
   color: var(--color-bg-main);
   text-decoration: none;
@@ -364,7 +253,7 @@ body::after {
 
 .custom-tabs .nav-link.active,
 .custom-tabs .nav-link.active:hover,
-.custom-tabs .nav-link.active:focus {
+.custom-tabs .nav-link.active:focus{
   background: var(--sup-red) !important;
   color: var(--color-bg-main) !important;
   text-decoration: none;
@@ -375,7 +264,7 @@ body::after {
    Mobile-safe: never overflow viewport
    ========================= */
 
-.tabsWithTools {
+.tabsWithTools{
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
@@ -383,7 +272,7 @@ body::after {
 }
 
 /* The tool itself is not a tab; keep it compact and sticky-right */
-.tabsWithTools .tabsTool {
+.tabsWithTools .tabsTool{
   flex: 0 0 auto;
   display: flex;
   align-items: center;
@@ -394,7 +283,7 @@ body::after {
   right: 0;
 
   /* protect readability over scrolling tabs */
-  background: rgba(14, 14, 14, 0.92);
+  background: rgba(14,14,14,0.92);
   padding-left: var(--tabs-tool-gap);
 
   /* hard safety so it never paints outside viewport */
@@ -404,30 +293,25 @@ body::after {
 
 /* Give sticky tool space so it doesn't cover the last tab on wide screens */
 .custom-tabs .nav-tabs.tabsWithTools,
-.custom-tabs.nav-tabs.tabsWithTools {
+.custom-tabs.nav-tabs.tabsWithTools{
   padding-right: calc(
-    var(--tabs-pad-x) + min(var(--tabs-tool-w), var(--tabs-tool-max)) +
-      var(--tabs-tool-gap)
+    var(--tabs-pad-x)
+    + min(var(--tabs-tool-w), var(--tabs-tool-max))
+    + var(--tabs-tool-gap)
   ) !important;
 }
 
-/* Mobile: keep everything single-row; scroll horizontally,
-   remove extra “ghost” area to the right of the switcher. */
-@media (max-width: 576px) {
-  :root {
-    /* WIDER SWITCHER ON PHONE TO FIT TEXT */
-    --tabs-tool-w: 150px;
-  }
-
+/* Mobile: tighter gaps, no “ghost” block to the right */
+@media (max-width: 576px){
   .custom-tabs .nav-tabs,
-  .custom-tabs.nav-tabs {
+  .custom-tabs.nav-tabs{
     padding-left: 6px !important;
     padding-right: 6px !important;
     gap: 6px;
   }
 
   .custom-tabs .nav-link,
-  .custom-tabs .nav-link:visited {
+  .custom-tabs .nav-link:visited{
     padding: 0 10px;
     font-size: 0.86rem;
     letter-spacing: 0.06em;
@@ -437,24 +321,22 @@ body::after {
     white-space: nowrap;
   }
 
-  /* Tighter tool container, no extra block after the button */
-  .tabsWithTools .tabsTool {
-    padding-left: 4px;
+  .tabsWithTools .tabsTool{
+    margin-left: 0 !important;
+    padding-left: 6px !important;
   }
 
-  /* Only small padding-right so there is no visual “extra element” */
   .custom-tabs .nav-tabs.tabsWithTools,
-  .custom-tabs.nav-tabs.tabsWithTools {
+  .custom-tabs.nav-tabs.tabsWithTools{
     padding-right: 6px !important;
   }
 }
 
 /* =========================
-   THEME SWITCHER (Malevich) — refined + mobile-safe
+   THEME SWITCHER (Malevich C)
    ========================= */
 
-.themeSwitch {
-  /* keep design size token, but never exceed viewport */
+.themeSwitch{
   width: min(var(--tabs-tool-w), var(--tabs-tool-max));
   max-width: 100%;
 
@@ -479,24 +361,21 @@ body::after {
   cursor: pointer;
   user-select: none;
 
-  padding: 0 10px;
-  padding-left: 30px;
+  padding: 0 10px 0 30px;
 
   box-shadow: none;
   outline: none;
 
   transition: background-color 120ms linear, border-color 120ms linear,
     color 120ms linear, transform 90ms linear;
-  will-change: transform;
-  -webkit-tap-highlight-color: transparent;
 
-  /* keep label/contents from forcing overflow */
   min-width: 0;
   overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Malevich: small suprematist square inside the switch */
-.themeSwitch::before {
+/* small suprematist square inside the switch */
+.themeSwitch::before{
   content: "";
   position: absolute;
   left: 10px;
@@ -507,31 +386,15 @@ body::after {
   background: var(--sup-red);
 }
 
-.themeSwitch:hover::before,
-.themeSwitch:active::before {
-  background: var(--color-bg-main);
-}
+.themeSwitch:hover{ background: var(--sup-yellow); color: var(--color-bg-main); border-color: var(--sup-yellow); }
+.themeSwitch:hover::before{ background: var(--color-bg-main); }
 
-.themeSwitch:hover {
-  background: var(--sup-yellow);
-  color: var(--color-bg-main);
-  border-color: var(--sup-yellow);
-}
+.themeSwitch:active{ background: var(--sup-red); border-color: var(--sup-red); color: var(--color-bg-main); transform: translate(2px, 2px); }
+.themeSwitch:active::before{ background: var(--color-bg-main); }
 
-.themeSwitch:active {
-  background: var(--sup-red);
-  border-color: var(--sup-red);
-  color: var(--color-bg-main);
-  transform: translate(2px, 2px);
-}
+.themeSwitch:focus-visible{ outline: var(--ui-border) solid var(--sup-blue); outline-offset: 3px; }
 
-.themeSwitch:focus-visible {
-  outline: var(--ui-border) solid var(--sup-blue);
-  outline-offset: 3px;
-}
-
-/* label can never push beyond */
-.themeSwitch__label {
+.themeSwitch__label{
   display: inline-block;
   min-width: 0;
   overflow: hidden;
@@ -539,26 +402,113 @@ body::after {
   white-space: nowrap;
 }
 
-/* Mobile: slightly tighter text, but wider button */
-@media (max-width: 576px) {
-  .themeSwitch {
-    padding: 0 10px;
-    font-size: 0.78rem;
-    letter-spacing: 0.04em;
-    padding-left: 30px;
-  }
+@media (max-width: 576px){
+  .themeSwitch{ font-size: 0.78rem; letter-spacing: 0.04em; }
+  .themeSwitch__label{ font-size: 0.78rem; letter-spacing: 0.04em; }
+}
 
-  .themeSwitch__label {
-    font-size: 0.78rem;
-    letter-spacing: 0.04em;
+/* =========================
+   VERSE BOX
+   ========================= */
+
+.verseBox{
+  width: min(100%, var(--content-max));
+  margin: var(--versebox-top) auto 0;
+  padding: var(--ui-pad);
+
+  background: rgba(14,14,14,0.86);
+  border: var(--ui-border) solid var(--color-text-main);
+  border-radius: 0;
+
+  position: relative;
+  overflow: hidden;
+
+  color: var(--color-text-main);
+}
+
+/* Suprematist square inside the box, using square.png */
+.verseBox::before{
+  content: "";
+  position: absolute;
+  inset: -12%;
+
+  background-image: url("./assets/square.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  opacity: 0.18;
+  mix-blend-mode: screen;
+
+  transform: rotate(-10deg);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Small event square in the corner */
+.verseBox::after{
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  width: 16px;
+  height: 16px;
+  background: var(--sup-red);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.verseBox:hover::after{ background: var(--sup-yellow); }
+.verseBox:active::after{ background: var(--sup-red); }
+
+.verseBox > *{ position: relative; z-index: 1; }
+
+.verseBox p, .verseBox li, .verseBox ul, .verseBox ol,
+.verseBox blockquote, .verseBox pre, .verseBox code,
+.verseBox h1, .verseBox h2, .verseBox h3, .verseBox h4, .verseBox h5, .verseBox h6{
+  color: inherit;
+}
+
+@media (min-width: 992px){
+  .verseBox{
+    margin-left: var(--versebox-left);
+    margin-right: auto;
   }
 }
+
+@media (max-width: 576px){
+  .verseBox{
+    width: 100vw;
+    margin: 0;
+    padding: var(--ui-pad-mobile);
+    border-left-width: var(--ui-border);
+    border-right-width: var(--ui-border);
+  }
+}
+
+.verseTitle{
+  margin: 0 0 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.verseText{ line-height: 1.6; }
+
+/* Verse tab: no-wrap + horizontal scroll only when needed */
+.verseBox--nowrap .verseText{
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.verseTop{ margin-top: 8px; }
+.verseBottom{ margin-top: 10px; }
 
 /* =========================
    BUTTONS
    ========================= */
 
-.u-btn {
+.u-btn{
   border-radius: 0 !important;
   box-shadow: none !important;
 
@@ -575,46 +525,32 @@ body::after {
   text-transform: uppercase;
 
   width: 100%;
-  max-width: var(--ui-w);
+  max-width: min(92vw, 760px);
   height: var(--ui-h);
   padding: 0 14px;
 }
 
-.u-btn:hover {
-  background: var(--sup-yellow) !important;
-}
+.u-btn:hover{ background: var(--sup-yellow) !important; }
+.u-btn:active{ background: var(--sup-red) !important; transform: translate(2px, 2px); }
 
-.u-btn:active {
-  background: var(--sup-red) !important;
-  transform: translate(2px, 2px);
-}
+.u-btn--wide{ max-width: min(92vw, 860px); }
 
-.u-btn--wide {
-  max-width: min(92vw, 760px);
-}
-
-.u-btn--square {
+.u-btn--square{
   width: var(--ui-h);
   max-width: var(--ui-h);
   padding: 0;
 }
 
-@media (max-width: 576px) {
-  .u-btn {
-    height: var(--ui-h-mobile);
-  }
-
-  .u-btn--square {
-    width: var(--ui-h-mobile);
-    max-width: var(--ui-h-mobile);
-  }
+@media (max-width: 576px){
+  .u-btn{ height: var(--ui-h-mobile); }
+  .u-btn--square{ width: var(--ui-h-mobile); max-width: var(--ui-h-mobile); }
 }
 
 /* =========================
    TRIANGLE BUTTON
    ========================= */
 
-.tri-btn {
+.tri-btn{
   --box: var(--ui-h);
 
   width: var(--box);
@@ -633,7 +569,7 @@ body::after {
   box-shadow: none;
 }
 
-.tri-btn::before {
+.tri-btn::before{
   content: "";
   width: 0;
   height: 0;
@@ -641,69 +577,45 @@ body::after {
   border-bottom: calc(var(--box) * 0.28) solid transparent;
 }
 
-.tri-btn--left::before {
-  border-right: calc(var(--box) * 0.39) solid var(--color-bg-main);
-}
+.tri-btn--left::before{ border-right: calc(var(--box) * 0.39) solid var(--color-bg-main); }
+.tri-btn--right::before{ border-left: calc(var(--box) * 0.39) solid var(--color-bg-main); }
 
-.tri-btn--right::before {
-  border-left: calc(var(--box) * 0.39) solid var(--color-bg-main);
-}
+.tri-btn:hover{ background: var(--sup-yellow); }
+.tri-btn:active{ background: var(--sup-red); transform: translate(2px, 2px); }
 
-.tri-btn:hover {
-  background: var(--sup-yellow);
-}
-
-.tri-btn:active {
-  background: var(--sup-red);
-  transform: translate(2px, 2px);
-}
-
-@media (max-width: 576px) {
-  .tri-btn {
-    --box: var(--ui-h-mobile);
-  }
-}
+@media (max-width: 576px){ .tri-btn{ --box: var(--ui-h-mobile); } }
 
 /* =========================
    AUDIO
    ========================= */
 
-.audio-box {
-  width: 100%;
-}
+.audio-box{ width: 100%; }
 
-.audio-frame {
+.audio-frame{
   width: 100%;
   border: var(--ui-border) solid var(--color-text-main);
   border-radius: 0;
   overflow: hidden;
-  background: rgba(14, 14, 14, 0.72);
+  background: rgba(14,14,14,0.72);
 }
 
-.audio-frame:hover {
-  border-color: var(--sup-yellow);
-}
+.audio-frame:hover{ border-color: var(--sup-yellow); }
+.audio-frame:focus-within{ border-color: var(--sup-red); }
 
-.audio-frame:focus-within {
-  border-color: var(--sup-red);
-}
-
-.square-audio {
+.square-audio{
   width: 100%;
   display: block;
   border-radius: 0 !important;
 }
 
 .square-audio::-webkit-media-controls-enclosure,
-.square-audio::-webkit-media-controls-panel {
-  border-radius: 0 !important;
-}
+.square-audio::-webkit-media-controls-panel{ border-radius: 0 !important; }
 
 /* =========================
    CONTROLS BAR
    ========================= */
 
-.controlsBar {
+.controlsBar{
   display: grid;
   grid-template-columns: var(--ui-h) minmax(0, 1fr) var(--ui-h);
   gap: var(--ui-gap);
@@ -716,170 +628,53 @@ body::after {
   border-top: var(--ui-border) solid var(--color-text-main);
 }
 
-.controlsBar > * {
-  min-width: 0;
-}
+.controlsBar > *{ min-width: 0; }
 
-.controlsBar:hover {
-  border-top-color: var(--sup-yellow);
-}
+.controlsBar:hover{ border-top-color: var(--sup-yellow); }
+.controlsBar:focus-within{ border-top-color: var(--sup-red); }
 
-.controlsBar:focus-within {
-  border-top-color: var(--sup-red);
-}
-
-.controlsBar .u-btn {
+.controlsBar .u-btn{
   max-width: none;
   width: 100%;
   justify-self: stretch;
 }
 
-@media (max-width: 576px) {
-  .controlsBar {
+@media (max-width: 576px){
+  .controlsBar{
     grid-template-columns: var(--ui-h-mobile) minmax(0, 1fr) var(--ui-h-mobile);
     padding-top: 8px;
     margin-top: 10px;
   }
 }
 
-/* =========================================================
-   UNIFIED LAYOUT CONTRACT
-   Keeps each theme’s visuals intact; standardizes page padding
-   and VerseBox placement across themes.
-   Requested: VerseBox left edge ~15vw (not 25vw).
-   ========================================================= */
+/* =========================
+   FIXED READER FRAME
+   Tabs fixed at top, controls pinned at bottom, VerseBox scrolls.
+   ========================= */
 
 :root{
-  /* Unified reading width (used by VerseBox) */
-  --content-max: 820px;
-
-  /* Unified page side padding */
-  --page-pad-x: 32px;
-  --page-pad-x-mobile: 14px;
-
-  /* VerseBox anchor */
-  --versebox-edge: 15vw;
-  --versebox-left: clamp(0px, calc(var(--versebox-edge) - var(--page-pad-x)), 240px);
-  --versebox-top: clamp(0px, 6vh, 56px);
-}
-
-@media (max-width: 576px){
-  :root{ --page-pad-x: var(--page-pad-x-mobile); }
-}
-
-/* Normalize root side padding without touching top/bottom reserves */
-#root{
-  padding-left: var(--page-pad-x);
-  padding-right: var(--page-pad-x);
-}
-
-/* VerseBox: unified width + consistent top spacing */
-.verseBox{
-  width: min(100%, var(--content-max));
-  margin-top: var(--versebox-top);
-}
-
-/* Desktop: anchor from the left (edge starts ~15vw) */
-@media (min-width: 992px){
-  .verseBox{
-    margin-left: var(--versebox-left);
-    margin-right: auto;
-  }
-}
-
-/* Phones: no horizontal offset */
-@media (max-width: 576px){
-  .verseBox{
-    margin-left: 0;
-    margin-right: 0;
-    margin-top: 0;
-  }
-}
-
-
-/* =========================================================
-   MOBILE TIGHTENING — TAB GAPS (UNIFIED)
-   Narrower gaps between tabs, and between tabs & theme switch,
-   only on smartphone screens.
-   ========================================================= */
-
-@media (max-width: 576px) {
-  :root{
-    /* unify the “tool reserve” math while keeping theme visuals intact */
-    --tabs-tool-gap: 6px;
-  }
-
-  /* Narrower gaps between tab buttons */
-  .custom-tabs .nav-tabs,
-  .custom-tabs.nav-tabs{
-    gap: 6px !important;
-  }
-
-  /* Narrower gap between tabs row and the tool area (theme switch) */
-  .tabsWithTools .tabsTool{
-    margin-left: 0 !important;  /* avoid double-spacing on mobile */
-    padding-left: 6px !important;
-  }
-
-  /* Keep end-of-row reserve consistent with the new tool gap */
-  .custom-tabs .nav-tabs.tabsWithTools,
-  .custom-tabs.nav-tabs.tabsWithTools{
-    padding-right: calc(
-      var(--tabs-pad-x, 12px)
-      + min(var(--tabs-tool-w, 116px), var(--tabs-tool-max, 100vw))
-      + var(--tabs-tool-gap, 6px)
-    ) !important;
-  }
-}
-
-/* =========================================================
-   FIXED READER FRAME — TABS + BOTTOM CONTROLS (UNIFIED)
-   Goal:
-   - Tabs already fixed at top.
-   - Fix bottom navigation + “This is not poetry” to viewport bottom
-     (wide → smartphone).
-   - Make the VerseBox the scroll container so the frame/background stays fixed.
-   Notes:
-   - Visual style (colors/textures) is NOT changed here — only layout behavior.
-   ========================================================= */
-
-:root{
-  /* iOS/Android safe areas */
   --safe-top: max(env(safe-area-inset-top), 0px);
   --safe-bottom: max(env(safe-area-inset-bottom), 0px);
 
-  /* Left anchor for fixed-position elements (true viewport coordinates) */
-  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge, 20vw), 360px);
+  --tabs-rail-h: calc(var(--tabs-h) + (var(--tabs-pad-y) * 2));
+  --controls-rail-h: calc(var(--ui-h) + 16px + var(--ui-border));
 
-  /* Estimated rails height for the fixed tabs bar (safe, theme-agnostic) */
-  --tabs-rail-h: calc(var(--ui-h, 52px) + (var(--tabs-pad-y, 8px) * 2));
-  --tabs-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + (var(--tabs-pad-y, 8px) * 2));
-
-  /* Bottom controls bar occupies roughly a control height + rule/padding */
-  --controls-rail-h: calc(var(--ui-h, 52px) + 16px + var(--ui-border, 2px));
-  --controls-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + 14px + var(--ui-border, 2px));
-
-  /* Frame top offset: tabs rail + small breathing room */
+  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge), 360px);
   --frame-top: calc(var(--tabs-rail-h) + 8px + var(--safe-top));
-  --frame-bottom-pad: calc(var(--controls-rail-h) + env(safe-area-inset-bottom));
+  --frame-bottom-pad: calc(var(--controls-rail-h) + var(--safe-bottom));
 }
 
 @media (max-width: 576px){
   :root{
+    --controls-rail-h: calc(var(--ui-h-mobile) + 14px + var(--ui-border));
     --frame-left: var(--page-pad-x);
-    --frame-top: calc(var(--tabs-rail-h-mobile) + 6px);
-    --frame-bottom-pad: calc(var(--controls-rail-h-mobile) + env(safe-area-inset-bottom));
+    --frame-top: calc(var(--tabs-rail-h) + 6px);
+    --frame-bottom-pad: calc(var(--controls-rail-h) + var(--safe-bottom));
   }
 }
 
-/* Lock the page: scrolling happens inside the VerseBox */
-html, body, #root{
-  height: 100%;
-}
-
-body{
-  overflow: hidden;
-}
+html, body, #root{ height: 100%; }
+body{ overflow: hidden; }
 
 /* VerseBox becomes the fixed reading frame (scroll container) */
 .verseBox{
@@ -893,14 +688,11 @@ body{
 
   margin: 0 !important;
 
-  /* scrolling content, fixed background/frame */
   overflow: auto !important;
   overscroll-behavior: contain;
 
-  /* keep last lines visible above the fixed bottom controls */
-  padding-bottom: calc(var(--ui-pad, 20px) + var(--frame-bottom-pad)) !important;
+  padding-bottom: calc(var(--ui-pad) + var(--frame-bottom-pad)) !important;
 
-  /* smooth iOS scroll */
   -webkit-overflow-scrolling: touch;
 }
 
@@ -916,38 +708,10 @@ body{
 
   z-index: 1050;
 
+  padding: 12px 0 14px;
+  background: rgba(14,14,14,0.96);
+  border-top: var(--ui-border) solid var(--color-text-main);
+
   box-sizing: border-box;
   max-width: 100vw;
-
-  /* make sure scrolled text never shows through */
-  background: inherit;
-}
-/* =========================================================
-   WIDE-SCREEN CONTROLS LAYOUT — VARIANT 3
-   Sticky bottom rail: controls stay reachable while reading.
-   ========================================================= */
-
-@media (min-width: 768px) {
-  .controlsBar {
-    position: sticky;
-    bottom: 0;
-    z-index: 30;
-
-    margin-top: 18px;
-    padding: 12px 0 14px;
-
-    background: rgba(14,14,14,0.96);
-    border-top: 0;
-
-    /* Subtle separation from content while keeping themes intact */
-    box-shadow: 0 -10px 0 rgba(0,0,0,0.04);
-  }
-
-  .controlsBar::before {
-    display: none;
-  }
-
-  .controlsBar .u-btn {
-    width: 100%;
-  }
 }

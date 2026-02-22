@@ -1,0 +1,748 @@
+/* =========================================================
+   ui_brutal.css — BRUTALISM (XEROX / ZINE / TONER) + FIXED SLOT
+   - Theme switch button as narrow as possible
+   - Square corners everywhere
+   - Brutal poster font on wide screens
+   - Bottom controls pinned to the same “slot” as Klee/Malevich
+   ========================================================= */
+
+:root{
+  --font-head: Impact, Haettenschweiler, "Arial Black", system-ui, sans-serif;
+  --font-body: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+               "Liberation Mono", "Courier New", monospace;
+
+  --paper: #f4f1e8;
+  --paper2:#efe9dc;
+  --toner: #101010;
+  --muted: #5a5a5a;
+
+  --stamp: #b00020;
+
+  --b: 3px;
+  --gap: 10px;
+
+  --ui-h: 56px;
+  --ui-h-mobile: 48px;
+
+  --pad: 18px;
+  --pad-mobile: 14px;
+
+  --content-max: 900px;
+
+  --page-pad-x: 24px;
+  --page-pad-x-mobile: 12px;
+
+  --tabs-pad-y: 8px;
+  --tabs-pad-x: 10px;
+  --tabs-h: var(--ui-h);
+
+  /* tool gap stays, but NO fixed tool width */
+  --tabs-tool-gap: 8px;
+
+  --safe-top: max(env(safe-area-inset-top), 0px);
+  --safe-bottom: max(env(safe-area-inset-bottom), 0px);
+
+  /* bottom slot offset (like your other themes) */
+  --controls-offset: 0px;
+}
+
+@media (max-width: 576px){
+  :root{
+    --tabs-h: var(--ui-h-mobile);
+    --page-pad-x: var(--page-pad-x-mobile);
+    --tabs-tool-gap: 6px;
+    --controls-offset: 0px;
+  }
+}
+
+/* Square corners everywhere (hard reset) */
+button,
+.btn,
+a button,
+.custom-tabs .nav-link,
+.themeSwitch,
+.tri-btn{
+  border-radius: 0 !important;
+}
+
+*,
+*::before,
+*::after{ box-sizing: border-box; }
+
+html, body{ min-height: 100%; overflow-x: hidden; }
+
+body{
+  margin: 0;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--toner);
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+  background:
+    radial-gradient(rgba(16,16,16,0.10) 1px, transparent 1px) 0 0/9px 9px,
+    radial-gradient(rgba(16,16,16,0.06) 1px, transparent 1px) 3px 3px/13px 13px,
+    linear-gradient(0deg, rgba(0,0,0,0.05), rgba(0,0,0,0.00));
+  mix-blend-mode: multiply;
+}
+
+body::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.18;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(176,0,32,0.18) 0px,
+      rgba(176,0,32,0.18) 1px,
+      transparent 1px,
+      transparent 18px
+    );
+  mix-blend-mode: multiply;
+}
+
+#root{
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding-left: var(--page-pad-x);
+  padding-right: var(--page-pad-x);
+}
+
+a{
+  color: var(--toner);
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 2px;
+}
+a:hover{
+  color: var(--stamp);
+  text-decoration-thickness: 5px;
+}
+
+/* =========================================================
+   FIXED TOP TABS
+   ========================================================= */
+
+.custom-tabs,
+.custom-tabs + .tab-content{
+  --tabs-bar-h: calc((var(--tabs-pad-y) * 2) + var(--tabs-h) + var(--b));
+}
+
+.custom-tabs .tab-content,
+.custom-tabs + .tab-content{
+  padding-top: var(--tabs-bar-h);
+}
+
+.custom-tabs .nav-tabs,
+.custom-tabs.nav-tabs{
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+
+  background: var(--paper2);
+  border: 0 !important;
+  margin: 0 !important;
+
+  padding: var(--tabs-pad-y) var(--tabs-pad-x) 0 !important;
+
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  border-bottom: var(--b) dashed var(--toner) !important;
+}
+
+.custom-tabs .nav-tabs::-webkit-scrollbar,
+.custom-tabs.nav-tabs::-webkit-scrollbar{ display:none; }
+
+.custom-tabs .nav-link,
+.custom-tabs .nav-link:visited{
+  height: var(--tabs-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 14px;
+
+  background: var(--paper);
+  color: var(--toner);
+
+  border: var(--b) solid var(--toner) !important;
+  box-shadow:
+    4px 4px 0 rgba(0,0,0,0.35),
+    -2px -2px 0 rgba(176,0,32,0.20);
+
+  font-family: var(--font-head);
+  font-weight: 900;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  line-height: 1;
+
+  white-space: nowrap;
+  flex: 0 0 auto;
+
+  /* keep a tiny zine feel on tabs only */
+  transform: skewX(-1.5deg);
+  transition: none;
+}
+
+.custom-tabs .nav-link:not(.active):hover,
+.custom-tabs .nav-link:not(.active):focus{
+  outline: none;
+  background: var(--toner);
+  color: var(--paper);
+  box-shadow:
+    6px 6px 0 rgba(0,0,0,0.35),
+    -2px -2px 0 rgba(176,0,32,0.35);
+}
+
+.custom-tabs .nav-link.active,
+.custom-tabs .nav-link.active:hover,
+.custom-tabs .nav-link.active:focus{
+  background: var(--stamp) !important;
+  color: var(--paper) !important;
+  border-color: var(--toner) !important;
+}
+
+/* Tools area */
+.tabsWithTools{
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.tabsWithTools .tabsTool{
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+
+  margin-left: var(--tabs-tool-gap);
+
+  position: sticky;
+  right: 0;
+
+  background: var(--paper2);
+  padding-left: var(--tabs-tool-gap);
+
+  max-width: calc(100vw - 12px);
+  overflow: hidden;
+}
+
+/* Theme switch: NARROW AS POSSIBLE */
+.themeSwitch{
+  width: auto;
+  min-width: 0;
+  flex: 0 0 auto;
+
+  height: var(--tabs-h);
+
+  border: var(--b) solid var(--toner);
+  background: var(--paper);
+  color: var(--toner);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: var(--font-head);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  user-select: none;
+
+  padding: 0 8px;
+  transition: none;
+
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.35);
+
+  /* IMPORTANT: no skew for stable top-right slot */
+  transform: none;
+}
+
+.themeSwitch:hover{
+  background: var(--toner);
+  color: var(--paper);
+}
+
+.themeSwitch:active{
+  transform: translate(2px, 2px);
+}
+
+.themeSwitch:focus-visible{
+  outline: var(--b) dotted var(--stamp);
+  outline-offset: 3px;
+}
+
+/* Label can truncate so it doesn't force width */
+.themeSwitch__label{
+  display: inline-block;
+  max-width: 14ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   VERSE BOX
+   ========================================================= */
+
+.verseBox{
+  width: min(100%, var(--content-max));
+  margin: 0 auto;
+
+  padding: var(--pad);
+
+  background: var(--paper);
+  color: var(--toner);
+
+  border: var(--b) solid var(--toner);
+  box-shadow:
+    10px 10px 0 rgba(0,0,0,0.50),
+    -3px -3px 0 rgba(176,0,32,0.18);
+
+  /* IMPORTANT: no rotate; fixed frame geometry like Malevich/Klee */
+  transform: none;
+
+  overflow: hidden;
+}
+
+.verseTitle{
+  margin: 0 0 12px;
+  font-family: var(--font-head);
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.verseText{
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.8;
+  color: var(--toner);
+}
+
+.verseBox em, .verseBox i{
+  font-style: normal;
+  border-bottom: 4px solid rgba(16,16,16,0.85);
+}
+
+.verseBox--nowrap .verseText{
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+/* =========================================================
+   AUDIO
+   ========================================================= */
+
+.audio-frame{
+  width: 100%;
+  border: var(--b) solid var(--toner);
+  overflow: hidden;
+  background: var(--paper2);
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.45);
+}
+
+/* =========================================================
+   CONTROLS BAR + NAV
+   ========================================================= */
+
+.controlsBar{
+  display: grid;
+  grid-template-columns: var(--ui-h) minmax(0, 1fr) var(--ui-h);
+  gap: var(--gap);
+  align-items: center;
+  width: 100%;
+
+  margin-top: 12px;
+  padding-top: 10px;
+
+  border-top: var(--b) dashed var(--toner);
+}
+
+/* Navigation buttons: stable (no skew) */
+.tri-btn{
+  --box: var(--ui-h);
+
+  width: var(--box);
+  height: var(--box);
+
+  border: var(--b) solid var(--toner);
+  background: var(--paper);
+
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  transition: none;
+
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.35);
+
+  /* IMPORTANT: no skew; fixed slot */
+  transform: none;
+}
+
+.tri-btn::before{
+  content:"";
+  width: 0;
+  height: 0;
+  border-top: calc(var(--box) * 0.26) solid transparent;
+  border-bottom: calc(var(--box) * 0.26) solid transparent;
+}
+
+.tri-btn--left::before{ border-right: calc(var(--box) * 0.38) solid var(--toner); }
+.tri-btn--right::before{ border-left: calc(var(--box) * 0.38) solid var(--toner); }
+
+.tri-btn:hover{
+  background: var(--toner);
+}
+.tri-btn:hover::before{
+  border-right-color: var(--paper);
+  border-left-color: var(--paper);
+}
+
+.tri-btn:active{
+  transform: translate(2px, 2px);
+}
+
+@media (max-width: 576px){
+  .tri-btn{ --box: var(--ui-h-mobile); }
+
+  .verseBox{
+    width: 100vw;
+    margin: 0;
+    padding: var(--pad-mobile);
+  }
+
+  .themeSwitch__label{ max-width: 10ch; }
+}
+
+/* =========================================================
+   BRUTAL “POSTER” FONT ON WIDE SCREENS
+   ========================================================= */
+@media (min-width: 992px){
+  .custom-tabs .nav-link,
+  .themeSwitch,
+  .verseTitle{
+    font-family: "Arial Black", Impact, Haettenschweiler, var(--font-head);
+    letter-spacing: 0.22em;
+  }
+
+  .custom-tabs .nav-link{
+    padding: 0 16px;
+  }
+}
+
+/* =========================================================
+   FIXED READER FRAME CONTRACT
+   Tabs fixed at top, controls pinned at bottom, VerseBox scrolls
+   ========================================================= */
+
+html, body, #root{ height: 100%; }
+body{ overflow: hidden; }
+
+:root{
+  --tabs-rail-h: calc(var(--tabs-h) + (var(--tabs-pad-y) * 2) + var(--b));
+  --controls-rail-h: calc(var(--ui-h) + 16px + var(--b));
+
+  --frame-left: clamp(var(--page-pad-x), 14vw, 360px);
+  --frame-top: calc(var(--tabs-rail-h) + 8px + var(--safe-top));
+
+  /* include slot offset in the pad calc */
+  --frame-bottom-pad: calc(var(--controls-rail-h) + var(--safe-bottom) + var(--controls-offset));
+}
+
+@media (max-width: 576px){
+  :root{
+    --controls-rail-h: calc(var(--ui-h-mobile) + 14px + var(--b));
+    --frame-left: var(--page-pad-x);
+    --frame-top: calc(var(--tabs-rail-h) + 6px);
+  }
+}
+
+.verseBox{
+  position: fixed !important;
+  top: var(--frame-top) !important;
+  bottom: var(--safe-bottom) !important;
+
+  left: var(--frame-left) !important;
+  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
+
+  margin: 0 !important;
+
+  overflow: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+
+  padding-bottom: calc(var(--pad) + var(--frame-bottom-pad)) !important;
+}
+
+/* Controls pinned bottom aligned with VerseBox in the “standard place” */
+.controlsBar{
+  position: fixed !important;
+  bottom: var(--safe-bottom) !important;
+
+  left: var(--frame-left) !important;
+  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
+
+  margin: 0 !important;
+  z-index: 1050;
+
+  padding: 12px 0 14px;
+  background: var(--paper2);
+  border-top: var(--b) dashed var(--toner);
+
+  box-sizing: border-box;
+  max-width: 100vw;
+}
+
+/* =========================================================
+   WIDE-SCREEN ONLY: brutal background (keeps everything else intact)
+   - Adds “print room / warehouse grid” + subtle vignette
+   ========================================================= */
+@media (min-width: 992px){
+  body{
+    background:
+      radial-gradient(1200px 800px at 15% 20%, rgba(0,0,0,0.10), transparent 55%),
+      radial-gradient(1200px 900px at 85% 70%, rgba(0,0,0,0.12), transparent 60%),
+      repeating-linear-gradient(
+        0deg,
+        rgba(16,16,16,0.06) 0px,
+        rgba(16,16,16,0.06) 1px,
+        transparent 1px,
+        transparent 28px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(16,16,16,0.05) 0px,
+        rgba(16,16,16,0.05) 1px,
+        transparent 1px,
+        transparent 32px
+      ),
+      var(--paper);
+  }
+
+  .custom-tabs .nav-tabs,
+  .custom-tabs.nav-tabs{
+    background:
+      linear-gradient(180deg, rgba(239,233,220,0.96), rgba(239,233,220,0.96)),
+      repeating-linear-gradient(
+        135deg,
+        rgba(0,0,0,0.06) 0px,
+        rgba(0,0,0,0.06) 10px,
+        transparent 10px,
+        transparent 20px
+      );
+  }
+
+  .controlsBar{
+    background:
+      linear-gradient(180deg, rgba(239,233,220,0.98), rgba(239,233,220,0.98)),
+      repeating-linear-gradient(
+        135deg,
+        rgba(0,0,0,0.05) 0px,
+        rgba(0,0,0,0.05) 12px,
+        transparent 12px,
+        transparent 24px
+      );
+  }
+}
+
+/* =========================================================
+   OVERRIDES (requested):
+   1) Vivid wide-screen background (keep rest intact)
+   2) Theme switch button stays close to Verse/Herm/Audio tabs
+      (Bootstrap uses .ms-auto to push it right; override only inside top tabs rail)
+   ========================================================= */
+
+/* --- (2) Keep ThemeSwitcher close to tabs --- */
+.custom-tabs .ms-auto{
+  margin-left: 0 !important; /* cancel Bootstrap push-to-right */
+}
+
+.tabsWithTools{
+  justify-content: flex-start !important;
+}
+
+.tabsWithTools .tabsTool{
+  margin-left: 6px !important;   /* small, controlled gap */
+  padding-left: 0 !important;
+  position: static !important;   /* stop sticky-right behavior */
+}
+
+/* Keep theme switch as compact as possible */
+.themeSwitch{
+  padding: 0 6px !important;
+}
+
+/* --- (1) Vivid wide-screen background --- */
+@media (min-width: 992px){
+  body{
+    /* Vivid overprint poster background: cyan/magenta + ink bands + grid */
+    background:
+      radial-gradient(900px 650px at 18% 22%, rgba(0,140,255,0.22), transparent 58%),
+      radial-gradient(950px 720px at 82% 68%, rgba(176,0,32,0.22), transparent 60%),
+      linear-gradient(135deg,
+        rgba(16,16,16,0.00) 0%,
+        rgba(16,16,16,0.00) 42%,
+        rgba(16,16,16,0.08) 42%,
+        rgba(16,16,16,0.08) 54%,
+        rgba(16,16,16,0.00) 54%,
+        rgba(16,16,16,0.00) 100%
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(16,16,16,0.06) 0px,
+        rgba(16,16,16,0.06) 1px,
+        transparent 1px,
+        transparent 26px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(16,16,16,0.05) 0px,
+        rgba(16,16,16,0.05) 1px,
+        transparent 1px,
+        transparent 30px
+      ),
+      var(--paper);
+  }
+
+  /* Make rails feel like taped posters (a bit more vivid but still xerox) */
+  .custom-tabs .nav-tabs,
+  .custom-tabs.nav-tabs{
+    background:
+      linear-gradient(180deg, rgba(239,233,220,0.96), rgba(239,233,220,0.96)),
+      repeating-linear-gradient(
+        135deg,
+        rgba(0,140,255,0.10) 0px,
+        rgba(0,140,255,0.10) 10px,
+        rgba(176,0,32,0.08) 10px,
+        rgba(176,0,32,0.08) 20px
+      );
+  }
+
+  .controlsBar{
+    background:
+      linear-gradient(180deg, rgba(239,233,220,0.98), rgba(239,233,220,0.98)),
+      repeating-linear-gradient(
+        135deg,
+        rgba(176,0,32,0.08) 0px,
+        rgba(176,0,32,0.08) 12px,
+        rgba(0,140,255,0.07) 12px,
+        rgba(0,140,255,0.07) 24px
+      );
+  }
+}
+
+/* =========================================================
+   RAW BRUTAL WIDE-SCREEN BACKGROUND (NO GRADIENTS)
+   - disables the vivid gradient background
+   - uses a harsh monochrome “photocopy + grid” tile image
+   ========================================================= */
+@media (min-width: 992px){
+  /* remove texture layers that were gradient-based */
+  body::before{ background: none !important; opacity: 0 !important; }
+  body::after{ background: none !important; opacity: 0 !important; }
+
+  body{
+    background-color: var(--paper) !important;
+    background-image: url("data:image/png;base64,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") !important;
+    background-repeat: repeat !important;
+    background-size: 96px 96px !important;
+    background-attachment: fixed !important;
+  }
+
+  /* keep rails readable, but also remove their gradient-based vividness */
+  .custom-tabs .nav-tabs,
+  .custom-tabs.nav-tabs{
+    background: var(--paper2) !important;
+  }
+
+  .controlsBar{
+    background: var(--paper2) !important;
+  }
+}
+
+/* =========================================================
+   RAW BRUTAL BACKGROUND FOR ALL SCREENS (NO GRADIENTS)
+   - apply the same tile background everywhere
+   - neutralize previous gradient-based texture layers
+   - keep everything else intact
+   ========================================================= */
+
+body::before{ background: none !important; opacity: 0 !important; }
+body::after{ background: none !important; opacity: 0 !important; }
+
+body{
+  background-color: var(--paper) !important;
+  background-image: url("data:image/png;base64,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") !important;
+  background-repeat: repeat !important;
+  background-size: 96px 96px !important;
+  background-attachment: fixed !important;
+}
+
+/* Rails remain paper2 for readability */
+.custom-tabs .nav-tabs,
+.custom-tabs.nav-tabs{
+  background: var(--paper2) !important;
+}
+
+.controlsBar{
+  background: var(--paper2) !important;
+}
+
+/* =========================================================
+   PATCH: Bottom controls block fully opaque (Kosuth-like plate)
+   - no transparency, no patterned background, no translucent shadow
+   - keeps the rest of the theme intact
+   ========================================================= */
+
+.controlsBar{
+  /* opaque plate */
+  background: var(--paper2) !important;
+  background-image: none !important;
+  opacity: 1 !important;
+
+  /* kill any “see-through” effects */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+
+  /* no translucent separation */
+  box-shadow: none !important;
+
+  /* isolate painting so nothing bleeds through */
+  isolation: isolate;
+}
+
+/* if any pseudo elements exist in your app for the bar, force them off */
+.controlsBar::before,
+.controlsBar::after{
+  content: none !important;
+  display: none !important;
+}

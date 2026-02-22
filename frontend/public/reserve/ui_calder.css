@@ -16,13 +16,14 @@
    ========================= */
 
 :root {
-  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --font-body: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    sans-serif;
 
   --calder-paper: #fbfbf7;
-  --calder-ink:   #0b0b0d;
-  --calder-red:   #e11b22;
-  --calder-blue:  #1b4fd6;
-  --calder-yellow:#f2c500;
+  --calder-ink: #0b0b0d;
+  --calder-red: #e11b22;
+  --calder-blue: #1b4fd6;
+  --calder-yellow: #f2c500;
   --calder-steel: #cfd3d8;
 
   /* motion knobs */
@@ -51,9 +52,15 @@
 
 *,
 *::before,
-*::after { box-sizing: border-box; }
+*::after {
+  box-sizing: border-box;
+}
 
-html, body { min-height: 100%; overflow-x: hidden; }
+html,
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+}
 
 body {
   margin: 0;
@@ -83,7 +90,9 @@ body {
 .custom-tabs .nav-tabs,
 .custom-tabs.nav-tabs {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
 
   margin: 0 !important;
@@ -107,7 +116,9 @@ body {
   contain: layout paint;
 }
 .custom-tabs .nav-tabs::-webkit-scrollbar,
-.custom-tabs.nav-tabs::-webkit-scrollbar { display: none; }
+.custom-tabs.nav-tabs::-webkit-scrollbar {
+  display: none;
+}
 
 .custom-tabs .nav-tabs::after,
 .custom-tabs.nav-tabs::after {
@@ -121,7 +132,9 @@ body {
 }
 
 .custom-tabs .nav-tabs > .nav-item,
-.custom-tabs.nav-tabs > .nav-item { flex: 0 0 auto; }
+.custom-tabs.nav-tabs > .nav-item {
+  flex: 0 0 auto;
+}
 
 .custom-tabs .nav-link,
 .custom-tabs .nav-link:visited {
@@ -159,7 +172,9 @@ body {
 }
 
 @media (max-width: 576px) {
-  :root { --tabs-h: var(--ui-h-mobile); }
+  :root {
+    --tabs-h: var(--ui-h-mobile);
+  }
 
   .custom-tabs .nav-tabs,
   .custom-tabs.nav-tabs {
@@ -200,12 +215,16 @@ body {
   position: relative;
 
   /* calm shadow frame */
-  box-shadow:
-    0 0 0 10px color-mix(in srgb, var(--calder-yellow) 16%, transparent),
-    14px 14px 0 0 rgba(11,11,13,0.08);
+  box-shadow: 0 0 0 10px
+      color-mix(in srgb, var(--calder-yellow) 16%, transparent),
+    14px 14px 0 0 rgba(11, 11, 13, 0.08);
 }
 
-@media (max-width: 576px){ .verseBox{ padding: var(--ui-pad-mobile); } }
+@media (max-width: 576px) {
+  .verseBox {
+    padding: var(--ui-pad-mobile);
+  }
+}
 
 .verseTitle {
   margin: 0 0 10px;
@@ -214,9 +233,22 @@ body {
   text-transform: uppercase;
 }
 
-.verseText { line-height: 1.78; word-wrap: break-word; }
-.verseTop { margin-top: 8px; }
-.verseBottom { margin-top: 12px; }
+.verseText {
+  line-height: 1.78;
+  word-wrap: break-word;
+}
+/* Verse tab: no-wrap + horizontal scroll only when needed */
+.verseBox--nowrap .verseText{
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.verseTop {
+  margin-top: 8px;
+}
+.verseBottom {
+  margin-top: 12px;
+}
 
 /* =========================
    BUTTONS
@@ -244,15 +276,31 @@ body {
   padding: 0 14px;
 }
 
-.u-btn:hover { background: color-mix(in srgb, var(--calder-yellow) 35%, #ffffff) !important; }
-.u-btn:active { background: var(--calder-red) !important; color: #ffffff !important; }
+.u-btn:hover {
+  background: color-mix(in srgb, var(--calder-yellow) 35%, #ffffff) !important;
+}
+.u-btn:active {
+  background: var(--calder-red) !important;
+  color: #ffffff !important;
+}
 
-.u-btn--wide { max-width: min(92vw, 1120px); }
-.u-btn--square { width: var(--ui-h); max-width: var(--ui-h); padding: 0; }
+.u-btn--wide {
+  max-width: min(92vw, 1120px);
+}
+.u-btn--square {
+  width: var(--ui-h);
+  max-width: var(--ui-h);
+  padding: 0;
+}
 
-@media (max-width: 576px){
-  .u-btn{ height: var(--ui-h-mobile); }
-  .u-btn--square{ width: var(--ui-h-mobile); max-width: var(--ui-h-mobile); }
+@media (max-width: 576px) {
+  .u-btn {
+    height: var(--ui-h-mobile);
+  }
+  .u-btn--square {
+    width: var(--ui-h-mobile);
+    max-width: var(--ui-h-mobile);
+  }
 }
 
 .tri-btn {
@@ -271,34 +319,57 @@ body {
 
 .tri-btn::before {
   content: "";
-  width: 0; height: 0;
+  width: 0;
+  height: 0;
   border-top: calc(var(--box) * 0.26) solid transparent;
   border-bottom: calc(var(--box) * 0.26) solid transparent;
 }
-.tri-btn--left::before { border-right: calc(var(--box) * 0.36) solid var(--calder-ink); }
-.tri-btn--right::before { border-left: calc(var(--box) * 0.36) solid var(--calder-ink); }
+.tri-btn--left::before {
+  border-right: calc(var(--box) * 0.36) solid var(--calder-ink);
+}
+.tri-btn--right::before {
+  border-left: calc(var(--box) * 0.36) solid var(--calder-ink);
+}
 
-.tri-btn:hover { background: color-mix(in srgb, var(--calder-yellow) 35%, #ffffff); }
-.tri-btn:active { background: var(--calder-red); }
+.tri-btn:hover {
+  background: color-mix(in srgb, var(--calder-yellow) 35%, #ffffff);
+}
+.tri-btn:active {
+  background: var(--calder-red);
+}
 .tri-btn:active.tri-btn--left::before,
-.tri-btn:active.tri-btn--right::before { border-color: #ffffff; }
+.tri-btn:active.tri-btn--right::before {
+  border-color: #ffffff;
+}
 
-@media (max-width: 576px){ .tri-btn{ --box: var(--ui-h-mobile); } }
+@media (max-width: 576px) {
+  .tri-btn {
+    --box: var(--ui-h-mobile);
+  }
+}
 
-.audio-box{ width: 100%; }
-.audio-frame{
+.audio-box {
+  width: 100%;
+}
+.audio-frame {
   width: 100%;
   border: var(--ui-border) solid var(--calder-ink);
   border-radius: 0;
   overflow: hidden;
   background: color-mix(in srgb, var(--calder-steel) 22%, #ffffff);
 }
-.square-audio{ width: 100%; display:block; border-radius:0 !important; }
+.square-audio {
+  width: 100%;
+  display: block;
+  border-radius: 0 !important;
+}
 .square-audio::-webkit-media-controls-enclosure,
-.square-audio::-webkit-media-controls-panel{ border-radius:0 !important; }
+.square-audio::-webkit-media-controls-panel {
+  border-radius: 0 !important;
+}
 
 /* controls */
-.controlsBar{
+.controlsBar {
   display: grid;
   grid-template-columns: var(--ui-h) minmax(0, 1fr) var(--ui-h);
   gap: var(--ui-gap);
@@ -308,21 +379,32 @@ body {
   background: #ffffff;
   border-top: var(--ui-border) solid var(--calder-ink);
 }
-@media (max-width: 576px){
-  .controlsBar{
+@media (max-width: 576px) {
+  .controlsBar {
     grid-template-columns: var(--ui-h-mobile) minmax(0, 1fr) var(--ui-h-mobile);
     padding: 10px 0 12px;
   }
 }
-.controlsBar > *{ min-width: 0; }
-.controlsBar .u-btn{ max-width: none; width: 100%; justify-self: stretch; }
+.controlsBar > * {
+  min-width: 0;
+}
+.controlsBar .u-btn {
+  max-width: none;
+  width: 100%;
+  justify-self: stretch;
+}
 
 /* tabs + tools */
-.tabsWithTools{ display:flex; align-items:center; flex-wrap:nowrap; width:100%; }
-.tabsWithTools .tabsTool{
+.tabsWithTools {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+.tabsWithTools .tabsTool {
   flex: 0 0 auto;
-  display:flex;
-  align-items:center;
+  display: flex;
+  align-items: center;
   margin-left: var(--tabs-tool-gap);
   position: sticky;
   right: 0;
@@ -336,7 +418,8 @@ body {
 .custom-tabs .nav-tabs.tabsWithTools,
 .custom-tabs.nav-tabs.tabsWithTools {
   padding-right: calc(
-    var(--tabs-pad-x) + min(var(--tabs-tool-w), var(--tabs-tool-max)) + var(--tabs-tool-gap)
+    var(--tabs-pad-x) + min(var(--tabs-tool-w), var(--tabs-tool-max)) +
+      var(--tabs-tool-gap)
   ) !important;
 }
 
@@ -369,7 +452,8 @@ body {
 .themeSwitch::before,
 .theme-switcher::before {
   content: "";
-  width: 10px; height: 10px;
+  width: 10px;
+  height: 10px;
   background: var(--calder-red);
   flex: 0 0 auto;
 }
@@ -377,7 +461,9 @@ body {
 .themeSwitch:hover,
 .theme-switcher:hover,
 .tabsTool .theme-switcher:hover,
-.tabsTool button:hover { background: var(--calder-steel); }
+.tabsTool button:hover {
+  background: var(--calder-steel);
+}
 
 .themeSwitch:active,
 .theme-switcher:active,
@@ -394,8 +480,10 @@ body {
   text-overflow: ellipsis;
 }
 
-@media (max-width: 576px){
-  :root{ --tabs-tool-w: 116px; }
+@media (max-width: 576px) {
+  :root {
+    --tabs-tool-w: 116px;
+  }
   .themeSwitch,
   .theme-switcher,
   .tabsTool .theme-switcher,
@@ -411,7 +499,7 @@ body {
    UNIFIED LAYOUT CONTRACT + FIXED READER FRAME (SHARED)
    ========================= */
 
-:root{
+:root {
   --content-max: 820px;
 
   --page-pad-x: 32px;
@@ -422,42 +510,59 @@ body {
   --safe-top: max(env(safe-area-inset-top), 0px);
   --safe-bottom: max(env(safe-area-inset-bottom), 0px);
 
-  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge, 15vw), 240px);
+  --frame-left: clamp(var(--page-pad-x), var(--versebox-edge, 20vw), 360px);
 
   --tabs-rail-h: calc(var(--ui-h, 52px) + (var(--tabs-pad-y, 8px) * 2));
-  --tabs-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + (var(--tabs-pad-y, 8px) * 2));
+  --tabs-rail-h-mobile: calc(
+    var(--ui-h-mobile, 44px) + (var(--tabs-pad-y, 8px) * 2)
+  );
 
   --controls-rail-h: calc(var(--ui-h, 52px) + 16px + var(--ui-border, 2px));
-  --controls-rail-h-mobile: calc(var(--ui-h-mobile, 44px) + 14px + var(--ui-border, 2px));
+  --controls-rail-h-mobile: calc(
+    var(--ui-h-mobile, 44px) + 14px + var(--ui-border, 2px)
+  );
 
   --frame-top: calc(var(--tabs-rail-h) + 8px + var(--safe-top));
-  --frame-bottom-pad: calc(var(--controls-rail-h) + env(safe-area-inset-bottom));
+  --frame-bottom-pad: calc(
+    var(--controls-rail-h) + env(safe-area-inset-bottom)
+  );
 }
 
-@media (max-width: 576px){
-  :root{
+@media (max-width: 576px) {
+  :root {
     --page-pad-x: var(--page-pad-x-mobile);
     --frame-left: var(--page-pad-x);
     --frame-top: calc(var(--tabs-rail-h-mobile) + 6px);
-    --frame-bottom-pad: calc(var(--controls-rail-h-mobile) + env(safe-area-inset-bottom));
+    --frame-bottom-pad: calc(
+      var(--controls-rail-h-mobile) + env(safe-area-inset-bottom)
+    );
   }
 }
 
-#root{
+#root {
   padding-left: var(--page-pad-x);
   padding-right: var(--page-pad-x);
 }
 
-html, body, #root{ height: 100%; }
-body{ overflow: hidden; }
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  overflow: hidden;
+}
 
-.verseBox{
+.verseBox {
   position: fixed !important;
   top: var(--frame-top) !important;
   bottom: var(--safe-bottom) !important;
 
   left: var(--frame-left) !important;
-  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
+  width: min(
+    calc(100vw - var(--frame-left) - var(--page-pad-x)),
+    var(--content-max)
+  ) !important;
 
   margin: 0 !important;
 
@@ -465,15 +570,20 @@ body{ overflow: hidden; }
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 
-  padding-bottom: calc(var(--ui-pad, 20px) + var(--frame-bottom-pad)) !important;
+  padding-bottom: calc(
+    var(--ui-pad, 20px) + var(--frame-bottom-pad)
+  ) !important;
 }
 
-.controlsBar{
+.controlsBar {
   position: fixed !important;
   bottom: var(--safe-bottom) !important;
 
   left: var(--frame-left) !important;
-  width: min(calc(100vw - var(--frame-left) - var(--page-pad-x)), var(--content-max)) !important;
+  width: min(
+    calc(100vw - var(--frame-left) - var(--page-pad-x)),
+    var(--content-max)
+  ) !important;
 
   margin: 0 !important;
   z-index: 1050;
@@ -492,18 +602,20 @@ body{ overflow: hidden; }
   max-width: 100vw;
 }
 
-@media (max-width: 576px){
+@media (max-width: 576px) {
   .custom-tabs .nav-tabs,
-  .custom-tabs.nav-tabs{ gap: 6px !important; }
+  .custom-tabs.nav-tabs {
+    gap: 6px !important;
+  }
 
-  .tabsWithTools .tabsTool{
+  .tabsWithTools .tabsTool {
     margin-left: 0 !important;
     padding-left: 6px !important;
   }
 }
 
-@media (min-width: 768px){
-  .controlsBar{
+@media (min-width: 768px) {
+  .controlsBar {
     position: sticky;
     bottom: 0;
     z-index: 30;
@@ -512,8 +624,12 @@ body{ overflow: hidden; }
     padding: 12px 0 14px;
     border-top: 0;
   }
-  .controlsBar::before{ display: none; }
-  .controlsBar .u-btn{ width: 100%; }
+  .controlsBar::before {
+    display: none;
+  }
+  .controlsBar .u-btn {
+    width: 100%;
+  }
 }
 
 /* =========================================================
@@ -523,22 +639,41 @@ body{ overflow: hidden; }
    ========================================================= */
 
 /* drifting primaries in the margins */
-body::before{
-  content:"";
+body::before {
+  content: "";
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
 
   background:
-    /* big discs (noticeable even on phones) */
-    radial-gradient(circle at 12% 18%, rgba(225,27,34,0.28) 0 14px, transparent 15px),
-    radial-gradient(circle at 78% 22%, rgba(242,197,0,0.26) 0 18px, transparent 19px),
-    radial-gradient(circle at 62% 76%, rgba(27,79,214,0.24) 0 16px, transparent 17px),
-    radial-gradient(circle at 20% 82%, rgba(207,211,216,0.22) 0 18px, transparent 19px),
-
+    /* big discs (noticeable even on phones) */ radial-gradient(
+      circle at 12% 18%,
+      rgba(225, 27, 34, 0.28) 0 14px,
+      transparent 15px
+    ),
+    radial-gradient(
+      circle at 78% 22%,
+      rgba(242, 197, 0, 0.26) 0 18px,
+      transparent 19px
+    ),
+    radial-gradient(
+      circle at 62% 76%,
+      rgba(27, 79, 214, 0.24) 0 16px,
+      transparent 17px
+    ),
+    radial-gradient(
+      circle at 20% 82%,
+      rgba(207, 211, 216, 0.22) 0 18px,
+      transparent 19px
+    ),
     /* subtle margin divider */
-    linear-gradient(90deg, transparent 0 92%, rgba(11,11,13,0.06) 92% 93%, transparent 93% 100%);
+      linear-gradient(
+        90deg,
+        transparent 0 92%,
+        rgba(11, 11, 13, 0.06) 92% 93%,
+        transparent 93% 100%
+      );
 
   background-repeat: no-repeat;
   background-size: 100% 100%;
@@ -547,14 +682,14 @@ body::before{
 }
 
 /* swinging wire — keep it visible on mobile by anchoring near the tabs */
-body::after{
-  content:"";
+body::after {
+  content: "";
   position: fixed;
   top: calc(var(--frame-top) + 10px);
   left: 12px;
   width: 150px;
   height: 1px;
-  background: rgba(11,11,13,0.26);
+  background: rgba(11, 11, 13, 0.26);
   z-index: 0;
   pointer-events: none;
   transform-origin: 6px 0px;
@@ -562,104 +697,139 @@ body::after{
 }
 
 /* Corner counterweights swing */
-.verseBox::after{
-  content:"";
-  position:absolute;
+.verseBox::after {
+  content: "";
+  position: absolute;
   right: 12px;
   top: 12px;
   width: 12px;
   height: 12px;
   background: var(--calder-red);
-  box-shadow:
-    -18px 2px 0 0 var(--calder-yellow),
+  box-shadow: -18px 2px 0 0 var(--calder-yellow),
     -6px 18px 0 0 var(--calder-blue);
-  pointer-events:none;
+  pointer-events: none;
   transform-origin: -42px -8px;
   animation: calder-swing 4.6s ease-in-out infinite alternate;
 }
 
 /* === MOBILE-ONLY: make motion unmistakable === */
-@media (max-width: 576px){
-  :root{ --mobile-amp: 16px; --mobile-speed: 10.5s; }
+@media (max-width: 576px) {
+  :root {
+    --mobile-amp: 16px;
+    --mobile-speed: 10.5s;
+  }
 
   /* tabs plates sway (so the motion is obvious even if VerseBox covers most of the screen) */
-  .custom-tabs .nav-link{
+  .custom-tabs .nav-link {
     transform-origin: 50% 0%;
     will-change: transform;
   }
-  .custom-tabs .nav-item:nth-child(1) .nav-link{ animation: calder-tab-sway 3.7s ease-in-out infinite; }
-  .custom-tabs .nav-item:nth-child(2) .nav-link{ animation: calder-tab-sway 4.2s ease-in-out infinite; }
-  .custom-tabs .nav-item:nth-child(3) .nav-link{ animation: calder-tab-sway 3.9s ease-in-out infinite; }
-  .custom-tabs .nav-item:nth-child(4) .nav-link{ animation: calder-tab-sway 4.5s ease-in-out infinite; }
-  .custom-tabs .nav-item:nth-child(5) .nav-link{ animation: calder-tab-sway 4.0s ease-in-out infinite; }
+  .custom-tabs .nav-item:nth-child(1) .nav-link {
+    animation: calder-tab-sway 3.7s ease-in-out infinite;
+  }
+  .custom-tabs .nav-item:nth-child(2) .nav-link {
+    animation: calder-tab-sway 4.2s ease-in-out infinite;
+  }
+  .custom-tabs .nav-item:nth-child(3) .nav-link {
+    animation: calder-tab-sway 3.9s ease-in-out infinite;
+  }
+  .custom-tabs .nav-item:nth-child(4) .nav-link {
+    animation: calder-tab-sway 4.5s ease-in-out infinite;
+  }
+  .custom-tabs .nav-item:nth-child(5) .nav-link {
+    animation: calder-tab-sway 4s ease-in-out infinite;
+  }
 
   /* bottom rail counterweight (tiny swinging dot at the top-right of controls) */
-  .controlsBar{
+  .controlsBar {
     position: fixed;
   }
-  .controlsBar::after{
-    content:"";
+  .controlsBar::after {
+    content: "";
     position: absolute;
     right: 10px;
     top: -8px;
     width: 10px;
     height: 10px;
     background: var(--calder-yellow);
-    border: 1px solid rgba(11,11,13,0.35);
+    border: 1px solid rgba(11, 11, 13, 0.35);
     transform-origin: -26px 18px;
     animation: calder-counter 3.9s ease-in-out infinite alternate;
     pointer-events: none;
   }
 
   /* wire visible and a little stronger */
-  body::after{ opacity: 0.75; width: 130px; }
+  body::after {
+    opacity: 0.75;
+    width: 130px;
+  }
 }
 
 /* Respect reduced motion */
-@media (prefers-reduced-motion: reduce){
+@media (prefers-reduced-motion: reduce) {
   body::before,
   body::after,
   .verseBox::after,
   .custom-tabs .nav-link,
-  .controlsBar::after{
+  .controlsBar::after {
     animation: none !important;
     transform: none !important;
   }
 }
 
 /* keyframes */
-@keyframes calder-drift{
-  0%{
+@keyframes calder-drift {
+  0% {
     background-position: 0px 0px;
     filter: saturate(1.02);
   }
-  50%{
-    background-position: calc(var(--mobile-amp) * 0.6) calc(var(--mobile-amp) * -0.3);
+  50% {
+    background-position: calc(var(--mobile-amp) * 0.6)
+      calc(var(--mobile-amp) * -0.3);
     filter: saturate(1.05);
   }
-  100%{
-    background-position: calc(var(--mobile-amp) * 1.0) calc(var(--mobile-amp) * 0.2);
+  100% {
+    background-position: calc(var(--mobile-amp) * 1)
+      calc(var(--mobile-amp) * 0.2);
     filter: saturate(1.03);
   }
 }
 
-@keyframes calder-wire{
-  0%{ transform: rotate(-6deg) translateY(0px); }
-  100%{ transform: rotate(7deg) translateY(2px); }
+@keyframes calder-wire {
+  0% {
+    transform: rotate(-6deg) translateY(0px);
+  }
+  100% {
+    transform: rotate(7deg) translateY(2px);
+  }
 }
 
-@keyframes calder-swing{
-  0%{ transform: rotate(-2.2deg) translate(0px, 0px); }
-  100%{ transform: rotate(3.4deg) translate(1px, 1px); }
+@keyframes calder-swing {
+  0% {
+    transform: rotate(-2.2deg) translate(0px, 0px);
+  }
+  100% {
+    transform: rotate(3.4deg) translate(1px, 1px);
+  }
 }
 
-@keyframes calder-tab-sway{
-  0%   { transform: rotate(-0.45deg) translateY(0px); }
-  50%  { transform: rotate(0.55deg) translateY(1px); }
-  100% { transform: rotate(-0.40deg) translateY(0px); }
+@keyframes calder-tab-sway {
+  0% {
+    transform: rotate(-0.45deg) translateY(0px);
+  }
+  50% {
+    transform: rotate(0.55deg) translateY(1px);
+  }
+  100% {
+    transform: rotate(-0.4deg) translateY(0px);
+  }
 }
 
-@keyframes calder-counter{
-  0%   { transform: rotate(-6deg); }
-  100% { transform: rotate(7deg); }
+@keyframes calder-counter {
+  0% {
+    transform: rotate(-6deg);
+  }
+  100% {
+    transform: rotate(7deg);
+  }
 }
