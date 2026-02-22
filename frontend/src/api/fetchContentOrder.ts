@@ -4,20 +4,15 @@ import { urlContentOrder } from "./urls";
 export interface ContentOrderInterface {
   pk: string;
   order: string;
-  content: string;
-  html_name: string;
+  content: string;   // "verse" | "reclamation" | "neologizm" | "rand_verse" | "print_copy"
+  html_name: string; // slug
 }
 
 export const fetchContentOrder = async (
   htmlName: string,
   dir: string
 ): Promise<ContentOrderInterface> => {
-  const url: string = urlContentOrder + htmlName + "/" + dir + "/";
-  try {
-    const { data } = await axios.get(url);
-    return data;
-  } catch (e) {
-    console.error(e);
-    throw e;
-  }
+  const url: string = `${urlContentOrder}${encodeURIComponent(htmlName)}/${dir}/`;
+  const { data } = await axios.get(url);
+  return data as ContentOrderInterface;
 };

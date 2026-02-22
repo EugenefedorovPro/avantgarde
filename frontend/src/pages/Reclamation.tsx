@@ -1,4 +1,3 @@
-// src/pages/Reclamation.tsx
 import { Tab, Nav } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -9,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { triggerManage } from "../api/manageTrigger";
 import { reclamationRandomApi, reclamationByNameApi } from "../api/reclamation";
 import type { ReclamationInterface } from "../api/reclamation";
 
@@ -19,14 +19,11 @@ import { TypewriterRepeat } from "../components/TypewriterRepeat";
 
 export const ReclamationPage = () => {
   const navigate = useNavigate();
-  const { html_name } = useParams<{ html_name?: string }>(); // /reclamation/:html_name?
+  const { html_name } = useParams<{ html_name?: string }>();
 
   const [data, setData] = useState<ReclamationInterface | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // reload logic:
-  // - if url has html_name -> fetch deterministic
-  // - else -> fetch random and then rewrite url to /reclamation/<html_name>
   const load = useCallback(async () => {
     setLoading(true);
     try {
@@ -36,11 +33,12 @@ export const ReclamationPage = () => {
 
       setData(d);
 
-      // if we came to /reclamation (no param), canonize the URL
       const got = d?.reclamation?.html_name;
       if (!html_name && got) {
         navigate(`/reclamation/${got}`, { replace: true });
       }
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoading(false);
     }
@@ -50,11 +48,13 @@ export const ReclamationPage = () => {
     void load();
   }, [load]);
 
-  // signature (kept intact)
   const Signature: ReactNode = useMemo(
     () => <div className="fst-italic text-end">Евгений Проскуликов</div>,
     []
   );
+
+  const onPrev = useCallback(() => triggerManage("prev"), []);
+  const onNext = useCallback(() => triggerManage("next"), []);
 
   const controls = useMemo(
     () => (
@@ -62,15 +62,14 @@ export const ReclamationPage = () => {
         tagText={data?.reclamation?.text ?? "…"}
         prevText="сюда"
         nextText="туда"
-        onTop={load} // "top" button reloads (random if no param; deterministic if param)
-        onPrev={() => navigate(`/manage?dir=prev`)}
-        onNext={() => navigate(`/manage?dir=next`)}
+        onTop={load}
+        onPrev={onPrev}
+        onNext={onNext}
       />
     ),
-    [data, load, navigate]
+    [data?.reclamation?.text, load, onPrev, onNext]
   );
 
-  // signature moved to bottom (after controls)
   const bottomBlock: ReactNode = useMemo(
     () => (
       <>
@@ -81,8 +80,19 @@ export const ReclamationPage = () => {
     [controls, Signature]
   );
 
-  if (loading) return <div>loading...</div>;
-  if (!data) return <div>no data</div>;
+  const showNoData = !loading && !data;
+
+  const loadingOverlay = (
+    <div
+      className="verseLoadingOverlay"
+      style={{
+        position: "absolute",
+        inset: 0,
+        pointerEvents: "none",
+        background: "rgba(255,255,255,0.0)",
+      }}
+    />
+  );
 
   return (
     <Tab.Container id="reclamation-tabs" activeKey="shadow">
@@ -100,16 +110,21 @@ export const ReclamationPage = () => {
 
       <Tab.Content>
         <Tab.Pane eventKey="shadow">
-          <VerseBox
-            textMd={
-              <TypewriterRepeat
-                markdown={data.answer.text}
-                repeat={data.answer.repeat}
-                msPerChar={65}
-              />
-            }
-            childrenBottom={bottomBlock}
-          />
+          <div style={{ position: "relative" }}>
+            <VerseBox
+              textMd={
+                <TypewriterRepeat
+                  markdown={data?.answer?.text ?? ""}
+                  repeat={data?.answer?.repeat ?? 1}
+                  msPerChar={65}
+                />
+              }
+              childrenBottom={bottomBlock}
+            />
+
+            {loading && loadingOverlay}
+            {showNoData && <div>no data</div>}
+          </div>
         </Tab.Pane>
       </Tab.Content>
     </Tab.Container>

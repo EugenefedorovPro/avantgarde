@@ -1,7 +1,7 @@
 import { Tab, Nav } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import { useMemo, useState, useEffect, type ReactNode } from "react";
 
+import { triggerManage } from "../api/manageTrigger";
 import { neologizm } from "../api/neologizm";
 import type { NeologizmInterface } from "../api/neologizm";
 
@@ -16,8 +16,6 @@ export const Neologizm = () => {
   const firstTitle = "слово";
   const secondTitle = "тень";
 
-  const navigate = useNavigate();
-
   const [data, setData] = useState<NeologizmInterface | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false);
@@ -27,22 +25,18 @@ export const Neologizm = () => {
     let cancelled = false;
 
     const load = async () => {
-      // IMPORTANT: start loading but do NOT blank the UI
       setLoading(true);
-
       try {
         const randData = await neologizm();
         if (!cancelled) setData(randData);
       } catch (e) {
         console.error(e);
-        // IMPORTANT: keep previous data on transient errors
-        // if (!cancelled) setData(null);
       } finally {
         if (!cancelled) setLoading(false);
       }
     };
 
-    load();
+    void load();
     return () => {
       cancelled = true;
     };
@@ -63,14 +57,13 @@ export const Neologizm = () => {
           setActiveTab("verse");
           setReload((prev) => !prev);
         }}
-        onPrev={() => navigate("/manage?dir=prev")}
-        onNext={() => navigate("/manage?dir=next")}
+        onPrev={() => triggerManage("prev")}
+        onNext={() => triggerManage("next")}
       />
     ),
-    [navigate]
+    []
   );
 
-  // signature at the bottom (after controls)
   const bottom: ReactNode = useMemo(
     () => (
       <>
@@ -81,11 +74,8 @@ export const Neologizm = () => {
     [controls, Signature]
   );
 
-  // IMPORTANT: no early returns for loading (keeps tabs + frame visible)
   const showNoData = !loading && (!data || !data.years?.length);
 
-  // Overlay exists but shows nothing (so user sees zero loading indicator).
-  // Keep it if you want to optionally add a spinner later.
   const loadingOverlay = (
     <div
       className="verseLoadingOverlay"
@@ -93,7 +83,7 @@ export const Neologizm = () => {
         position: "absolute",
         inset: 0,
         pointerEvents: "none",
-        background: "rgba(255,255,255,0.0)", // set >0 if you want dimming
+        background: "rgba(255,255,255,0.0)",
       }}
     />
   );
@@ -103,7 +93,8 @@ export const Neologizm = () => {
       id="neologizm-tabs"
       activeKey={activeTab}
       onSelect={(k) => k && setActiveTab(k as TabKey)}
-      mountOnEnter
+      // OPTIONAL: mountOnEnter can cause tiny reflow flicker
+      // mountOnEnter
     >
       <Nav variant="tabs" className="custom-tabs tabsWithTools">
         <Nav.Item>

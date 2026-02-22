@@ -1,10 +1,17 @@
 import { Tab, Nav } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+  useCallback,
+} from "react";
 import ReactMarkdown from "react-markdown";
 
+import { triggerManage } from "../api/manageTrigger";
 import { randVerse } from "../api/randVerse";
 import type { RandVerseInterface } from "../api/randVerse";
+
 import { VerseControls } from "../components/VerseControls";
 import { VerseBox } from "../components/VerseBox";
 import { ThemeSwitcher } from "../theme/ThemeSwitcher";
@@ -15,8 +22,6 @@ export const RandVersePage = () => {
   const firstTitle = "слово";
   const secondTitle = "тень";
 
-  const navigate = useNavigate();
-
   const [data, setData] = useState<RandVerseInterface | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false);
@@ -26,22 +31,18 @@ export const RandVersePage = () => {
     let cancelled = false;
 
     const load = async () => {
-      // IMPORTANT: do NOT clear UI, just start loading
       setLoading(true);
       try {
         const randData = await randVerse();
         if (!cancelled) setData(randData);
       } catch (e) {
         console.error(e);
-        // IMPORTANT: keep previous data on transient errors
-        // if (!cancelled) setData(null);
       } finally {
         if (!cancelled) setLoading(false);
       }
     };
 
-    load();
-
+    void load();
     return () => {
       cancelled = true;
     };
@@ -52,36 +53,40 @@ export const RandVersePage = () => {
     []
   );
 
+  const onTop = useCallback(() => setReload((prev) => !prev), []);
+  const onPrev = useCallback(() => triggerManage("prev"), []);
+  const onNext = useCallback(() => triggerManage("next"), []);
+
   const controls = useMemo(
     () => (
       <VerseControls
         tagText="Собрать новый стих"
         prevText="сюда"
         nextText="туда"
-        onTop={() => setReload((prev) => !prev)}
-        onPrev={() => navigate("/manage?dir=prev")}
-        onNext={() => navigate("/manage?dir=next")}
+        onTop={onTop}
+        onPrev={onPrev}
+        onNext={onNext}
       />
     ),
-    [navigate]
+    [onTop, onPrev, onNext]
   );
 
-  const newVerse = useMemo(() => {
+  const newVerseText = useMemo(() => {
     if (!data) return "";
     return Object.values(data.rand_verse).join(" ");
   }, [data]);
 
-  const verseWithSignature: ReactNode = useMemo(
+  const verseNode: ReactNode = useMemo(
     () => (
       <>
-        <ReactMarkdown>{newVerse}</ReactMarkdown>
+        <ReactMarkdown>{newVerseText}</ReactMarkdown>
         {signature}
       </>
     ),
-    [newVerse, signature]
+    [newVerseText, signature]
   );
 
-  const hermWithSignature: ReactNode = useMemo(
+  const hermNode: ReactNode = useMemo(
     () => (
       <>
         <ReactMarkdown>{data?.herm ?? ""}</ReactMarkdown>
@@ -91,8 +96,6 @@ export const RandVersePage = () => {
     [data?.herm, signature]
   );
 
-  // IMPORTANT: no more "if (loading) return ...".
-  // Keep the shell rendered always.
   const showNoData = !loading && !data;
 
   const loadingOverlay = (
@@ -101,16 +104,10 @@ export const RandVersePage = () => {
       style={{
         position: "absolute",
         inset: 0,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "rgba(255,255,255,0.0)", // set >0 if you want dimming
+        background: "rgba(255,255,255,0.0)",
         pointerEvents: "none",
       }}
-    >
-      {/* leave empty if you want ZERO visible loading indicator */}
-      {/* <div>Loading…</div> */}
-    </div>
+    />
   );
 
   return (
@@ -118,7 +115,6 @@ export const RandVersePage = () => {
       id="rand-verse-tabs"
       activeKey={activeTab}
       onSelect={(k) => k && setActiveTab(k as TabKey)}
-      mountOnEnter
     >
       <Nav variant="tabs" className="custom-tabs tabsWithTools">
         <Nav.Item>
@@ -139,8 +135,7 @@ export const RandVersePage = () => {
       <Tab.Content>
         <Tab.Pane eventKey="verse">
           <div style={{ position: "relative" }}>
-            <VerseBox textMd={verseWithSignature} childrenBottom={controls} />
-            {/* keep old verse visible while fetching new */}
+            <VerseBox textMd={verseNode} childrenBottom={controls} />
             {loading && loadingOverlay}
             {showNoData && <div>no data</div>}
           </div>
@@ -148,7 +143,7 @@ export const RandVersePage = () => {
 
         <Tab.Pane eventKey="hermeneutics">
           <div style={{ position: "relative" }}>
-            <VerseBox textMd={hermWithSignature} childrenBottom={controls} />
+            <VerseBox textMd={hermNode} childrenBottom={controls} />
             {loading && loadingOverlay}
             {showNoData && <div>no data</div>}
           </div>
