@@ -1,4 +1,4 @@
-import { Tab, Nav } from "react-bootstrap";
+import { Tab } from "react-bootstrap";
 import { useMemo, useState, useEffect, type ReactNode } from "react";
 
 import { triggerManage } from "../api/manageTrigger";
@@ -9,6 +9,10 @@ import { NeologizmPretty } from "../components/NeologizmPretty";
 import { VerseControls } from "../components/VerseControls";
 import { VerseBox } from "../components/VerseBox";
 import { ThemeSwitcher } from "../theme/ThemeSwitcher";
+
+import { TabbedPageShell } from "../components/TabbedPageShell";
+import { PaneFrame } from "../components/PaneFrame";
+import { Signature } from "../components/Signature";
 
 type TabKey = "verse" | "hermeneutics";
 
@@ -31,6 +35,7 @@ export const Neologizm = () => {
         if (!cancelled) setData(randData);
       } catch (e) {
         console.error(e);
+        if (!cancelled) setData(null);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -42,10 +47,7 @@ export const Neologizm = () => {
     };
   }, [reload]);
 
-  const Signature: ReactNode = useMemo(
-    () => <div className="fst-italic text-end">Евгений Проскуликов</div>,
-    []
-  );
+  const signature: ReactNode = useMemo(() => <Signature />, []);
 
   const controls = useMemo(
     () => (
@@ -68,74 +70,51 @@ export const Neologizm = () => {
     () => (
       <>
         {controls}
-        {Signature}
+        {signature}
       </>
     ),
-    [controls, Signature]
+    [controls, signature]
   );
 
   const showNoData = !loading && (!data || !data.years?.length);
 
-  const loadingOverlay = (
-    <div
-      className="verseLoadingOverlay"
-      style={{
-        position: "absolute",
-        inset: 0,
-        pointerEvents: "none",
-        background: "rgba(255,255,255,0.0)",
-      }}
-    />
-  );
-
   return (
-    <Tab.Container
+    <TabbedPageShell<TabKey>
       id="neologizm-tabs"
       activeKey={activeTab}
-      onSelect={(k) => k && setActiveTab(k as TabKey)}
-      // OPTIONAL: mountOnEnter can cause tiny reflow flicker
-      // mountOnEnter
+      onSelect={setActiveTab}
+      toolsRight={<ThemeSwitcher />}
+      tabs={[
+        { key: "verse", title: firstTitle },
+        { key: "hermeneutics", title: secondTitle },
+      ]}
     >
-      <Nav variant="tabs" className="custom-tabs tabsWithTools">
-        <Nav.Item>
-          <Nav.Link eventKey="verse">{firstTitle}</Nav.Link>
-        </Nav.Item>
+      <Tab.Pane eventKey="verse">
+        <PaneFrame
+          loading={loading}
+          empty={showNoData}
+          emptyNode={<div>no data</div>}
+        >
+          <VerseBox
+            textMd={data ? <NeologizmPretty data={data} /> : ""}
+            childrenBottom={bottom}
+          />
+        </PaneFrame>
+      </Tab.Pane>
 
-        <Nav.Item>
-          <Nav.Link eventKey="hermeneutics">{secondTitle}</Nav.Link>
-        </Nav.Item>
-
-        <Nav.Item className="ms-auto d-flex align-items-center">
-          <div className="tabsTool">
-            <ThemeSwitcher />
-          </div>
-        </Nav.Item>
-      </Nav>
-
-      <Tab.Content>
-        <Tab.Pane eventKey="verse">
-          <div style={{ position: "relative" }}>
-            <VerseBox
-              textMd={data ? <NeologizmPretty data={data} /> : ""}
-              childrenBottom={bottom}
-            />
-            {loading && loadingOverlay}
-            {showNoData && <div>no data</div>}
-          </div>
-        </Tab.Pane>
-
-        <Tab.Pane eventKey="hermeneutics">
-          <div style={{ position: "relative" }}>
-            <VerseBox
-              titleMd={data?.herm?.title ?? "—"}
-              textMd={data?.herm?.text ?? ""}
-              childrenBottom={bottom}
-            />
-            {loading && loadingOverlay}
-            {showNoData && <div>no data</div>}
-          </div>
-        </Tab.Pane>
-      </Tab.Content>
-    </Tab.Container>
+      <Tab.Pane eventKey="hermeneutics">
+        <PaneFrame
+          loading={loading}
+          empty={showNoData}
+          emptyNode={<div>no data</div>}
+        >
+          <VerseBox
+            titleMd={data?.herm?.title ?? "—"}
+            textMd={data?.herm?.text ?? ""}
+            childrenBottom={bottom}
+          />
+        </PaneFrame>
+      </Tab.Pane>
+    </TabbedPageShell>
   );
 };

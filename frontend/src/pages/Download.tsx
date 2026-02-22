@@ -1,3 +1,4 @@
+import { Tab } from "react-bootstrap";
 import {
   useCallback,
   useEffect,
@@ -5,7 +6,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { Tab, Nav } from "react-bootstrap";
 import ReactMarkdown from "react-markdown";
 
 import { triggerManage } from "../api/manageTrigger";
@@ -16,6 +16,10 @@ import type { PdfTextInterface } from "../api/pdfText";
 import { VerseBox } from "../components/VerseBox";
 import { VerseControls } from "../components/VerseControls";
 import { ThemeSwitcher } from "../theme/ThemeSwitcher";
+
+import { TabbedPageShell } from "../components/TabbedPageShell";
+import { PaneFrame } from "../components/PaneFrame";
+import { Signature } from "../components/Signature";
 
 type TabKey = "download";
 
@@ -31,22 +35,7 @@ export const Download = () => {
     window.location.href = urlPdfFile;
   }, []);
 
-  const signature: ReactNode = useMemo(
-    () => (
-      <div
-        className="verseMetaRow"
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          textAlign: "right",
-          width: "100%",
-        }}
-      >
-        <div className="fst-italic mb-0">Евгений Проскуликов</div>
-      </div>
-    ),
-    []
-  );
+  const signature: ReactNode = useMemo(() => <Signature />, []);
 
   const controls = useMemo(
     () => (
@@ -97,58 +86,37 @@ export const Download = () => {
   const showNotFound = !loading && !pdf?.herm;
 
   const textNode: ReactNode = useMemo(() => {
-    if (!pdf?.herm?.text) return "";
+    const text = pdf?.herm?.text;
+    if (!text) return "";
     return (
       <div className="verseTextBody">
-        <ReactMarkdown>{pdf.herm.text}</ReactMarkdown>
+        <ReactMarkdown>{text}</ReactMarkdown>
       </div>
     );
-  }, [pdf?.herm?.text, pdf?.herm?.text]);
-
-  const loadingOverlay = (
-    <div
-      className="verseLoadingOverlay"
-      style={{
-        position: "absolute",
-        inset: 0,
-        background: "rgba(255,255,255,0.0)",
-        pointerEvents: "none",
-      }}
-    />
-  );
+  }, [pdf?.herm?.text]);
 
   return (
-    <Tab.Container
+    <TabbedPageShell<TabKey>
       id="download-tabs"
       activeKey={activeTab}
-      onSelect={(k) => k && setActiveTab(k as TabKey)}
+      onSelect={setActiveTab}
+      toolsRight={<ThemeSwitcher />}
+      tabs={[{ key: "download", title: "ART" }]}
     >
-      <Nav variant="tabs" className="custom-tabs tabsWithTools">
-        <Nav.Item>
-          <Nav.Link eventKey="download">ART</Nav.Link>
-        </Nav.Item>
-
-        <Nav.Item className="ms-auto d-flex align-items-center">
-          <div className="tabsTool">
-            <ThemeSwitcher />
-          </div>
-        </Nav.Item>
-      </Nav>
-
-      <Tab.Content>
-        <Tab.Pane eventKey="download">
-          <div style={{ position: "relative" }}>
-            <VerseBox
-              className="verseBox"
-              titleMd={pdf?.herm?.title ?? (loading ? "—" : "PDF")}
-              textMd={textNode}
-              childrenBottom={bottomBlock}
-            />
-            {loading && loadingOverlay}
-            {showNotFound && <div>PDF text not found</div>}
-          </div>
-        </Tab.Pane>
-      </Tab.Content>
-    </Tab.Container>
+      <Tab.Pane eventKey="download">
+        <PaneFrame
+          loading={loading}
+          empty={showNotFound}
+          emptyNode={<div>PDF text not found</div>}
+        >
+          <VerseBox
+            className="verseBox"
+            titleMd={pdf?.herm?.title ?? (loading ? "—" : "PDF")}
+            textMd={textNode}
+            childrenBottom={bottomBlock}
+          />
+        </PaneFrame>
+      </Tab.Pane>
+    </TabbedPageShell>
   );
 };

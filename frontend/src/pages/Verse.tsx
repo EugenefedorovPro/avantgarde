@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Tab, Nav } from "react-bootstrap";
+import { Tab } from "react-bootstrap";
 
 import { triggerManage } from "../api/manageTrigger";
 import { defaultVerseUrl } from "../api/urls";
@@ -20,6 +20,10 @@ import { AudioBox } from "../components/AudioBox";
 import { VerseBox } from "../components/VerseBox";
 import { VerseControls } from "../components/VerseControls";
 import { ThemeSwitcher } from "../theme/ThemeSwitcher";
+
+import { TabbedPageShell, type TabDef } from "../components/TabbedPageShell";
+import { PaneFrame } from "../components/PaneFrame";
+import { Signature } from "../components/Signature";
 
 type TabKey = "verse" | "hermeneutics" | "audio";
 
@@ -45,22 +49,7 @@ export const Verse = () => {
     navigate(name ? `/reclamation/${name}` : "/reclamation");
   }, [navigate, recl]);
 
-  const signature: ReactNode = useMemo(
-    () => (
-      <div
-        className="verseMetaRow"
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          textAlign: "right",
-          width: "100%",
-        }}
-      >
-        <div className="fst-italic mb-0">Евгений Проскуликов</div>
-      </div>
-    ),
-    []
-  );
+  const signature: ReactNode = useMemo(() => <Signature />, []);
 
   const controls = useMemo(
     () => (
@@ -140,66 +129,59 @@ export const Verse = () => {
 
   const showNotFound = !loading && !!html_name && !vrs;
 
+  // Build tabs list dynamically (same behavior as conditional <Nav.Item>)
+  const tabs: Array<TabDef<TabKey>> = useMemo(() => {
+    const t: Array<TabDef<TabKey>> = [{ key: "verse", title: "знак" }];
+    if (herm) t.push({ key: "hermeneutics", title: "тень" });
+    if (audio) t.push({ key: "audio", title: "звук" });
+    return t;
+  }, [herm, audio]);
+
   return (
-    <Tab.Container
+    <TabbedPageShell<TabKey>
       id="verse-tabs"
       activeKey={activeTab}
-      onSelect={(k) => k && setActiveTab(k as TabKey)}
+      onSelect={setActiveTab}
+      toolsRight={<ThemeSwitcher />}
+      tabs={tabs}
     >
-      <Nav variant="tabs" className="custom-tabs tabsWithTools">
-        <Nav.Item>
-          <Nav.Link eventKey="verse">стих</Nav.Link>
-        </Nav.Item>
-
-        {herm && (
-          <Nav.Item>
-            <Nav.Link eventKey="hermeneutics">смысл</Nav.Link>
-          </Nav.Item>
-        )}
-
-        {audio && (
-          <Nav.Item>
-            <Nav.Link eventKey="audio">звук</Nav.Link>
-          </Nav.Item>
-        )}
-
-        <Nav.Item className="ms-auto d-flex align-items-center">
-          <div className="tabsTool">
-            <ThemeSwitcher />
-          </div>
-        </Nav.Item>
-      </Nav>
-
-      <Tab.Content>
-        <Tab.Pane eventKey="verse">
+      <Tab.Pane eventKey="verse">
+        <PaneFrame
+          loading={loading && !hasLoadedOnceRef.current} // keep overlay only if you want; can simplify to loading
+          empty={showNotFound}
+          emptyNode={<div>Verse not found: {html_name}</div>}
+        >
           <VerseBox
             className="verseBox verseBox--nowrap"
             titleMd={vrs?.title ?? ""}
             textMd={vrs?.text ?? ""}
             childrenBottom={bottomBlock}
           />
-          {showNotFound && <div>Verse not found: {html_name}</div>}
-        </Tab.Pane>
+        </PaneFrame>
+      </Tab.Pane>
 
-        {herm && (
-          <Tab.Pane eventKey="hermeneutics">
+      {herm && (
+        <Tab.Pane eventKey="hermeneutics">
+          <PaneFrame loading={false}>
             <VerseBox
               titleMd={herm.title}
               textMd={herm.text}
               childrenBottom={bottomBlock}
             />
-          </Tab.Pane>
-        )}
+          </PaneFrame>
+        </Tab.Pane>
+      )}
 
-        {audio && (
-          <Tab.Pane eventKey="audio">
+      {audio && (
+        <Tab.Pane eventKey="audio">
+          <PaneFrame loading={false}>
             <VerseBox
               childrenTop={<AudioBox audio={audio}>{signature}</AudioBox>}
               childrenBottom={controls}
             />
-          </Tab.Pane>
-        )}
-      </Tab.Content>
-    </Tab.Container>
+          </PaneFrame>
+        </Tab.Pane>
+      )}
+    </TabbedPageShell>
   );
 };
