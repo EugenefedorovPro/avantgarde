@@ -109,6 +109,9 @@ export const Verse = () => {
       return;
     }
 
+    // ✅ reset tab immediately on route param change
+    setActiveTab("verse");
+
     const load = async () => {
       setLoading(true);
       try {
@@ -127,15 +130,13 @@ export const Verse = () => {
           setHerm(data.herm);
           setAudio(data.audio);
 
-          setActiveTab((prev) => {
-            if (prev === "hermeneutics" && !data.herm) return "verse";
-            if (prev === "audio" && !data.audio) return "verse";
-            return prev;
-          });
+          // ✅ always land on verse tab after loading too
+          setActiveTab("verse");
         } else {
           setVrs(null);
           setHerm(null);
           setAudio(null);
+          setActiveTab("verse");
         }
       } catch (e) {
         console.error(e);
