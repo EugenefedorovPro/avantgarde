@@ -12,7 +12,7 @@
   display: flex;
   align-items: flex-start;
   flex-wrap: nowrap;
-  gap: 16px;
+  gap: 17px;
 }
 
 /* ✅ fixed left column width, measured in pixels */
