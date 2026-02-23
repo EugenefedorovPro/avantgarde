@@ -73,7 +73,7 @@ export const RandVersePage = () => {
 
   const newVerseText = useMemo(() => {
     if (!data) return "";
-    return Object.values(data.rand_verse).join(" ");
+    return Object.values(data.rand_verse).join("  \n");
   }, [data]);
 
   const verseNode: ReactNode = useMemo(

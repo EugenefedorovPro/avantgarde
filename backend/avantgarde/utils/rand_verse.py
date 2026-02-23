@@ -1,44 +1,65 @@
 import re
 import random
+from typing import Iterable
+
 from avantgarde.models import RawVerse
 
-BR_INTERVAL = 4
+WORDS_PER_LINE = 4  # how many words in each rendered line
+
 
 class CalcCombinations:
+    def calc_combinations(self) -> None:
+        # placeholder: implement if you really need combinatorics
+        _texts = RawVerse.objects.values_list("text", flat=True)
+        return None
 
-    def calc_combinations(self):
-        texts = RawVerse.objects.values_list("text", flat=True)
-        pass
 
 class RandVerse:
+    _word_re = re.compile(r"[^\W\d_]+", flags=re.UNICODE)
 
     def clean_text(self, text: str) -> list[str]:
-        return re.findall(r"[^\W\d_]+", text, flags=re.UNICODE)
+        # keep only letter-words, no digits, no underscores
+        return self._word_re.findall(text)
 
     def select_word(self, text: str) -> str:
         words = self.clean_text(text)
-        word = random.choices(words)[0]
-        word = word.lower()
-        return word
+        if not words:
+            return ""
+        return random.choice(words).lower()
 
-    def add_br(self, order_word: dict[str, str]):
-        br_order_word = {}
-        for i, (order, word) in enumerate(order_word.items()):
-            if i % BR_INTERVAL == 0:
-                br_order_word[order] = word + "  \n"
-            else:
-                br_order_word[order] = word
-        return br_order_word
-
-    def rand_verse(self) -> dict[int, str]:
-        verses = RawVerse.objects.all()
-        order_word: dict[str, str] = {}
+    def _iter_words(self, verses: Iterable[RawVerse]) -> list[str]:
+        # stable ordering matters in production
+        words: list[str] = []
         for verse in verses:
-            order_word[verse.order] = self.select_word(verse.text)
-        br_order_word = self.add_br(order_word)
-        return br_order_word
+            w = self.select_word(verse.text)
+            if w:
+                words.append(w)
+        return words
 
-    def only_words(self) -> str:
-        html_words = self.rand_verse()
-        new_verse = " ".join(list(html_words.values()))
-        return new_verse
+    def _format_words_md(self, words: list[str], words_per_line: int = WORDS_PER_LINE) -> str:
+        if words_per_line <= 0:
+            raise ValueError("words_per_line must be > 0")
+
+        lines: list[str] = []
+        for i in range(0, len(words), words_per_line):
+            chunk = words[i : i + words_per_line]
+            lines.append(" ".join(chunk))
+
+        # Markdown hard line breaks
+        return "  \n".join(lines)
+
+    def rand_verse(self, words_per_line: int = WORDS_PER_LINE) -> dict[str, str]:
+        verses = RawVerse.objects.order_by("order").only("order", "text")
+        words = self._iter_words(verses)
+
+        formatted = self._format_words_md(words, words_per_line=words_per_line)
+
+        # keep your current API shape: dict of "order" -> "word"
+        # but now each "line" is stored under synthetic keys so frontend can join safely
+        # If you do not need dict, return {"text": formatted} instead.
+        return {str(i): line for i, line in enumerate(formatted.split("  \n"))}
+
+    def only_words(self, words_per_line: int = WORDS_PER_LINE) -> str:
+        data = self.rand_verse(words_per_line=words_per_line)
+        # rebuild with consistent line breaks
+        return "  \n".join(data.values())
