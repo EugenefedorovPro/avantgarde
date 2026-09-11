@@ -10,3 +10,4 @@ __pycache__/
 staticfiles/
 backend/qr_print.pdf
 backend/qr_print.docx
+data/avantgarde.sqlite3
