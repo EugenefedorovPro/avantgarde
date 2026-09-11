@@ -1,17 +1,16 @@
-from django.db.models import fields
-from rest_framework.serializers import ModelSerializer
 from avantgarde.models import (
-    RawVerse,
-    Hermeneutics,
-    Audio,
-    Reclamation,
     AnswerToReclamation,
+    Audio,
     ContentOrder,
-    HistoryTime,
-    EuPro,
+    Hermeneutics,
     HermToHistory,
     HermToMakeCopy,
+    HistoryTime,
+    RawVerse,
+    Reclamation,
 )
+from django.db.models import fields
+from rest_framework.serializers import ModelSerializer
 
 
 class HermToMakeCopySerializer(ModelSerializer):
@@ -23,12 +22,6 @@ class HermToMakeCopySerializer(ModelSerializer):
 class HermToHistorySerializer(ModelSerializer):
     class Meta:
         model = HermToHistory
-        fields = ["pk", "title", "text"]
-
-
-class EuProSerializer(ModelSerializer):
-    class Meta:
-        model = EuPro
         fields = ["pk", "title", "text"]
 
 

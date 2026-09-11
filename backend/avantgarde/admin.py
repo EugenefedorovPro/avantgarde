@@ -2,23 +2,24 @@ from django.contrib import admin
 from django.db.models import Count
 
 from .models import (
-    RawVerse,
-    EuPro,
-    Hermeneutics,
-    Audio,
-    Reclamation,
     AnswerToReclamation,
-    HermRandVerse,
+    Audio,
     ContentOrder,
-    HistoryTime,
+    Hermeneutics,
+    HermRandVerse,
     HermToHistory,
     HermToMakeCopy,
     HermToQrCode,
+    HistoryTime,
+    RawVerse,
+    Reclamation,
 )
+
 
 @admin.register(HermToQrCode)
 class HermToQrCodeAdmin(admin.ModelAdmin):
     list_display = ["title", "text"]
+
 
 @admin.register(HermToMakeCopy)
 class HermToMakeCopyAdmin(admin.ModelAdmin):
@@ -76,11 +77,6 @@ class RawVersesAdmin(admin.ModelAdmin):
     search_fields = ("text", "title", "html_name")
 
 
-class EuProAdmin(admin.ModelAdmin):
-    list_display = ("title", "html_name", "date_of_writing", "text")
-    search_fields = ("title", "html_name")
-
-
 class HermeneuticsAdmin(admin.ModelAdmin):
     fieldsets = [
         ("Форма", {"fields": ("html_name", "title", "raw_verses", "date_of_writing")}),
@@ -91,7 +87,6 @@ class HermeneuticsAdmin(admin.ModelAdmin):
 
 
 admin.site.register(RawVerse, RawVersesAdmin)
-admin.site.register(EuPro, EuProAdmin)
 admin.site.register(Hermeneutics, HermeneuticsAdmin)
 admin.site.register(Audio)
 

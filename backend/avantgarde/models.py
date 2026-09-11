@@ -130,16 +130,3 @@ class Audio(models.Model):
         managed = True
         db_table = "audio"
 
-
-class EuPro(models.Model):
-    html_name = models.SlugField(null=True, blank=True, unique=True)
-    title = models.CharField(max_length=50, null=True, blank=True, unique=True)
-    text = models.TextField(default="")
-    date_of_writing = models.DateField(blank=True, null=True)
-
-    def __str__(self):
-        return str(self.pk) + ". " + self.title
-
-    class Meta:
-        managed = True
-        db_table = "eu_pro"
