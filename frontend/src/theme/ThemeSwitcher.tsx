@@ -30,9 +30,11 @@ export function ThemeSwitcher() {
         .tabsWithTools > .nav-item:last-child {
           flex: 0 0 auto !important;
           min-width: 0 !important;
+          height: var(--tabs-h, auto) !important;
           margin-left: auto !important;
           position: relative !important;
           right: auto !important;
+          align-self: flex-end !important;
           z-index: 5 !important;
         }
 
@@ -42,10 +44,12 @@ export function ThemeSwitcher() {
           flex: 0 0 auto !important;
           min-width: 0 !important;
           max-width: none !important;
+          height: var(--tabs-h, auto) !important;
           margin-left: 0.5rem !important;
           padding-left: 0 !important;
           overflow: visible !important;
           background: transparent !important;
+          align-items: stretch !important;
         }
 
         .themeSwitch[data-theme-vocabulary] {
@@ -54,14 +58,16 @@ export function ThemeSwitcher() {
           width: 9.25rem !important;
           min-width: 9.25rem !important;
           max-width: 9.25rem !important;
-          height: 2.75rem !important;
-          min-height: 2.75rem !important;
-          max-height: 2.75rem !important;
+          height: var(--tabs-h, 3.5rem) !important;
+          min-height: var(--tabs-h, 3.5rem) !important;
+          max-height: var(--tabs-h, 3.5rem) !important;
+          margin: 0 !important;
           padding: 0 0.55rem !important;
           overflow: hidden !important;
           display: inline-flex !important;
           align-items: center !important;
           justify-content: center !important;
+          align-self: flex-end !important;
           font-size: 0.8rem !important;
           line-height: 1 !important;
           letter-spacing: 0.035em !important;
@@ -109,9 +115,6 @@ export function ThemeSwitcher() {
             width: 8.6rem !important;
             min-width: 8.6rem !important;
             max-width: 8.6rem !important;
-            height: 2.5rem !important;
-            min-height: 2.5rem !important;
-            max-height: 2.5rem !important;
             padding: 0 0.4rem !important;
             font-size: 0.76rem !important;
             letter-spacing: 0.025em !important;
