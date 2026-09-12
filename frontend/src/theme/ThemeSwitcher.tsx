@@ -27,34 +27,100 @@ export function ThemeSwitcher() {
   return (
     <>
       <style>{`
-        .themeSwitch[data-theme-vocabulary] {
+        .tabsWithTools > .nav-item:last-child {
+          flex: 0 0 auto !important;
           min-width: 0 !important;
-          max-width: min(11rem, 42vw) !important;
-          width: auto !important;
-          padding-inline: 0.65rem !important;
-          overflow: hidden !important;
+          margin-left: auto !important;
+          position: relative !important;
+          right: auto !important;
+          z-index: 5 !important;
         }
 
-        .themeSwitch[data-theme-vocabulary] .themeSwitch__label {
-          display: block !important;
+        .tabsWithTools .tabsTool {
+          position: static !important;
+          right: auto !important;
+          flex: 0 0 auto !important;
           min-width: 0 !important;
-          max-width: 100% !important;
+          max-width: none !important;
+          margin-left: 0.5rem !important;
+          padding-left: 0 !important;
+          overflow: visible !important;
+          background: transparent !important;
+        }
+
+        .themeSwitch[data-theme-vocabulary] {
+          box-sizing: border-box !important;
+          flex: 0 0 9.25rem !important;
+          width: 9.25rem !important;
+          min-width: 9.25rem !important;
+          max-width: 9.25rem !important;
+          height: 2.75rem !important;
+          min-height: 2.75rem !important;
+          max-height: 2.75rem !important;
+          padding: 0 0.55rem !important;
           overflow: hidden !important;
-          text-overflow: ellipsis !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          font-size: 0.8rem !important;
+          line-height: 1 !important;
+          letter-spacing: 0.035em !important;
           white-space: nowrap !important;
         }
 
-        .themeSwitch[data-theme-vocabulary="soviet"]::before {
+        .themeSwitch[data-theme-vocabulary]::before,
+        .themeSwitch[data-theme-vocabulary]::after {
           display: none !important;
           content: none !important;
         }
 
+        .themeSwitch[data-theme-vocabulary] .themeSwitch__label {
+          display: block !important;
+          position: relative !important;
+          z-index: 1 !important;
+          width: 100% !important;
+          min-width: 0 !important;
+          max-width: none !important;
+          overflow: visible !important;
+          text-overflow: clip !important;
+          white-space: nowrap !important;
+          text-align: center !important;
+          font-size: inherit !important;
+          line-height: inherit !important;
+          letter-spacing: inherit !important;
+        }
+
         @media (max-width: 576px) {
+          .tabsWithTools > .nav-item:last-child {
+            margin-left: 0 !important;
+          }
+
+          .tabsWithTools .tabsTool {
+            margin-left: 0.35rem !important;
+          }
+
           .themeSwitch[data-theme-vocabulary] {
-            max-width: min(8.25rem, 38vw) !important;
-            padding-inline: 0.45rem !important;
-            font-size: clamp(0.66rem, 2.8vw, 0.78rem) !important;
-            letter-spacing: 0.02em !important;
+            flex-basis: 8.6rem !important;
+            width: 8.6rem !important;
+            min-width: 8.6rem !important;
+            max-width: 8.6rem !important;
+            height: 2.5rem !important;
+            min-height: 2.5rem !important;
+            max-height: 2.5rem !important;
+            padding: 0 0.4rem !important;
+            font-size: 0.76rem !important;
+            letter-spacing: 0.025em !important;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .themeSwitch[data-theme-vocabulary] {
+            flex-basis: 8.2rem !important;
+            width: 8.2rem !important;
+            min-width: 8.2rem !important;
+            max-width: 8.2rem !important;
+            font-size: 0.74rem !important;
+            letter-spacing: 0.015em !important;
           }
         }
       `}</style>
