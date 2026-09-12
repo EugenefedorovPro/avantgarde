@@ -6,27 +6,22 @@ export const THEME_FILES = {
   boychuk: "ui_boychuk.css",
   ekster: "ui_ekster.css",
   calder: "ui_calder.css",
-  gropius: "ui_gropius.css",
   newman: "ui_newman.css",
-  brutal: "ui_brutal.css",
   soviet: "ui_soviet.css",
 } as const;
 
 export type ThemeName = keyof typeof THEME_FILES;
 
 export const THEME_LABELS: Record<ThemeName, string> = {
-  default: "Kosuth",
-  klee: "Klee",
-  chirico: "de Chirico",
-  malevitch: "Malevich",
-  boychuk: "Boychuk",
-  ekster: "Ekster",
-  calder: "Calder",
-  gropius: "Gropius",
-  newman: "Newman",
-  brutal: "brutal",
-  soviet: "soviet",
-
+  default: "Spolia",
+  klee: "Vision",
+  chirico: "Zwischen",
+  malevitch: "Autoreference",
+  boychuk: "Trace",
+  ekster: "Tension",
+  calder: "Drift",
+  newman: "Seam",
+  soviet: "Bureaucracy",
 };
 
 export const THEME_BASE_PATH = "/";
