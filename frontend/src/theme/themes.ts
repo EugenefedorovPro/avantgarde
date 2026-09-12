@@ -16,12 +16,12 @@ export const THEME_LABELS: Record<ThemeName, string> = {
   default: "Spolia",
   klee: "Vision",
   chirico: "Zwischen",
-  malevitch: "Autoreference",
+  malevitch: "Zero",
   boychuk: "Trace",
   ekster: "Tension",
   calder: "Drift",
   newman: "Seam",
-  soviet: "Bureaucracy",
+  soviet: "Record",
 };
 
 export const THEME_BASE_PATH = "/";
