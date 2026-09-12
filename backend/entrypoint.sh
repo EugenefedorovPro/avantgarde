@@ -1,8 +1,7 @@
 #!/bin/sh
 set -e
 
-python manage.py makemigrations
-python manage.py migrate
+python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 #
 # commands
@@ -13,5 +12,4 @@ python manage.py collectstatic --noinput
 # exec python manage.py runserver 0.0.0.0:8000 --nothreading
 
 ## alternative for development
-gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers=2 --timeout=300
-
+exec gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers=2 --timeout=300

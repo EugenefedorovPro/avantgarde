@@ -11,3 +11,4 @@ staticfiles/
 backend/qr_print.pdf
 backend/qr_print.docx
 data/avantgarde.sqlite3
+backend/data/avantgarde.sqlite3

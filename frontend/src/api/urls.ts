@@ -1,9 +1,8 @@
-export const baseUrl = import.meta.env.VITE_BASE_URL as string;
+export const baseUrl = (import.meta.env.VITE_BASE_URL ?? "").replace(/\/+$/, "");
 
 // API endpoints
 export const urlVerse = `${baseUrl}/api/verse/`;
 export const urlRandVerse = `${baseUrl}/api/rand_verse/`;
-export const urlHerm = `${baseUrl}/api/herm/`;
 export const urlReclamation = `${baseUrl}/api/reclamation/`;
 export const urlContentOrder = `${baseUrl}/api/content_order/`;
 export const urlNeologizm = `${baseUrl}/api/neologizm/`;

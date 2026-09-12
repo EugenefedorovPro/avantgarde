@@ -1,15 +1,31 @@
-import ipdb
-import os
+import tempfile
+from pathlib import Path
+
 from django.test import TestCase
+
+from avantgarde.models import ContentOrder, HermToQrCode
 from avantgarde.utils.create_file_to_print import CreateFileToPrint
-from avantgarde.models import RawVerse, ContentOrder
-from django.urls import reverse
 
 
 class TestCreateFileToPrint(TestCase):
-    fixtures = ["content_order.json", "herm_to_qr_code.json"]
+    def setUp(self):
+        HermToQrCode.objects.create(title="QR", text="Journal text")
+        ContentOrder.objects.create(
+            content="verse",
+            order=10,
+            html_name="test-verse",
+            html_for_qr="https://example.com/verse/test-verse/",
+            qr_text="Test verse",
+        )
 
     def test_one_file(self):
-        CreateF = CreateFileToPrint()
-        CreateF.create_file_to_print()
-        self.assertTrue(1)
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            output_path = Path(tmp_dir) / "qr_print.docx"
+            docx_path, pdf_path = CreateFileToPrint().create_file_to_print(
+                out_path=str(output_path), also_pdf=False
+            )
+
+            self.assertEqual(Path(docx_path), output_path)
+            self.assertIsNone(pdf_path)
+            self.assertTrue(output_path.is_file())
+            self.assertGreater(output_path.stat().st_size, 0)

@@ -1,17 +1,20 @@
+import logging
 import os
 import re
-import logging
+
 from django.db import transaction
+
 from avantgarde.models import ContentOrder, RawVerse
 
 STEP_IN_NUMERATION = 10
-BASE_URL = os.getenv("BASE_URL", "").rstrip("/")  # avoid double slashes
+BASE_URL = os.getenv("BASE_URL", os.getenv("VITE_BASE_URL", "")).rstrip("/")
+logger = logging.getLogger(__name__)
 
 
 class PopulateContentOrder:
     def _change_order_value(
         self, verses: list[RawVerse], step: int
-    ) -> tuple[list[int], list[str], list[str], list[str | None]]:
+    ) -> tuple[list[int], list[str], list[str], list[str]]:
         """
         renumerates verses by changing order field but keeping their sequence intact:
         e. g. 1,2,5 -> 10, 20, 30.
@@ -33,16 +36,15 @@ class PopulateContentOrder:
             if verse.title:
                 titles.append(verse.title)
             else:
-                first_line= verse.text.splitlines()[0]
+                first_line = (verse.text or "").splitlines()[0] if verse.text else ""
                 first_line = re.sub(r"[^\w\s]", "", first_line)
-                titles.append(first_line)
+                titles.append(first_line or verse.html_name)
 
         return new_orders, html_names, html_for_qr, titles
 
     def add_base_url_to_non_verse(self, non_verse_content: list[ContentOrder]) -> None:
         for item in non_verse_content:
-            # If your non-verse html_name is a slug like "rand_verse" and your route is "/<slug>/"
-            # adjust the path here if needed (e.g. "/api/..." or "/print/pdf/").
+            # For a non-verse slug such as "rand_verse", use its frontend route.
             item.html_for_qr = f"{BASE_URL}/{item.html_name}/"
 
     def move_non_verse_content(self, max_current_order: int) -> None:
@@ -98,8 +100,8 @@ class PopulateContentOrder:
             )
         )
         if not verses:
-            logging.warning("No verses in db")
-            return None
+            logger.warning("No verses in db")
+            return
 
         max_order = max((v.order for v in verses if v.order is not None), default=0)
         temp_step = max_order + 10
@@ -136,5 +138,4 @@ class PopulateContentOrder:
                 ]
             )
 
-        logging.info("Content order was populated with verse orders = %s", final_orders)
-        return None
+        logger.info("Content order was populated with verse orders = %s", final_orders)

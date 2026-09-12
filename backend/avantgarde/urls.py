@@ -1,13 +1,14 @@
-from django.urls import include, path
+from django.urls import path
+
 from avantgarde.views import (
-    VerseView,
-    RandVerseView,
-    ReclamationView,
-    ReclamationByNameView,
     ContentOrderView,
     NeologizmView,
     PrintQrPdfView,
     PrintQrTextView,
+    RandVerseView,
+    ReclamationByNameView,
+    ReclamationView,
+    VerseView,
 )
 
 urlpatterns = [

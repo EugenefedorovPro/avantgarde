@@ -1,20 +1,20 @@
 # avantgarde/management/commands/check_content_urls.py
 # Run: python manage.py check_content_urls
 
-from django.core.management.base import BaseCommand
-from avantgarde.models import ContentOrder
-
 import requests  # pip install requests
+from django.core.management.base import BaseCommand
+
+from avantgarde.models import ContentOrder
 
 
 class Command(BaseCommand):
-    help = "Check that ContentOrder.html_for_qr URLs are accessible (prints HTTP status)."
+    help = (
+        "Check that ContentOrder.html_for_qr URLs are accessible (prints HTTP status)."
+    )
 
     def handle(self, *args, **options):
         # Get all URLs from DB (skip empty ones)
-        urls = [
-            u for (u,) in ContentOrder.objects.values_list("html_for_qr") if u
-        ]
+        urls = [u for (u,) in ContentOrder.objects.values_list("html_for_qr") if u]
 
         # Check each URL
         for i, url in enumerate(urls, start=1):

@@ -32,7 +32,7 @@ class HermToHistoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(HistoryTime)
-class HistoryTime(admin.ModelAdmin):
+class HistoryTimeAdmin(admin.ModelAdmin):
     list_display = ["order", "year", "word_of_year"]
 
 
@@ -60,8 +60,7 @@ class ReclamationAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        # If you DID set related_name="answers" on the FK, replace with Count("answers")
-        return qs.annotate(_answers_count=Count("answertoreclamation"))
+        return qs.annotate(_answers_count=Count("answers"))
 
     @admin.display(description="Answers", ordering="_answers_count")
     def answers_count(self, obj):

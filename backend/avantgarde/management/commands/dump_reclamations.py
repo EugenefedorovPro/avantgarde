@@ -5,7 +5,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from avantgarde.models import Reclamation, AnswerToReclamation
+from avantgarde.models import AnswerToReclamation, Reclamation
 
 
 class Command(BaseCommand):
@@ -20,10 +20,11 @@ class Command(BaseCommand):
                 f.write("-----\n")
 
             f.write("\n=== AnswerToReclamation ===\n")
-            for row in AnswerToReclamation.objects.values():  # all fields incl reclamation_id
+            for (
+                row
+            ) in AnswerToReclamation.objects.values():  # all fields incl reclamation_id
                 for k, v in row.items():
                     f.write(f"{k}: {v}\n")
                 f.write("-----\n")
 
         self.stdout.write(f"Wrote {out_path}")
-

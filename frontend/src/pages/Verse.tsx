@@ -117,7 +117,7 @@ export const Verse = () => {
       try {
         const [data, reclData] = await Promise.all([
           verse(html_name),
-          reclamationRandomApi(),
+          reclamationRandomApi().catch(() => null),
         ]);
 
         if (cancelled) return;
@@ -140,6 +140,13 @@ export const Verse = () => {
         }
       } catch (e) {
         console.error(e);
+        if (!cancelled) {
+          setVrs(null);
+          setHerm(null);
+          setAudio(null);
+          setRecl(null);
+          setActiveTab("verse");
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -187,7 +194,7 @@ export const Verse = () => {
         <Tab.Pane eventKey="hermeneutics">
           <PaneFrame loading={false}>
             <VerseBox
-              titleMd={herm.title}
+              titleMd={herm.title ?? ""}
               textMd={herm.text}
               childrenBottom={bottomHerm}
             />

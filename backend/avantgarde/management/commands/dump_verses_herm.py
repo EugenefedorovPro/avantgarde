@@ -1,7 +1,8 @@
 # avantgarde/management/commands/dump_verses_herm_txt.py
 
 from django.core.management.base import BaseCommand
-from avantgarde.models import RawVerse, Hermeneutics
+
+from avantgarde.models import Hermeneutics, RawVerse
 
 
 class Command(BaseCommand):

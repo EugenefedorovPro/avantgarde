@@ -21,11 +21,11 @@ COPY . .
 
 # Install ONLY your project fonts (Noto/OpenSans + mstt Times New Roman files you copied)
 RUN mkdir -p /usr/local/share/fonts/truetype/custom \
-    && if [ -d "/app/backend/avantgarde/utils/fonts" ]; then \
-         find "/app/backend/avantgarde/utils/fonts" -type f \( -iname "*.ttf" -o -iname "*.otf" \) -print0 \
+    && if [ -d "/app/avantgarde/utils/fonts" ]; then \
+         find "/app/avantgarde/utils/fonts" -type f \( -iname "*.ttf" -o -iname "*.otf" \) -print0 \
          | xargs -0 -I{} cp -v "{}" /usr/local/share/fonts/truetype/custom/ ; \
        else \
-         echo "No fonts dir at /app/backend/avantgarde/utils/fonts; skipping." ; \
+         echo "No fonts dir at /app/avantgarde/utils/fonts; skipping." ; \
        fi \
     && fc-cache -f -v
 

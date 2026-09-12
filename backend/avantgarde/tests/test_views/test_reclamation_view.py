@@ -1,32 +1,27 @@
-import ipdb
-from avantgarde.models import Reclamation, AnswerToReclamation
+from django.urls import reverse
+
+from avantgarde.models import AnswerToReclamation, Reclamation
 from avantgarde.tests.create_test_verses import CreateTestVerses
-from unittest import skip
 
 
 class TestReclamationView(CreateTestVerses):
-    def populate_recl(self):
-        recl_1 = Reclamation.objects.create(
+    def populate_reclamations(self):
+        reclamation = Reclamation.objects.create(
             text="reclamation_1",
             html_name="html_name_reclamation_1",
         )
-        recl_2 = Reclamation.objects.create(
+        Reclamation.objects.create(
             text="reclamation_2",
             html_name="html_name_reclamation_2",
         )
-        answer_1 = AnswerToReclamation.objects.create(
+        AnswerToReclamation.objects.create(
             text="answer_1 to reclamation_1",
-            reclamation=recl_1,
+            reclamation=reclamation,
             repeat=10,
         )
 
-    def test_reclamation_view(self):
-        self.populate_recl()
-
-        url = f"/reclamation/"
-        response = self.client.get(url)
-        actual = response.data
-        expected = {
+    def expected_response(self):
+        return {
             "answer": {"pk": 1, "text": "answer_1 to reclamation_1", "repeat": 10},
             "reclamation": {
                 "pk": 1,
@@ -34,22 +29,23 @@ class TestReclamationView(CreateTestVerses):
                 "html_name": "html_name_reclamation_1",
             },
         }
-        print(actual)
-        self.assertEqual(expected, actual)
+
+    def test_reclamation_view(self):
+        self.populate_reclamations()
+
+        response = self.client.get(reverse("reclamation"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.expected_response(), response.data)
 
     def test_reclamation_by_name_view(self):
-        self.populate_recl()
+        self.populate_reclamations()
+        url = reverse(
+            "reclamation_by_name",
+            kwargs={"html_name": "html_name_reclamation_1"},
+        )
 
-        url = f"/reclamation/html_name_reclamation_1"
         response = self.client.get(url)
-        actual = response.data
-        expected = {
-            "answer": {"pk": 1, "text": "answer_1 to reclamation_1", "repeat": 10},
-            "reclamation": {
-                "pk": 1,
-                "text": "reclamation_1",
-                "html_name": "html_name_reclamation_1",
-            },
-        }
-        print(actual)
-        self.assertEqual(expected, actual)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.expected_response(), response.data)

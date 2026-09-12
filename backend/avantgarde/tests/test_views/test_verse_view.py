@@ -1,19 +1,12 @@
-import ipdb
-from django.test import TestCase
-from avantgarde.views import VerseView, get_new_order_verse
-from avantgarde.models import RawVerse
-from django.contrib.auth.models import User
+from django.urls import reverse
+
 from avantgarde.tests.create_test_verses import CreateTestVerses
-import datetime
-from unittest import skip
 
 
 class TestVerseView(CreateTestVerses):
-
     def test_verse_view(self):
-        url = f"/verse/1/"
+        url = reverse("verse", kwargs={"html_name": "html_name_1"})
         response = self.client.get(url)
-        actual = response.data
 
         expected = {
             "verse": {
@@ -39,6 +32,19 @@ class TestVerseView(CreateTestVerses):
         }
 
         self.assertEqual(response.status_code, 200)
-        print(f"response.data = {response.data}")
-        self.assertEqual(expected, actual)
+        self.assertEqual(expected, response.data)
 
+    def test_unknown_verse_returns_not_found(self):
+        url = reverse("verse", kwargs={"html_name": "unknown-verse"})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_audio_without_file_is_not_returned(self):
+        self.verse.audio_set.update(audio="")
+        url = reverse("verse", kwargs={"html_name": self.verse.html_name})
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.data["audio"])

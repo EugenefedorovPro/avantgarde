@@ -1,18 +1,15 @@
-import ipdb
-
+from collections.abc import Iterator, Sequence
 from itertools import cycle
 from pathlib import Path
-from typing import Iterable, Iterator, Optional, Sequence
 
 import segno
 from PIL import Image, ImageDraw, ImageFont
-from importlib.resources import files
 
 # DEFAULT_FONT = files("qr_code_generator").joinpath("fonts", "NotoSans-Black.ttf")
 DEFAULT_FONT = Path(__file__).parent / "fonts" / "NotoSans-Black.ttf"
 
 # Segno matrix behaves like: rows -> columns -> bool (True=dark module)
-Matrix = Sequence[Sequence[bool]]
+Matrix = Sequence[Sequence[int]]
 
 
 class DrawQR:
@@ -34,8 +31,8 @@ class DrawQR:
 
         # per-render state (initialized in draw_qr)
         self.size: int = 0
-        self.img: Optional[Image.Image] = None
-        self._text_gen: Optional[Iterator[str]] = None
+        self.img: Image.Image | None = None
+        self._text_gen: Iterator[str] | None = None
 
     def _make_text_generator(self, text: str) -> Iterator[str]:
         prepared_text = "".join(ch for ch in text if ch.isalpha())
@@ -66,10 +63,7 @@ class DrawQR:
             return True
 
         # Format info area
-        if x == 8 or y == 8:
-            return True
-
-        return False
+        return x == 8 or y == 8
 
     def draw_letter(
         self, px: int, py: int, font: ImageFont.FreeTypeFont, draw: ImageDraw.ImageDraw

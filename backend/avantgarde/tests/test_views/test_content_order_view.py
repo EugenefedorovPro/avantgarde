@@ -1,21 +1,19 @@
-import ipdb
-from unittest import skip
-from avantgarde.views import ContentOrderView, New
-from avantgarde.tests.create_test_verses import CreateTestVerses
+from django.urls import reverse
+
 from avantgarde.models import ContentOrder
-from unittest import skip
+from avantgarde.tests.create_test_verses import CreateTestVerses
+from avantgarde.views import ContentOrderView, New
 
 
 class TestContentOrderView(CreateTestVerses):
-
     def populate_content_order(self):
         content_types = ["rand_verse"] + ["verse"] * 8 + ["end"]
         order_objs = []
-        for i, c_type in zip(range(10, 110, 10), content_types):
+        for i, content_type in zip(range(10, 110, 10), content_types):
             order_objs.append(
                 ContentOrder(
                     order=i,
-                    content=c_type,
+                    content=content_type,
                     html_name=f"html_name_{i}",
                 )
             )
@@ -23,33 +21,23 @@ class TestContentOrderView(CreateTestVerses):
 
     def test_cycle_order(self):
         self.populate_content_order()
-        print(ContentOrder.objects.values_list("order", "content"))
-        cov = ContentOrderView()
+        view = ContentOrderView()
 
-        next_order = cov.cycle_order(passed_order=80, passed_new=New.NEXT)
-        self.assertEqual(next_order, 90)
+        self.assertEqual(view.cycle_order(80, New.NEXT), 90)
+        self.assertEqual(view.cycle_order(100, New.NEXT), 10)
+        self.assertEqual(view.cycle_order(70, New.PREV), 60)
+        self.assertEqual(view.cycle_order(10, New.PREV), 100)
+        self.assertIsNone(view.cycle_order(15, New.NEXT))
+        self.assertEqual(view.cycle_order(20, New.CURRENT), 20)
 
-        next_order = cov.cycle_order(100, New.NEXT)
-        self.assertEqual(next_order, 10)
-
-        prev_order = cov.cycle_order(70, New.PREV)
-        self.assertEqual(prev_order, 60)
-
-        prev_order = cov.cycle_order(10, New.PREV)
-        self.assertEqual(prev_order, 100)
-
-        no_order = cov.cycle_order(15, New.NEXT)
-        self.assertEqual(no_order, None)
-
-        current_order = cov.cycle_order(20, New.CURRENT)
-        self.assertEqual(current_order, 20)
-
-    def test_incorrect_request(self):
+    def test_incorrect_request_returns_first_content(self):
         self.populate_content_order()
 
-        # no 15 in order
-        url = "/content_order/15/next/"
+        url = reverse(
+            "content_order", kwargs={"html_name": "missing", "new": New.NEXT.value}
+        )
         response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.data,
             {
@@ -60,9 +48,11 @@ class TestContentOrderView(CreateTestVerses):
             },
         )
 
-        # incorrect new arg: previous instead of prev
-        url = "/content_order/10/previous/"
+        url = reverse(
+            "content_order", kwargs={"html_name": "html_name_10", "new": "previous"}
+        )
         response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.data,
             {
@@ -76,15 +66,20 @@ class TestContentOrderView(CreateTestVerses):
     def test_correct_request(self):
         self.populate_content_order()
 
-        url = "/content_order/10/next/"
+        url = reverse(
+            "content_order",
+            kwargs={"html_name": "html_name_10", "new": New.NEXT.value},
+        )
         response = self.client.get(url)
-        print(f"response_data = {response.data}")
         self.assertEqual(
             response.data,
             {"pk": 2, "order": 20, "content": "verse", "html_name": "html_name_20"},
         )
 
-        url = "/content_order/100/next/"
+        url = reverse(
+            "content_order",
+            kwargs={"html_name": "html_name_100", "new": New.NEXT.value},
+        )
         response = self.client.get(url)
         self.assertEqual(
             response.data,
@@ -96,7 +91,10 @@ class TestContentOrderView(CreateTestVerses):
             },
         )
 
-        url = "/content_order/10/prev/"
+        url = reverse(
+            "content_order",
+            kwargs={"html_name": "html_name_10", "new": New.PREV.value},
+        )
         response = self.client.get(url)
         self.assertEqual(
             response.data,

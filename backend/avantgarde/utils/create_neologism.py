@@ -1,6 +1,5 @@
-from abc import ABC, abstractmethod
 import random
-import ipdb
+from abc import ABC, abstractmethod
 from enum import Enum
 
 # -------------------------
@@ -284,7 +283,9 @@ class CreateNeologism:
         new_word: str = "".join(new_letters)
         return new_word
 
-    def create_neologizm(self, pattern_by_harmony: Harmony, n_words: int = 1) -> list[str]:
+    def create_neologizm(
+        self, pattern_by_harmony: Harmony, n_words: int = 1
+    ) -> list[str]:
         PatternClass: RegularPatterns = self.regular_patterns[pattern_by_harmony]
         new_words: list[str] = []
         for i in range(n_words):

@@ -9,7 +9,7 @@ type AudioBoxProps = {
 };
 
 export const AudioBox = ({ audio, children }: AudioBoxProps): ReactNode => {
-  const audioUrl = `${baseUrl}${audio.audio}`;
+  const audioUrl = audio.audio ? `${baseUrl}${audio.audio}` : "";
 
   return (
     <section className="audio-box">
@@ -20,7 +20,7 @@ export const AudioBox = ({ audio, children }: AudioBoxProps): ReactNode => {
           preload="metadata"
           aria-label="Audio player"
         >
-          <source src={audioUrl} type="audio/mpeg" />
+          {audioUrl && <source src={audioUrl} type="audio/mpeg" />}
           Your browser does not support the audio element.
         </audio>
       </div>

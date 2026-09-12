@@ -1,24 +1,46 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { fetchContentOrder } from "./fetchContentOrder";
+import type { ContentDirection } from "./fetchContentOrder";
+
+const STORAGE_KEY = "htmlName";
+
+function contentSlugFromPath(pathname: string): string | null {
+  const parts = pathname.split("/").filter(Boolean);
+
+  if (parts[0] === "verse" && parts[1]) return parts[1];
+  if (parts[0] === "neologizm") return "neologizm";
+  if (parts[0] === "rand_verse") return "rand_verse";
+  if (parts[0] === "print_copy") return "print_copy";
+
+  return null;
+}
+
+function isContentDirection(value: string | null): value is ContentDirection {
+  return value === "prev" || value === "next";
+}
 
 export function ManageContentOrderOverlay() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     let cancelled = false;
 
     const run = async () => {
-      const dir = sessionStorage.getItem("manage_dir") as "prev" | "next" | null;
-      if (!dir) return;
+      const dir = sessionStorage.getItem("manage_dir");
+      if (!isContentDirection(dir)) return;
 
-      const htmlName = localStorage.getItem("htmlName") ?? "noHtmlName";
+      const htmlName =
+        contentSlugFromPath(location.pathname) ??
+        localStorage.getItem(STORAGE_KEY) ??
+        "neologizm";
 
       try {
         const content = await fetchContentOrder(htmlName, dir);
         if (cancelled || !content) return;
 
-        localStorage.setItem("htmlName", content.html_name);
+        localStorage.setItem(STORAGE_KEY, content.html_name);
 
         // ✅ IMPORTANT: no trailing slash for /verse/:html_name route
         if (content.content === "verse") {
@@ -32,7 +54,6 @@ export function ManageContentOrderOverlay() {
         } else if (content.content === "print_copy") {
           navigate("/print_copy", { replace: true });
         } else {
-          // fallback (optional)
           navigate("/neologizm", { replace: true });
         }
       } catch (e) {
@@ -49,7 +70,12 @@ export function ManageContentOrderOverlay() {
       cancelled = true;
       window.removeEventListener("manage_tick", handler);
     };
-  }, [navigate]);
+  }, [location.pathname, navigate]);
+
+  useEffect(() => {
+    const slug = contentSlugFromPath(location.pathname);
+    if (slug) localStorage.setItem(STORAGE_KEY, slug);
+  }, [location.pathname]);
 
   return null;
 }

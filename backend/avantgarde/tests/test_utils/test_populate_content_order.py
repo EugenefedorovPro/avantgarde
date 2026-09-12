@@ -1,7 +1,6 @@
-import ipdb
-from avantgarde.utils.populate_content_order import PopulateContentOrder
+from avantgarde.models import ContentOrder, RawVerse
 from avantgarde.tests.create_test_verses import CreateTestVerses
-from avantgarde.models import RawVerse, ContentOrder
+from avantgarde.utils.populate_content_order import PopulateContentOrder
 
 
 class TestPopulateContentOrder(CreateTestVerses):
@@ -94,4 +93,4 @@ class TestPopulateContentOrder(CreateTestVerses):
 
         PopulateContentOrder().populate_content_order()
         expected = ContentOrder.objects.values_list("qr_text")
-        self.assertEqual(expected[0], (None,))
+        self.assertEqual(expected[0], ("text_0",))

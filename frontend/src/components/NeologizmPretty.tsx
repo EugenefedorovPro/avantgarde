@@ -1,9 +1,11 @@
-import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import type { NeologizmInterface, YearType } from "../api/neologizm";
 import "./NeologizmPretty.css";
 
 type Props = { data: NeologizmInterface };
 type Bucket = "prewar" | "war" | "future";
+type NeologismStyle = CSSProperties & { "--neoLeftW": string };
 
 function normalizeYears(years: YearType[]): YearType[] {
   return [...years].sort((a, b) => Number(b.year) - Number(a.year));
@@ -85,9 +87,7 @@ export function NeologizmPretty({ data }: Props) {
       className="neoPretty"
       style={
         leftWidthPx
-          ? ({
-              ["--neoLeftW" as any]: `${leftWidthPx}px`,
-            } as React.CSSProperties)
+          ? ({ "--neoLeftW": `${leftWidthPx}px` } as NeologismStyle)
           : undefined
       }
     >

@@ -1,7 +1,6 @@
 // src/components/TypewriterRepeat.tsx
 import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
 
 type Props = {
   markdown: string;
@@ -26,21 +25,34 @@ export function TypewriterRepeat({
     return Array.from({ length: r }, () => one).join(sep);
   }, [markdown, repeat]);
 
+  return (
+    <Typewriter
+      key={fullText}
+      text={fullText}
+      msPerChar={msPerChar}
+      className={className}
+    />
+  );
+}
+
+type TypewriterProps = {
+  text: string;
+  msPerChar: number;
+  className?: string;
+};
+
+function Typewriter({ text, msPerChar, className }: TypewriterProps) {
   const [i, setI] = useState(0);
 
-  useEffect(() => setI(0), [fullText]);
-
   useEffect(() => {
-    if (i >= fullText.length) return;
+    if (i >= text.length) return;
     const t = window.setTimeout(() => setI((v) => v + 1), msPerChar);
     return () => window.clearTimeout(t);
-  }, [i, fullText, msPerChar]);
+  }, [i, text, msPerChar]);
 
   return (
     <div className={className} style={{ whiteSpace: "normal" }}>
-      <ReactMarkdown rehypePlugins={[rehypeRaw]}>
-        {fullText.slice(0, i)}
-      </ReactMarkdown>
+      <ReactMarkdown>{text.slice(0, i)}</ReactMarkdown>
     </div>
   );
 }

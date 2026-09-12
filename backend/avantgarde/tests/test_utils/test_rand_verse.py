@@ -1,30 +1,27 @@
-import ipdb
-from avantgarde.utils.rand_verse import RandVerse
-from avantgarde.tests.create_test_verses import CreateTestVerses
 from django.urls import reverse
+
+from avantgarde.models import HermRandVerse
+from avantgarde.tests.create_test_verses import CreateTestVerses
+from avantgarde.utils.rand_verse import RandVerse
 
 
 class TestRandVerse(CreateTestVerses):
-
     def test_rand_verse_utils(self):
-        rand_verse: dict[int, str] = RandVerse().rand_verse()
+        rand_verse = RandVerse().rand_verse()
         expected = {
-            0: "text",
-            1: "text",
-            2: "text",
-            3: "text",
-            4: "text",
-            5: "text",
-            6: "text",
-            7: "text",
-            8: "text",
-            9: "text",
+            "0": "text text text text",
+            "1": "text text text text",
+            "2": "text text",
         }
 
         self.assertEqual(expected, rand_verse)
 
     def test_rand_verse_view(self):
-        url = reverse("rand_verse")
-        response = self.client.get(url)
-        print(response.data)
+        HermRandVerse.objects.create(
+            text="Universe: {univ_placeholder}",
+            html_name="random-verse-shadow",
+        )
+
+        response = self.client.get(reverse("rand_verse"))
+
         self.assertEqual(response.status_code, 200)

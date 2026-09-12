@@ -1,20 +1,20 @@
 import os
 import subprocess
+import tempfile
 from io import BytesIO
 from pathlib import Path
-from typing import Optional, Tuple
 
-from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Mm
+from docxtpl import DocxTemplate, InlineImage
 
 from avantgarde.models import ContentOrder, HermToQrCode
 from avantgarde.utils.draw_qr import DrawQR
 
-BASE_URL: str = os.getenv("VITE_BASE_URL", "").rstrip("/")
+BASE_URL: str = os.getenv("BASE_URL", os.getenv("VITE_BASE_URL", "")).rstrip("/")
 TEMPLATE_PATH: Path = Path(__file__).resolve().parent / "template.docx"
 
 
-def docx_to_pdf(docx_path: str, out_dir: Optional[str] = None) -> str:
+def docx_to_pdf(docx_path: str, out_dir: str | None = None) -> str:
     """
     Convert DOCX -> PDF using LibreOffice (soffice) in headless mode.
     Returns the resulting PDF file path.
@@ -26,20 +26,30 @@ def docx_to_pdf(docx_path: str, out_dir: Optional[str] = None) -> str:
     output_dir = Path(out_dir).resolve() if out_dir else docx.parent
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    cmd = [
-        "soffice",
-        "--headless",
-        "--nologo",
-        "--nofirststartwizard",
-        "--norestore",
-        "--convert-to",
-        "pdf",
-        "--outdir",
-        str(output_dir),
-        str(docx),
-    ]
+    with tempfile.TemporaryDirectory(prefix="libreoffice-profile-") as profile_dir:
+        profile_uri = Path(profile_dir).resolve().as_uri()
+        cmd = [
+            "soffice",
+            f"-env:UserInstallation={profile_uri}",
+            "--headless",
+            "--nologo",
+            "--nofirststartwizard",
+            "--norestore",
+            "--convert-to",
+            "pdf",
+            "--outdir",
+            str(output_dir),
+            str(docx),
+        ]
 
-    r = subprocess.run(cmd, capture_output=True, text=True)
+        try:
+            r = subprocess.run(
+                cmd, capture_output=True, text=True, timeout=120, check=False
+            )
+        except subprocess.TimeoutExpired as error:
+            raise RuntimeError(
+                "LibreOffice conversion timed out after 120 seconds"
+            ) from error
     if r.returncode != 0:
         raise RuntimeError(
             "LibreOffice conversion failed.\n"
@@ -62,7 +72,7 @@ class CreateFileToPrint:
         self,
         out_path: str = "qr_print.docx",
         also_pdf: bool = True,
-    ) -> Tuple[str, Optional[str]]:
+    ) -> tuple[str, str | None]:
         """
         Create a DOCX using a docxtpl template.
         If also_pdf=True, convert it to PDF via LibreOffice.
@@ -90,6 +100,11 @@ class CreateFileToPrint:
 
         images: list[InlineImage] = []
         for html_for_qr, qr_text in items:
+            if not qr_text:
+                raise ValueError(
+                    "Every printable content item must have non-empty QR text"
+                )
+
             # html_for_qr can be a full URL or a path; normalize safely.
             if isinstance(html_for_qr, str) and html_for_qr.startswith(
                 ("http://", "https://")
@@ -120,7 +135,7 @@ class CreateFileToPrint:
         tpl.render(context)
         tpl.save(out_path)
 
-        pdf_path: Optional[str] = None
+        pdf_path: str | None = None
         if also_pdf:
             pdf_path = docx_to_pdf(out_path)
 

@@ -1,6 +1,6 @@
-import ipdb
-from pprint import pprint
-from avantgarde.models import HistoryTime, HermToHistory
+from django.urls import reverse
+
+from avantgarde.models import HermToHistory, HistoryTime
 from avantgarde.tests.create_test_verses import CreateTestVerses
 
 
@@ -17,16 +17,26 @@ class TestNeologizmView(CreateTestVerses):
 
     def test_neologizm_view(self):
         self.populate_history_time()
-        url = "/neologizm/"
-        response = self.client.get(url)
-        pprint(f"neologizm_view_response = {response.data}")
-        pprint(list(response.data.keys()))
-        pprint(list(response.data.get("years")))
-        expected = [
+        response = self.client.get(reverse("neologizm"))
+
+        expected_keys = [
             "harmony_words",
             "disharmony_words",
             "spontaneity_words",
             "years",
             "herm",
         ]
-        self.assertEqual(expected, list(response.data.keys()))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(expected_keys, list(response.data.keys()))
+        self.assertEqual(
+            ["2000", "2001", "2002"],
+            [item["year"] for item in response.data["years"]],
+        )
+
+    def test_missing_shadow_is_returned_as_null(self):
+        HistoryTime.objects.create(order=1, year="2000", word_of_year="word")
+
+        response = self.client.get(reverse("neologizm"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.data["herm"])

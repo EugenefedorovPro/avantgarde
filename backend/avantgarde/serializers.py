@@ -1,3 +1,5 @@
+from rest_framework.serializers import ModelSerializer
+
 from avantgarde.models import (
     AnswerToReclamation,
     Audio,
@@ -9,8 +11,6 @@ from avantgarde.models import (
     RawVerse,
     Reclamation,
 )
-from django.db.models import fields
-from rest_framework.serializers import ModelSerializer
 
 
 class HermToMakeCopySerializer(ModelSerializer):
@@ -43,7 +43,7 @@ class ReclamationSerializer(ModelSerializer):
         fields = ["pk", "text", "html_name"]
 
 
-class AnserToReclamationSerializer(ModelSerializer):
+class AnswerToReclamationSerializer(ModelSerializer):
     class Meta:
         model = AnswerToReclamation
         fields = ["pk", "text", "repeat"]

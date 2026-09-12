@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class HermToQrCode(models.Model):
     title = models.CharField(max_length=50, default="")
     text = models.TextField()
@@ -11,6 +12,7 @@ class HermToQrCode(models.Model):
     @classmethod
     def load(cls):
         return cls.objects.get_or_create(pk=1, defaults={"title": "", "text": ""})[0]
+
 
 class HistoryTime(models.Model):
     order = models.PositiveIntegerField(unique=True, blank=True, null=True)
@@ -49,7 +51,7 @@ class ContentOrder(models.Model):
     order = models.PositiveIntegerField(unique=True, blank=True, null=True)
     html_name = models.SlugField(unique=True)
     qr_text = models.CharField(max_length=50, null=True, blank=True, unique=True)
-    html_for_qr= models.CharField(max_length=255, unique=True, null=True, blank=True)
+    html_for_qr = models.CharField(max_length=255, unique=True, null=True, blank=True)
 
     def __str__(self):
         return f"{self.order} - {self.content}"
@@ -74,12 +76,16 @@ class Reclamation(models.Model):
 class AnswerToReclamation(models.Model):
     text = models.TextField(default="")
     reclamation = models.ForeignKey(
-        "Reclamation", on_delete=models.PROTECT, null=True, blank=True
+        "Reclamation",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="answers",
     )
     repeat = models.PositiveIntegerField(default=100)
 
     def __str__(self):
-        return f"{self.text[: 30]}"
+        return self.text[:30]
 
 
 class RawVerse(models.Model):
@@ -107,7 +113,7 @@ class Hermeneutics(models.Model):
     date_of_writing = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return self.title
+        return self.title or f"Hermeneutics #{self.pk}"
 
     class Meta:
         managed = True
@@ -129,4 +135,3 @@ class Audio(models.Model):
     class Meta:
         managed = True
         db_table = "audio"
-

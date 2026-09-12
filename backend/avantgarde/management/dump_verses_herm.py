@@ -5,7 +5,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from avantgarde.models import RawVerse, Hermeneutics
+from avantgarde.models import Hermeneutics, RawVerse
 
 
 class Command(BaseCommand):

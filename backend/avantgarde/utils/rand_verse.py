@@ -1,27 +1,20 @@
-import re
 import random
-from typing import Iterable
+import re
+from collections.abc import Iterable
 
 from avantgarde.models import RawVerse
 
 WORDS_PER_LINE = 4  # how many words in each rendered line
 
 
-class CalcCombinations:
-    def calc_combinations(self) -> None:
-        # placeholder: implement if you really need combinatorics
-        _texts = RawVerse.objects.values_list("text", flat=True)
-        return None
-
-
 class RandVerse:
     _word_re = re.compile(r"[^\W\d_]+", flags=re.UNICODE)
 
-    def clean_text(self, text: str) -> list[str]:
+    def clean_text(self, text: str | None) -> list[str]:
         # keep only letter-words, no digits, no underscores
-        return self._word_re.findall(text)
+        return self._word_re.findall(text or "")
 
-    def select_word(self, text: str) -> str:
+    def select_word(self, text: str | None) -> str:
         words = self.clean_text(text)
         if not words:
             return ""
@@ -36,7 +29,9 @@ class RandVerse:
                 words.append(w)
         return words
 
-    def _format_words_md(self, words: list[str], words_per_line: int = WORDS_PER_LINE) -> str:
+    def _format_words_md(
+        self, words: list[str], words_per_line: int = WORDS_PER_LINE
+    ) -> str:
         if words_per_line <= 0:
             raise ValueError("words_per_line must be > 0")
 
