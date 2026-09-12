@@ -68,6 +68,11 @@ export function ThemeSwitcher() {
           white-space: nowrap !important;
         }
 
+        .themeSwitch[data-theme-vocabulary="soviet"] {
+          font-size: 0.95rem !important;
+          letter-spacing: 0.01em !important;
+        }
+
         .themeSwitch[data-theme-vocabulary]::before,
         .themeSwitch[data-theme-vocabulary]::after {
           display: none !important;
@@ -111,6 +116,11 @@ export function ThemeSwitcher() {
             font-size: 0.76rem !important;
             letter-spacing: 0.025em !important;
           }
+
+          .themeSwitch[data-theme-vocabulary="soviet"] {
+            font-size: 0.88rem !important;
+            letter-spacing: 0 !important;
+          }
         }
 
         @media (max-width: 360px) {
@@ -121,6 +131,10 @@ export function ThemeSwitcher() {
             max-width: 8.2rem !important;
             font-size: 0.74rem !important;
             letter-spacing: 0.015em !important;
+          }
+
+          .themeSwitch[data-theme-vocabulary="soviet"] {
+            font-size: 0.84rem !important;
           }
         }
       `}</style>
