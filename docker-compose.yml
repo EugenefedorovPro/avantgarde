@@ -14,7 +14,7 @@ services:
       - ./backend/staticfiles:/app/staticfiles
       - ./backend/audio:/app/audio
     ports:
-      - "8015:8000"
+      - "127.0.0.1:8015:8000"
 
   react_avant:
     container_name: react_avant
@@ -24,7 +24,7 @@ services:
     env_file:
       - .env
     ports:
-      - "3015:5173"
+      - "127.0.0.1:3015:5173"
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -44,4 +44,4 @@ services:
       - ./backend/staticfiles:/app/staticfiles:ro
       - ./backend/audio:/app/audio:ro
     ports:
-      - "8085:8085"
+      - "127.0.0.1:8085:8085"
